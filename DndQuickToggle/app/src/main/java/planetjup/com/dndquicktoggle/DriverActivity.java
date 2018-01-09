@@ -19,6 +19,8 @@ public class DriverActivity extends AppCompatActivity {
     private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 0;
     private static boolean isAllowed = false;
 
+    private final long MINUTE = 60 * 1000;
+
     private AudioManager audioMgr;
     private NotificationManager notificationManager;
     private CountDownTimer countDownTimer;
@@ -65,12 +67,12 @@ public class DriverActivity extends AppCompatActivity {
         buttonStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeMode("buttonStop", AudioManager.RINGER_MODE_NORMAL);
+                handleStop();
             }
         });
 
-        Button buttonClose = (Button) findViewById(R.id.buttonStop);
-        buttonStop.setOnClickListener(new View.OnClickListener() {
+        Button buttonClose = (Button) findViewById(R.id.buttonClose);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 exitApp();
@@ -124,24 +126,29 @@ public class DriverActivity extends AppCompatActivity {
         }
     }
 
-    protected void printAudioMode()
+    protected String printAudioMode()
     {
-        int ringerMode = audioMgr.getRingerMode();
-        if (ringerMode == AudioManager.RINGER_MODE_VIBRATE)
-        {
-            Toast.makeText(DriverActivity.this, "Now in Vibrate Mode", Toast.LENGTH_LONG).show();
+        String toastMsg = "";
+
+        switch (audioMgr.getRingerMode()) {
+            case AudioManager.RINGER_MODE_SILENT:
+                toastMsg = "Ringer is in Silent mode";
+                break;
+
+            case AudioManager.RINGER_MODE_VIBRATE:
+                toastMsg = "Ringer is in Vibrate mode";
+                break;
+
+            case AudioManager.RINGER_MODE_NORMAL:
+                toastMsg = "Ringer is in Normal mode";
+                break;
         }
-        else if (ringerMode == AudioManager.RINGER_MODE_NORMAL)
-        {
-            Toast.makeText(DriverActivity.this,"Now in Ringing Mode", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            Toast.makeText(DriverActivity.this,"Now in Vibrate Mode", Toast.LENGTH_LONG).show();
-        }
+
+        Toast.makeText(DriverActivity.this, toastMsg, Toast.LENGTH_LONG).show();
+        return toastMsg;
     }
 
-    protected void startCountdonwTimer(int duration)
+    protected void startCountdonwTimer(long duration)
     {
         countDownTimer = new CountDownTimer(duration, duration) {
             @Override
@@ -150,35 +157,82 @@ public class DriverActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                changeMode("buttonStop", AudioManager.RINGER_MODE_NORMAL);
+                changeMode("time-out", AudioManager.RINGER_MODE_NORMAL);
             }
         }.start();
     }
 
     protected void exitApp()
     {
-        // todo : ßadd other cleanup here
+        // todo : add other cleanup here
         finish();
     }
 
     protected void handle15()
     {
         changeMode("button15", AudioManager.RINGER_MODE_SILENT);
-        startCountdonwTimer(15 * 60 * 60);
+        startCountdonwTimer(15 * MINUTE);
         exitApp();
     }
 
     protected void handle30()
     {
         changeMode("button15", AudioManager.RINGER_MODE_SILENT);
-        startCountdonwTimer(30 * 60 * 60);
+        startCountdonwTimer(30 * MINUTE);
         exitApp();
     }
 
     protected void handle60()
     {
         changeMode("button15", AudioManager.RINGER_MODE_SILENT);
-        startCountdonwTimer(60 * 60 * 60);
+        startCountdonwTimer(60 * MINUTE);
         exitApp();
     }
+
+    protected void handleStop()
+    {
+        changeMode("buttonStop", AudioManager.RINGER_MODE_NORMAL);
+        exitApp();
+    }
+
+//
+//    @Override
+//    public void onClick(View view) {
+//        Log.v(TAG, "onClick : " + view.getId());
+//
+//        int duration = 0;
+//        boolean isChangeNeeded = Boolean.TRUE;
+//        int mode = AudioManager.RINGER_MODE_SILENT;
+//
+//        switch (view.getId())
+//        {
+//            case R.id.button15:
+//                duration = 15;
+//                break;
+//
+//            case R.id.button30:
+//                duration = 30;
+//                break;
+//
+//            case R.id.button60:
+//                duration = 60;
+//                break;
+//
+//            case R.id.buttonStop:
+//                mode = AudioManager.RINGER_MODE_NORMAL;
+//                break;
+//
+//            case R.id.buttonClose:
+//                isChangeNeeded = Boolean.FALSE;
+//                break;
+//        }
+//
+//        if (isChangeNeeded)
+//        {
+//            changeMode("button15", AudioManager.RINGER_MODE_SILENT);
+//            startCountdonwTimer(15 * MINUTE);
+//        }
+//
+//        exitApp();
+//    }
 }

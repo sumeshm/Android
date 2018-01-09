@@ -1,8 +1,12 @@
 package planetjup.com.dndquicktoggle;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.service.quicksettings.TileService;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by summani on 1/9/18.
@@ -11,6 +15,25 @@ import android.util.Log;
 public class DndTileService extends TileService {
 
     private static final String TAG = DndTileService.class.getSimpleName();
+
+    private BroadcastReceiver ringerModeReceiver = null;
+    private AudioManager audioMgr;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        audioMgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        ringerModeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(AudioManager.RINGER_MODE_CHANGED_ACTION)) {
+                    changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
+                }
+            }
+        };
+    }
 
     @Override
     public void onTileAdded() {
@@ -41,5 +64,19 @@ public class DndTileService extends TileService {
 
         Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         sendBroadcast(closeIntent);
+    }
+
+    protected void changeIcon(int mode)
+    {
+        Log.v(TAG, "changeIcon");
+
+        switch (mode) {
+            case AudioManager.RINGER_MODE_SILENT:
+                break;
+
+            case AudioManager.RINGER_MODE_VIBRATE:
+            case AudioManager.RINGER_MODE_NORMAL:
+                break;
+        }
     }
 }
