@@ -6,28 +6,27 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
 public class DriverActivity extends AppCompatActivity {
 
-    private static final String TAG = "DriverActivity";
+    private static final String TAG = DriverActivity.class.getSimpleName();
     private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 0;
     private static boolean isAllowed = false;
+
     private AudioManager audioMgr;
     private NotificationManager notificationManager;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_driver);
 
         if (!isAllowed)
@@ -42,9 +41,7 @@ public class DriverActivity extends AppCompatActivity {
         button15.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                setInturptionMode(NotificationManager.INTERRUPTION_FILTER_NONE);
-                //changeMode("button15", AudioManager.RINGER_MODE_SILENT);
+                handle15();
             }
         });
 
@@ -52,8 +49,7 @@ public class DriverActivity extends AppCompatActivity {
         button30.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setInturptionMode(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
-                //changeMode("button30", AudioManager.RINGER_MODE_VIBRATE);
+                handle30();
             }
         });
 
@@ -61,8 +57,7 @@ public class DriverActivity extends AppCompatActivity {
         button60.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setInturptionMode(NotificationManager.INTERRUPTION_FILTER_ALARMS);
-                //changeMode("button60", AudioManager.RINGER_MODE_SILENT);
+                handle60();
             }
         });
 
@@ -70,8 +65,15 @@ public class DriverActivity extends AppCompatActivity {
         buttonStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setInturptionMode(NotificationManager.INTERRUPTION_FILTER_NONE);
-                //changeMode("buttonStop", AudioManager.RINGER_MODE_NORMAL);
+                changeMode("buttonStop", AudioManager.RINGER_MODE_NORMAL);
+            }
+        });
+
+        Button buttonClose = (Button) findViewById(R.id.buttonStop);
+        buttonStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exitApp();
             }
         });
     }
@@ -91,18 +93,34 @@ public class DriverActivity extends AppCompatActivity {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && !notificationManager.isNotificationPolicyAccessGranted()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!notificationManager.isNotificationPolicyAccessGranted()) {
 
-            Intent intent = new Intent(
-                    android.provider.Settings
-                            .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                Intent intent = new Intent(
+                        android.provider.Settings
+                                .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
 
-            startActivityForResult( intent, DriverActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE );
+                startActivityForResult( intent, DriverActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE );
+            }
+            else
+            {
+                isAllowed = true;
+            }
         }
-        else
+    }
+
+    protected void changeMode(String msg, int newRingerMode)
+    {
+        Log.v(TAG, msg + " was clicked");
+        if (isAllowed)
         {
-            isAllowed = true;
+            int ringerMode = audioMgr.getRingerMode();
+            if (ringerMode != newRingerMode)
+            {
+                audioMgr.setRingerMode(newRingerMode);
+            }
+
+            printAudioMode();
         }
     }
 
@@ -123,44 +141,44 @@ public class DriverActivity extends AppCompatActivity {
         }
     }
 
-    protected void changeMode(String msg, int mode)
+    protected void startCountdonwTimer(int duration)
     {
-        Log.v(TAG, msg + " was clicked");
-        if (isAllowed)
-        {
-            audioMgr.setRingerMode(mode);
-            printAudioMode();
-        }
+        countDownTimer = new CountDownTimer(duration, duration) {
+            @Override
+            public void onTick(long l) {
+
+            }
+
+            public void onFinish() {
+                changeMode("buttonStop", AudioManager.RINGER_MODE_NORMAL);
+            }
+        }.start();
     }
 
-    protected void setInturptionMode(int mode)
+    protected void exitApp()
     {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            notificationManager.setInterruptionFilter(mode);
-            printNotificationMode();
-        }
+        // todo : ßadd other cleanup here
+        finish();
     }
 
-    protected void printNotificationMode()
+    protected void handle15()
     {
-        int filterMode = notificationManager.getCurrentInterruptionFilter();
-        if (filterMode == NotificationManager.INTERRUPTION_FILTER_ALL)
-        {
-            Toast.makeText(DriverActivity.this, "Complete Silence", Toast.LENGTH_LONG).show();
-        }
-        else if (filterMode == NotificationManager.INTERRUPTION_FILTER_PRIORITY)
-        {
-            Toast.makeText(DriverActivity.this,"Priority Mode", Toast.LENGTH_LONG).show();
-        }
-        else if (filterMode == NotificationManager.INTERRUPTION_FILTER_ALARMS)
-        {
-            Toast.makeText(DriverActivity.this,"Alarms Mode", Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            Toast.makeText(DriverActivity.this,"Normal Mode", Toast.LENGTH_LONG).show();
-        }
+        changeMode("button15", AudioManager.RINGER_MODE_SILENT);
+        startCountdonwTimer(15 * 60 * 60);
+        exitApp();
+    }
+
+    protected void handle30()
+    {
+        changeMode("button15", AudioManager.RINGER_MODE_SILENT);
+        startCountdonwTimer(30 * 60 * 60);
+        exitApp();
+    }
+
+    protected void handle60()
+    {
+        changeMode("button15", AudioManager.RINGER_MODE_SILENT);
+        startCountdonwTimer(60 * 60 * 60);
+        exitApp();
     }
 }

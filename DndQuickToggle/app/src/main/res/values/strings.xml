@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">DndQuickToggle</string>
+    <string name="tile_name">DnD</string>
     <string name="action_settings">Settings</string>
+    <string name="class_driver_activity">DriverActivity</string>
+    <string name="class_tile_service">DndTileService</string>
 </resources>
