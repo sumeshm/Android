@@ -1,4 +1,4 @@
-package planetjup.com.dndquicktoggle;
+package com.planetjup.dnd;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

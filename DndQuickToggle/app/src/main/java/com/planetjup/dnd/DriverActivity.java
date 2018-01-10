@@ -1,4 +1,4 @@
-package planetjup.com.dndquicktoggle;
+package com.planetjup.dnd;
 
 import android.app.NotificationManager;
 import android.content.Context;
