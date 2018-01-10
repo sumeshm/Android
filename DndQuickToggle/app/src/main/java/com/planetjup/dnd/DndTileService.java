@@ -10,22 +10,30 @@ import android.service.quicksettings.TileService;
 import android.util.Log;
 
 /**
- * Created by summani on 1/9/18.
+ * This class will manage the Do-Not-Disturb quick settings toggle functionality
+ *
+ * Created by Sumesh Mani on 1/9/18.
  */
 
 public class DndTileService extends TileService {
 
     private static final String TAG = DndTileService.class.getSimpleName();
 
-    private BroadcastReceiver ringerModeReceiver = null;
     private AudioManager audioMgr;
+    private BroadcastReceiver ringerModeReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         audioMgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        registerListener();
+        registerListenerHere();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(ringerModeReceiver);
     }
 
     @Override
@@ -51,7 +59,7 @@ public class DndTileService extends TileService {
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
-                Intent intent = new Intent(this, DriverActivity.class);
+                Intent intent = new Intent(this, DriverRadioActivity.class);
                 startActivity(intent);
                 Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
                 sendBroadcast(closeIntent);
@@ -59,8 +67,7 @@ public class DndTileService extends TileService {
         }
     }
 
-
-    protected void changeIcon(int mode) {
+    private void changeIcon(int mode) {
         Log.v(TAG, "changeIcon");
 
         switch (mode) {
@@ -77,7 +84,7 @@ public class DndTileService extends TileService {
         this.getQsTile().updateTile();
     }
 
-    protected void registerListener() {
+    private void registerListenerHere() {
         ringerModeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

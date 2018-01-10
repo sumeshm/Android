@@ -2,15 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.planetjup.dnd">
 
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_do_not_disturb_off"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_do_not_disturb_off"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup">
         <activity
-            android:name="com.planetjup.dnd.DriverActivity"
+            android:name="com.planetjup.dnd.DriverRadioActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -30,7 +33,5 @@
         </service>
 
     </application>
-
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
 </manifest>

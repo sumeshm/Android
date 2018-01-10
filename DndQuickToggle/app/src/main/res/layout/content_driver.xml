@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="planetjup.com.dndquicktoggle.com.planetjup.dnd.DriverActivity"
+    tools:context="com.planetjup.dnd.DriverActivity"
     tools:showIn="@layout/activity_driver">
 
     <Button
@@ -13,80 +13,80 @@
         style="@style/Widget.AppCompat.Button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="380dp"
-        android:text="Close"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="220dp"
+        android:text="@string/Close"
+        android:textStyle="bold|italic"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold|italic"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonStop"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="310dp"
-        android:text="STOP"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="150dp"
+        android:text="@string/STOP"
+        android:textStyle="bold|italic"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold|italic" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button60"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="240dp"
-        android:text="60 Min"
+        android:layout_marginStart="270dp"
+        android:layout_marginTop="80dp"
+        android:text="@string/Min_60"
+        android:textStyle="bold|italic"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold|italic" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button30"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="170dp"
-        android:text="30 Min"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="80dp"
+        android:text="@string/Min_30"
+        android:textStyle="bold|italic"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold|italic" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/button15"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="100dp"
-        android:text="15 Min"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="80dp"
+        android:text="@string/Min_15"
+        android:textStyle="bold|italic"
         android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold|italic" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
-        android:text="Do Not Disturb"
+        android:layout_marginTop="20dp"
+        android:text="@string/Do_Not_Disturb"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold|italic" />
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

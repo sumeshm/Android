@@ -18,33 +18,28 @@ import android.widget.Toast;
  * Created by Sumesh Mani on 1/9/18.
  */
 
-public class DriverActivity extends AppCompatActivity implements View.OnClickListener {
+public class DriverRadioActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static boolean isCreatedBefore = false;
-    private static final String TAG = DriverActivity.class.getSimpleName();
+    private static final String TAG = DriverRadioActivity.class.getSimpleName();
     private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 0;
-    private static boolean isAllowed = false;
+    private static boolean isAllowed = Boolean.FALSE;
 
     private AudioManager audioMgr;
     private NotificationManager notificationManager;
     private CountDownTimer countDownTimer;
+    private boolean isTimerCancel = Boolean.FALSE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_driver);
+        setContentView(R.layout.activity_driver_radio);
 
         audioMgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         getPermission();
-
-        findViewById(R.id.button15).setOnClickListener(this);
-        findViewById(R.id.button30).setOnClickListener(this);
-        findViewById(R.id.button60).setOnClickListener(this);
-        findViewById(R.id.buttonStop).setOnClickListener(this);
-        findViewById(R.id.buttonClose).setOnClickListener(this);
 
         if (!isCreatedBefore)
         {
@@ -57,7 +52,7 @@ public class DriverActivity extends AppCompatActivity implements View.OnClickLis
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult :: requestCode=" + requestCode);
 
-        if (requestCode == DriverActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE) {
+        if (requestCode == DriverRadioActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE) {
             Log.v(TAG, "onActivityResult: ON_DO_NOT_DISTURB_CALLBACK_CODE");
             isAllowed = true;
         }
@@ -68,23 +63,26 @@ public class DriverActivity extends AppCompatActivity implements View.OnClickLis
         Log.v(TAG, "onClick : " + view.getId());
 
         switch (view.getId()) {
-            case R.id.button15:
+            case R.id.radio_15:
+                isTimerCancel = Boolean.FALSE;
                 changeMode(AudioManager.RINGER_MODE_SILENT);
                 startCountdownTimer(15 * 60 * 1000);
                 break;
 
-            case R.id.button30:
+            case R.id.radio_30:
+                isTimerCancel = Boolean.FALSE;
                 changeMode(AudioManager.RINGER_MODE_SILENT);
                 startCountdownTimer(30 * 60 * 1000);
                 break;
 
-            case R.id.button60:
+            case R.id.radio_60:
+                isTimerCancel = Boolean.FALSE;
                 changeMode(AudioManager.RINGER_MODE_SILENT);
                 startCountdownTimer(60 * 60 * 1000);
                 break;
 
             case R.id.buttonStop:
-                countDownTimer.cancel();
+                isTimerCancel = Boolean.TRUE;
                 changeMode(AudioManager.RINGER_MODE_NORMAL);
                 break;
 
@@ -107,7 +105,7 @@ public class DriverActivity extends AppCompatActivity implements View.OnClickLis
                         android.provider.Settings
                                 .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
 
-                startActivityForResult(intent, DriverActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE);
+                startActivityForResult(intent, DriverRadioActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE);
             } else {
                 isAllowed = true;
             }
@@ -142,14 +140,20 @@ public class DriverActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
 
-        Toast.makeText(DriverActivity.this, toastMsg, Toast.LENGTH_LONG).show();
+        Toast.makeText(DriverRadioActivity.this, toastMsg, Toast.LENGTH_LONG).show();
     }
 
     private void startCountdownTimer(long duration) {
-        countDownTimer = new CountDownTimer(duration, duration) {
+        isTimerCancel = Boolean.FALSE;
+
+        countDownTimer = new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
-
+                if (isTimerCancel)
+                {
+                    cancel();
+                    isTimerCancel = Boolean.FALSE;
+                }
             }
 
             public void onFinish() {
