@@ -10,6 +10,9 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -20,15 +23,18 @@ import android.widget.Toast;
 
 public class DriverRadioActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static boolean isCreatedBefore = false;
     private static final String TAG = DriverRadioActivity.class.getSimpleName();
     private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 0;
+
+    private static boolean isCreatedBefore = false;
     private static boolean isAllowed = Boolean.FALSE;
 
     private AudioManager audioMgr;
     private NotificationManager notificationManager;
     private CountDownTimer countDownTimer;
     private boolean isTimerCancel = Boolean.FALSE;
+    private SeekBar seekBar;
+    private TextView progressText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +46,7 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         getPermission();
+        prepareSeekBar();
 
         if (!isCreatedBefore)
         {
@@ -81,6 +88,12 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
                 startCountdownTimer(60 * 60 * 1000);
                 break;
 
+            case R.id.buttonOk:
+                isTimerCancel = Boolean.FALSE;
+                changeMode(AudioManager.RINGER_MODE_SILENT);
+                startCountdownTimer(seekBar.getProgress() * 60 * 1000);
+                break;
+
             case R.id.buttonStop:
                 isTimerCancel = Boolean.TRUE;
                 changeMode(AudioManager.RINGER_MODE_NORMAL);
@@ -110,6 +123,27 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
                 isAllowed = true;
             }
         }
+    }
+
+    private void prepareSeekBar()
+    {
+        progressText = (TextView) findViewById(R.id.progressText);
+
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
+                progressText.setText(progressVal + " Min");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
     }
 
     private void changeMode(int newRingerMode) {
