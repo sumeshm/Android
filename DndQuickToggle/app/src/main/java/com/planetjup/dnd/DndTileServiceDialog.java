@@ -43,10 +43,11 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate()");
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        //registerListenerHere();
+        registerListenerHere();
 
         prepareDialog();
     }
@@ -54,7 +55,17 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //unregisterReceiver(ringerModeReceiver);
+        Log.v(TAG, "onDestroy()");
+        unregisterReceiver(ringerModeReceiver);
+    }
+
+    @Override
+    public void onTileAdded() {
+        super.onTileAdded();
+        Log.v(TAG, "onTileAdded()");
+
+        isAllowed = Boolean.FALSE;
+        changeIcon(audioManager.getRingerMode());
     }
 
     @Override
@@ -181,16 +192,23 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
 
         switch (mode) {
             case AudioManager.RINGER_MODE_SILENT:
-                this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_on));
+                if (this.getQsTile() != null)
+                {
+                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_on));
+                }
                 break;
 
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
-                this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_off));
+                if (this.getQsTile() != null) {
+                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_off));
+                }
                 break;
         }
 
-        this.getQsTile().updateTile();
+        if (this.getQsTile() != null) {
+            this.getQsTile().updateTile();
+        }
     }
 
     private void changeMode(int newRingerMode) {
