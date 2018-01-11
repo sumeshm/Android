@@ -8,4 +8,5 @@
     <string name="Min_60">60 Min</string>
     <string name="Do_Not_Disturb">Do Not Disturb</string>
     <string name="OK">OK</string>
+    <string name="dnd_broadcast">DND_BROADCAST</string>
 </resources>

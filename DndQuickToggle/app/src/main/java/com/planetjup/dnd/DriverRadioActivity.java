@@ -1,8 +1,10 @@
 package com.planetjup.dnd;
 
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +37,7 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
     private boolean isTimerCancel = Boolean.FALSE;
     private SeekBar seekBar;
     private TextView progressText;
+    private BroadcastReceiver ringerModeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +50,21 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
 
         getPermission();
         prepareSeekBar();
+        registerListenerHere();
 
         if (!isCreatedBefore)
         {
-            isCreatedBefore = true;
+            Log.v(TAG, "onCreate :: first launch");
             exitApp();
+            isCreatedBefore = true;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(ringerModeReceiver);
+        Log.v(TAG, "unregisterReceiver() called");
     }
 
     @Override
@@ -144,6 +156,23 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+    }
+
+    private void registerListenerHere() {
+        Log.v(TAG, "registerListener() called");
+
+        ringerModeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.v(TAG, "onReceive : " + intent.getAction());
+                isTimerCancel = Boolean.TRUE;
+                Toast.makeText(DriverRadioActivity.this, "Custom Intent received", Toast.LENGTH_LONG).show();
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(getResources().getString(R.string.dnd_broadcast));
+        this.registerReceiver(ringerModeReceiver, filter);
     }
 
     private void changeMode(int newRingerMode) {
