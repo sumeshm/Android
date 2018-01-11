@@ -9,13 +9,13 @@ import android.content.IntentFilter;
 import android.graphics.drawable.Icon;
 import android.media.AudioManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -30,7 +30,7 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
     private static final String TAG = DndTileServiceDialog.class.getSimpleName();
 
     private SeekBar seekBar;
-    private TextView progressText;
+    private Button buttonOk;
     private Dialog dialog;
 
     private AudioManager audioManager;
@@ -106,14 +106,6 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
                 changeMode(AudioManager.RINGER_MODE_SILENT);
                 startCountdownTimer(seekBar.getProgress() * 60 * 1000);
                 break;
-
-            case R.id.buttonStop:
-                isTimerCancel = Boolean.TRUE;
-                changeMode(AudioManager.RINGER_MODE_NORMAL);
-                break;
-
-            case R.id.buttonClose:
-                break;
         }
 
         hideDnDDialog();
@@ -165,13 +157,13 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         dialog.setContentView(R.layout.layout_dnd_dialog);
         dialog.setTitle(R.string.Do_Not_Disturb);
 
-        progressText = (TextView) dialog.getWindow().findViewById(R.id.progressText);
+        buttonOk = (Button) dialog.getWindow().findViewById(R.id.buttonOk);
 
         seekBar = (SeekBar) dialog.getWindow().findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
-                progressText.setText(progressVal + R.string.Min);
+                buttonOk.setText(progressVal + "" + getString(R.string.Min));
             }
 
             @Override
@@ -273,6 +265,8 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         Log.v(TAG, "hideDnDDialog");
 
         if (dialog != null) {
+            final RadioGroup radioGroup = (RadioGroup) dialog.getWindow().findViewById(R.id.radio_group);
+            radioGroup.clearCheck();
             dialog.dismiss();
         }
     }

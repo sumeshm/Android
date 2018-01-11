@@ -3,13 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.planetjup.dnd.DndTileServiceDialog" >
+    android:layout_height="wrap_content"
+    tools:context="com.planetjup.dnd.DndTileServiceDialog">
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/radio_group"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:orientation="vertical"
@@ -45,28 +46,16 @@
             android:textStyle="bold|italic" />
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/progressText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="150dp"
-        android:text="0 Min"
-        android:textColor="@android:color/background_dark"
-        android:textSize="16.5dp"
-        android:textStyle="bold|italic"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <SeekBar
         android:id="@+id/seekBar"
         style="@android:style/Widget.DeviceDefault.SeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="90dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="155dp"
         android:max="120"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,42 +64,16 @@
         style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="160dp"
-        android:layout_marginTop="360dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="180dp"
         android:onClick="onClick"
-        android:text="@string/OK"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonStop"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="200dp"
-        android:onClick="onClick"
-        android:text="@string/STOP"
-        android:textStyle="bold"
-        android:visibility="visible"
+        android:text="@string/Min_0"
+        android:textSize="17dp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonClose"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="270dp"
-        android:onClick="onClick"
-        android:text="@string/Close"
-        android:textStyle="bold"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
