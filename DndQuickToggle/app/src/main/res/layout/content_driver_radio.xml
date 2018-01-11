@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:onClick="onClick"
             android:text="@string/Min_15"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold|italic" />
 
         <RadioButton
@@ -35,7 +35,7 @@
             android:layout_marginStart="30dp"
             android:onClick="onClick"
             android:text="@string/Min_30"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold|italic" />
 
         <RadioButton
@@ -46,7 +46,7 @@
             android:layout_marginStart="30dp"
             android:onClick="onClick"
             android:text="@string/Min_60"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold|italic" />
     </RadioGroup>
 
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginTop="130dp"
-        android:text="0 Min"
+        android:text="@string/Min_0"
         android:textColor="@android:color/background_dark"
         android:textSize="16.5dp"
         android:textStyle="bold|italic"

@@ -77,10 +77,4 @@ public class DnDMainActivity extends AppCompatActivity {
 
         return isAllowed;
     }
-
-    private void exitActivity(String msg) {
-        Log.v(TAG, "exitActivity : msg=" + msg);
-
-        finish();
-    }
 }

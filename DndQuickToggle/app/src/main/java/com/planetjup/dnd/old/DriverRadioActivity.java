@@ -35,7 +35,6 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
 
     private AudioManager audioMgr;
     private NotificationManager notificationManager;
-    private CountDownTimer countDownTimer;
     private boolean isTimerCancel = Boolean.FALSE;
     private SeekBar seekBar;
     private TextView progressText;
@@ -141,13 +140,14 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
 
     private void prepareSeekBar()
     {
-        progressText = (TextView) findViewById(R.id.progressText);
+        progressText = findViewById(R.id.progressText);
 
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
-                progressText.setText(progressVal + " Min");
+                progressText.setText(progressVal + " " + getString(R.string.Min));
+
             }
 
             @Override
@@ -211,7 +211,7 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
     private void startCountdownTimer(long duration) {
         isTimerCancel = Boolean.FALSE;
 
-        countDownTimer = new CountDownTimer(duration, 1000) {
+        final CountDownTimer countDownTimer = new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
                 if (isTimerCancel)

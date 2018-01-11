@@ -122,13 +122,13 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         hideDnDDialog();
     }
 
-    // todo
     private void registerListenerHere() {
+        Log.v(TAG, "getPermission : isAllowed=" + isAllowed);
         ringerModeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                isTimerCancel = Boolean.TRUE;
-                changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
+            //isTimerCancel = Boolean.TRUE;
+            changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
             }
         };
 
@@ -168,13 +168,13 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         dialog.setContentView(R.layout.layout_dnd_dialog);
         dialog.setTitle(R.string.Do_Not_Disturb);
 
-        buttonOk = (Button) dialog.getWindow().findViewById(R.id.buttonOk);
+        buttonOk = dialog.getWindow().findViewById(R.id.buttonOk);
 
-        seekBar = (SeekBar) dialog.getWindow().findViewById(R.id.seekBar);
+        seekBar = dialog.getWindow().findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
-                buttonOk.setText(progressVal + "" + getString(R.string.Min));
+                buttonOk.setText(progressVal + " " + getString(R.string.Min));
             }
 
             @Override
@@ -192,8 +192,7 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
 
         switch (mode) {
             case AudioManager.RINGER_MODE_SILENT:
-                if (this.getQsTile() != null)
-                {
+                if (this.getQsTile() != null) {
                     this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_on));
                 }
                 break;
@@ -283,7 +282,7 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         Log.v(TAG, "hideDnDDialog");
 
         if (dialog != null) {
-            final RadioGroup radioGroup = (RadioGroup) dialog.getWindow().findViewById(R.id.radio_group);
+            final RadioGroup radioGroup = dialog.getWindow().findViewById(R.id.radio_group);
             radioGroup.clearCheck();
             dialog.dismiss();
         }
