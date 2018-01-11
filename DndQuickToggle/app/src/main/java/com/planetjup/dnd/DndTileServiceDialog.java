@@ -1,85 +1,82 @@
 package com.planetjup.dnd;
 
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Icon;
 import android.media.AudioManager;
-import android.os.Build;
-import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v7.app.AppCompatActivity;
+import android.service.quicksettings.TileService;
 import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * This class will manage the Do-Not-Disturb app
+ * This class will manage the Do-Not-Disturb quick settings toggle functionality
  *
  * Created by Sumesh Mani on 1/9/18.
  */
 
-public class DriverRadioActivity extends AppCompatActivity implements View.OnClickListener {
+public class DndTileServiceDialog extends TileService implements View.OnClickListener {
 
-    private static final String TAG = DriverRadioActivity.class.getSimpleName();
-    private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 0;
+    private static final String TAG = DndTileServiceDialog.class.getSimpleName();
 
-    private static boolean isCreatedBefore = false;
-    private static boolean isAllowed = Boolean.FALSE;
-
-    private AudioManager audioMgr;
-    private NotificationManager notificationManager;
-    private CountDownTimer countDownTimer;
-    private boolean isTimerCancel = Boolean.FALSE;
     private SeekBar seekBar;
     private TextView progressText;
+    private Dialog dialog;
+
+    private NotificationManager notificationManager;
+    private AudioManager audioMgr;
     private BroadcastReceiver ringerModeReceiver;
+    private CountDownTimer countDownTimer;
+
+    // todo
+    private static boolean isAllowed = Boolean.FALSE;
+    private boolean isTimerCancel = Boolean.FALSE;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_driver_radio);
+    public void onCreate() {
+        super.onCreate();
 
         audioMgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        getPermission();
-        prepareSeekBar();
         //registerListenerHere();
 
-        if (!isCreatedBefore)
-        {
-            Log.v(TAG, "onCreate :: first launch");
-            exitApp();
-            isCreatedBefore = true;
-        }
+        prepareDialog();
+        getPermission();
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         //unregisterReceiver(ringerModeReceiver);
-        Log.v(TAG, "unregisterReceiver() called");
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult :: requestCode=" + requestCode);
+    public void onClick() {
+        super.onClick();
+        Log.v(TAG, "onClick()");
 
-        if (requestCode == DriverRadioActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE) {
-            Log.v(TAG, "onActivityResult: ON_DO_NOT_DISTURB_CALLBACK_CODE");
-            isAllowed = true;
+        switch (audioMgr.getRingerMode()) {
+            case AudioManager.RINGER_MODE_SILENT:
+                audioMgr.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                break;
+            case AudioManager.RINGER_MODE_VIBRATE:
+            case AudioManager.RINGER_MODE_NORMAL:
+                showDialog();
+                break;
         }
     }
 
     @Override
     public void onClick(View view) {
-        Log.v(TAG, "onClick : " + view.getId());
+        Log.v(TAG, "onClick(View) : " + view.getId());
 
         switch (view.getId()) {
             case R.id.radio_15:
@@ -115,34 +112,88 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
 
-        exitApp();
+        hideDialog();
     }
 
-    private void getPermission() {
-        if (isAllowed) {
-            return;
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!notificationManager.isNotificationPolicyAccessGranted()) {
-
-                Intent intent = new Intent(
-                        android.provider.Settings
-                                .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-
-                startActivityForResult(intent, DriverRadioActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE);
-            } else {
-                isAllowed = true;
+    // todo
+    private void registerListenerHere() {
+        ringerModeReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                isTimerCancel = Boolean.TRUE;
+                changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
             }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
+        this.registerReceiver(ringerModeReceiver, filter);
+    }
+
+    private void changeIcon(int mode) {
+        Log.v(TAG, "changeIcon");
+
+        switch (mode) {
+            case AudioManager.RINGER_MODE_SILENT:
+                this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_on));
+                break;
+
+            case AudioManager.RINGER_MODE_VIBRATE:
+            case AudioManager.RINGER_MODE_NORMAL:
+                this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_off));
+                break;
+        }
+
+        this.getQsTile().updateTile();
+    }
+
+    private void changeMode(int newRingerMode) {
+        if (isAllowed) {
+            int ringerMode = audioMgr.getRingerMode();
+            if (ringerMode != newRingerMode) {
+                audioMgr.setRingerMode(newRingerMode);
+            }
+
+            printAudioMode();
         }
     }
 
-    private void prepareSeekBar()
+    private void showDialog()
     {
-        progressText = (TextView) findViewById(R.id.progressText);
+        if (dialog == null)
+        {
+            dialog = new Dialog(this);
+            dialog.setContentView(R.layout.content_dialog_driver_radio);
+            dialog.setTitle(R.string.Do_Not_Disturb);
+        }
 
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
-        seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        showDialog(dialog);
+    }
+
+    private void hideDialog()
+    {
+        if (dialog != null)
+        {
+            dialog.dismiss();
+        }
+    }
+
+    // todo
+    private void getPermission() {
+        isAllowed = true;
+    }
+
+
+    private void prepareDialog()
+    {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.content_dialog_driver_radio);
+        dialog.setTitle(R.string.Do_Not_Disturb);
+
+        progressText = (TextView) dialog.getWindow().findViewById(R.id.progressText);
+
+        seekBar = (SeekBar) dialog.getWindow().findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
                 progressText.setText(progressVal + " Min");
@@ -156,34 +207,6 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-    }
-
-    private void registerListenerHere() {
-        Log.v(TAG, "registerListener() called");
-
-        ringerModeReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.v(TAG, "onReceive : " + intent.getAction());
-                isTimerCancel = Boolean.TRUE;
-                Toast.makeText(DriverRadioActivity.this, "Custom Intent received", Toast.LENGTH_LONG).show();
-            }
-        };
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(getResources().getString(R.string.dnd_broadcast));
-        this.registerReceiver(ringerModeReceiver, filter);
-    }
-
-    private void changeMode(int newRingerMode) {
-        if (isAllowed) {
-            int ringerMode = audioMgr.getRingerMode();
-            if (ringerMode != newRingerMode) {
-                audioMgr.setRingerMode(newRingerMode);
-            }
-
-            printAudioMode();
-        }
     }
 
     private void printAudioMode() {
@@ -203,7 +226,7 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
                 break;
         }
 
-        Toast.makeText(DriverRadioActivity.this, toastMsg, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
     }
 
     private void startCountdownTimer(long duration) {
@@ -223,10 +246,5 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
                 changeMode(AudioManager.RINGER_MODE_NORMAL);
             }
         }.start();
-    }
-
-    private void exitApp() {
-        // todo : add other cleanup here
-        finish();
     }
 }

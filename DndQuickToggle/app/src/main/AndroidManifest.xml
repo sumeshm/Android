@@ -23,7 +23,7 @@
         </activity>
 
         <service
-            android:name="com.planetjup.dnd.DndTileService"
+            android:name="com.planetjup.dnd.DndTileServiceDialog"
             android:icon="@mipmap/ic_do_not_disturb_off"
             android:label="@string/tile_name"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
