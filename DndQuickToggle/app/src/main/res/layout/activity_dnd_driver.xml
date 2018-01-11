@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.planetjup.dnd.old.DriverActivity">
+    tools:context="com.planetjup.dnd.DnDMainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -17,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" >
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            >
 
             <TextView
                 android:id="@+id/textView"
@@ -27,11 +28,18 @@
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:textStyle="bold"
+                android:layout_marginLeft="20dp"
                 />
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_driver" />
+    <include
+        android:id="@+id/layout_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp"
+        layout="@layout/layout_dnd_dialog"
+        />
 
 </android.support.design.widget.CoordinatorLayout>

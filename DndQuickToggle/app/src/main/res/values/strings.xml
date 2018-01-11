@@ -9,4 +9,7 @@
     <string name="Do_Not_Disturb">Do Not Disturb</string>
     <string name="OK">OK</string>
     <string name="dnd_broadcast">DND_BROADCAST</string>
+    <string name="Min">Min</string>
+    <string name="Err_permission">Missing DnD Permission</string>
+    <string name="Err_none">Clean</string>
 </resources>

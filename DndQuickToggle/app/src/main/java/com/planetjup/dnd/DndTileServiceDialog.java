@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Icon;
 import android.media.AudioManager;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.service.quicksettings.TileService;
 import android.util.Log;
@@ -18,25 +20,23 @@ import android.widget.Toast;
 
 /**
  * This class will manage the Do-Not-Disturb quick settings toggle functionality
- *
+ * <p>
  * Created by Sumesh Mani on 1/9/18.
  */
 
 public class DndTileServiceDialog extends TileService implements View.OnClickListener {
 
+    private static boolean isAllowed = Boolean.FALSE;
     private static final String TAG = DndTileServiceDialog.class.getSimpleName();
 
     private SeekBar seekBar;
     private TextView progressText;
     private Dialog dialog;
 
+    private AudioManager audioManager;
     private NotificationManager notificationManager;
-    private AudioManager audioMgr;
     private BroadcastReceiver ringerModeReceiver;
-    private CountDownTimer countDownTimer;
 
-    // todo
-    private static boolean isAllowed = Boolean.FALSE;
     private boolean isTimerCancel = Boolean.FALSE;
 
 
@@ -44,12 +44,11 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
     public void onCreate() {
         super.onCreate();
 
-        audioMgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //registerListenerHere();
 
         prepareDialog();
-        getPermission();
     }
 
     @Override
@@ -63,20 +62,25 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         super.onClick();
         Log.v(TAG, "onClick()");
 
-        switch (audioMgr.getRingerMode()) {
+        if (!getPermission()) {
+            return;
+        }
+
+        switch (audioManager.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
-                audioMgr.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                isTimerCancel = Boolean.TRUE;
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
-                showDialog();
+                showDnDDialog();
                 break;
         }
     }
 
     @Override
     public void onClick(View view) {
-        Log.v(TAG, "onClick(View) : " + view.getId());
+        Log.v(TAG, "onClick(View) : view_id=" + view.getId());
 
         switch (view.getId()) {
             case R.id.radio_15:
@@ -112,7 +116,7 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
                 break;
         }
 
-        hideDialog();
+        hideDnDDialog();
     }
 
     // todo
@@ -130,8 +134,58 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         this.registerReceiver(ringerModeReceiver, filter);
     }
 
+    private boolean getPermission() {
+        Log.v(TAG, "getPermission : isAllowed=" + isAllowed);
+
+        if (isAllowed) {
+            return Boolean.TRUE;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!notificationManager.isNotificationPolicyAccessGranted()) {
+
+                Intent intent = new Intent(
+                        android.provider.Settings
+                                .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+
+                startActivity(intent);
+                exitService();
+            } else {
+                isAllowed = Boolean.TRUE;
+            }
+        }
+
+        return isAllowed;
+    }
+
+    private void prepareDialog() {
+        Log.v(TAG, "prepareDialog");
+
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.layout_dnd_dialog);
+        dialog.setTitle(R.string.Do_Not_Disturb);
+
+        progressText = (TextView) dialog.getWindow().findViewById(R.id.progressText);
+
+        seekBar = (SeekBar) dialog.getWindow().findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
+                progressText.setText(progressVal + R.string.Min);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+    }
+
     private void changeIcon(int mode) {
-        Log.v(TAG, "changeIcon");
+        Log.v(TAG, "changeIcon : mode=" + mode);
 
         switch (mode) {
             case AudioManager.RINGER_MODE_SILENT:
@@ -148,71 +202,22 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
     }
 
     private void changeMode(int newRingerMode) {
+        Log.v(TAG, "changeMode : isAllowed=" + isAllowed);
+
         if (isAllowed) {
-            int ringerMode = audioMgr.getRingerMode();
+            int ringerMode = audioManager.getRingerMode();
             if (ringerMode != newRingerMode) {
-                audioMgr.setRingerMode(newRingerMode);
+                audioManager.setRingerMode(newRingerMode);
             }
 
             printAudioMode();
         }
     }
 
-    private void showDialog()
-    {
-        if (dialog == null)
-        {
-            dialog = new Dialog(this);
-            dialog.setContentView(R.layout.content_dialog_driver_radio);
-            dialog.setTitle(R.string.Do_Not_Disturb);
-        }
-
-        showDialog(dialog);
-    }
-
-    private void hideDialog()
-    {
-        if (dialog != null)
-        {
-            dialog.dismiss();
-        }
-    }
-
-    // todo
-    private void getPermission() {
-        isAllowed = true;
-    }
-
-
-    private void prepareDialog()
-    {
-        dialog = new Dialog(this);
-        dialog.setContentView(R.layout.content_dialog_driver_radio);
-        dialog.setTitle(R.string.Do_Not_Disturb);
-
-        progressText = (TextView) dialog.getWindow().findViewById(R.id.progressText);
-
-        seekBar = (SeekBar) dialog.getWindow().findViewById(R.id.seekBar);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
-                progressText.setText(progressVal + " Min");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-    }
-
     private void printAudioMode() {
         String toastMsg = "";
 
-        switch (audioMgr.getRingerMode()) {
+        switch (audioManager.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
                 toastMsg = "Ringer is in Silent mode";
                 break;
@@ -226,25 +231,56 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
                 break;
         }
 
+        Log.v(TAG, "printAudioMode : toastMsg=" + toastMsg);
         Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
     }
 
     private void startCountdownTimer(long duration) {
+        Log.v(TAG, "startCountdownTimer : duration=" + duration);
+
         isTimerCancel = Boolean.FALSE;
 
-        countDownTimer = new CountDownTimer(duration, 1000) {
+        final CountDownTimer countDownTimer = new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
-                if (isTimerCancel)
-                {
+                if (isTimerCancel) {
+                    Log.v(TAG, "CountdownTimer : CANCEL");
                     cancel();
                     isTimerCancel = Boolean.FALSE;
                 }
             }
 
             public void onFinish() {
+                Log.v(TAG, "CountdownTimer : FINISH");
                 changeMode(AudioManager.RINGER_MODE_NORMAL);
             }
         }.start();
+    }
+
+    private void showDnDDialog() {
+        Log.v(TAG, "showDnDDialog");
+
+        if (dialog == null) {
+            dialog = new Dialog(this);
+            dialog.setContentView(R.layout.layout_dnd_dialog);
+            dialog.setTitle(R.string.Do_Not_Disturb);
+        }
+
+        showDialog(dialog);
+    }
+
+    private void hideDnDDialog() {
+        Log.v(TAG, "hideDnDDialog");
+
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+    }
+
+    private void exitService() {
+        Log.v(TAG, "exitService");
+
+        Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        sendBroadcast(closeIntent);
     }
 }

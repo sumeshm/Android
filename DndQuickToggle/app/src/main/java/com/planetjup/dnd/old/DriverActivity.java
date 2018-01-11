@@ -1,4 +1,4 @@
-package com.planetjup.dnd;
+package com.planetjup.dnd.old;
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.planetjup.dnd.R;
 
 /**
  * This class will manage the Do-Not-Disturb app

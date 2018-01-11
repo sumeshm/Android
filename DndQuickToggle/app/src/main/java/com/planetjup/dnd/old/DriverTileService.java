@@ -1,4 +1,4 @@
-package com.planetjup.dnd;
+package com.planetjup.dnd.old;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,15 +9,17 @@ import android.media.AudioManager;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 
+import com.planetjup.dnd.R;
+
 /**
  * This class will manage the Do-Not-Disturb quick settings toggle functionality
  *
  * Created by Sumesh Mani on 1/9/18.
  */
 
-public class DndTileService extends TileService {
+public class DriverTileService extends TileService {
 
-    private static final String TAG = DndTileService.class.getSimpleName();
+    private static final String TAG = DriverTileService.class.getSimpleName();
 
     private AudioManager audioMgr;
     private BroadcastReceiver ringerModeReceiver;
