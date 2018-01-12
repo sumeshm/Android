@@ -6,12 +6,12 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup"
         android:icon="@mipmap/ic_do_not_disturb_off"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_do_not_disturb_off"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="@xml/backup">
+        android:theme="@style/AppTheme">
         <activity
             android:name="com.planetjup.dnd.DnDMainActivity"
             android:label="@string/app_name"

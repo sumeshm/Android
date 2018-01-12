@@ -16,15 +16,15 @@ import com.planetjup.dnd.R;
 
 /**
  * This class will manage the Do-Not-Disturb app
- *
+ * <p>
  * Created by Sumesh Mani on 1/9/18.
  */
 
 public class DriverActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static boolean isCreatedBefore = false;
     private static final String TAG = DriverActivity.class.getSimpleName();
     private static final int ON_DO_NOT_DISTURB_CALLBACK_CODE = 0;
+    private static boolean isCreatedBefore = false;
     private static boolean isAllowed = false;
 
     private AudioManager audioMgr;
@@ -48,8 +48,7 @@ public class DriverActivity extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.buttonStop).setOnClickListener(this);
         findViewById(R.id.buttonClose).setOnClickListener(this);
 
-        if (!isCreatedBefore)
-        {
+        if (!isCreatedBefore) {
             isCreatedBefore = true;
             exitApp();
         }

@@ -13,7 +13,7 @@ import com.planetjup.dnd.R;
 
 /**
  * This class will manage the Do-Not-Disturb quick settings toggle functionality
- *
+ * <p>
  * Created by Sumesh Mani on 1/9/18.
  */
 

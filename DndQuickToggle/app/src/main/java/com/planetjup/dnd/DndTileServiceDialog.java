@@ -26,9 +26,8 @@ import android.widget.Toast;
 
 public class DndTileServiceDialog extends TileService implements View.OnClickListener {
 
-    private static boolean isAllowed = Boolean.FALSE;
     private static final String TAG = DndTileServiceDialog.class.getSimpleName();
-
+    private static boolean isAllowed = Boolean.FALSE;
     private SeekBar seekBar;
     private Button buttonOk;
     private Dialog dialog;
@@ -127,8 +126,7 @@ public class DndTileServiceDialog extends TileService implements View.OnClickLis
         ringerModeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-            //isTimerCancel = Boolean.TRUE;
-            changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
+                changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
             }
         };
 

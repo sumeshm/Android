@@ -21,7 +21,7 @@ import com.planetjup.dnd.R;
 
 /**
  * This class will manage the Do-Not-Disturb app
- *
+ * <p>
  * Created by Sumesh Mani on 1/9/18.
  */
 
@@ -53,8 +53,7 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
         prepareSeekBar();
         //registerListenerHere();
 
-        if (!isCreatedBefore)
-        {
+        if (!isCreatedBefore) {
             Log.v(TAG, "onCreate :: first launch");
             exitApp();
             isCreatedBefore = true;
@@ -138,8 +137,7 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void prepareSeekBar()
-    {
+    private void prepareSeekBar() {
         progressText = findViewById(R.id.progressText);
 
         seekBar = findViewById(R.id.seekBar);
@@ -214,8 +212,7 @@ public class DriverRadioActivity extends AppCompatActivity implements View.OnCli
         final CountDownTimer countDownTimer = new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
-                if (isTimerCancel)
-                {
+                if (isTimerCancel) {
                     cancel();
                     isTimerCancel = Boolean.FALSE;
                 }

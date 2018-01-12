@@ -33,8 +33,7 @@ public class DnDMainActivity extends AppCompatActivity {
         if (!getPermission()) {
             Log.v(TAG, "exitActivity : msg=" + R.string.Err_permission);
             finish();
-        }
-        else {
+        } else {
             setContentView(R.layout.activity_dnd_driver);
         }
     }
