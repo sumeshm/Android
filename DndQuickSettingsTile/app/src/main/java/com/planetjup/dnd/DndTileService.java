@@ -276,7 +276,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
         if (dialog == null) {
             dialog = new Dialog(this);
             dialog.setContentView(R.layout.layout_dnd_dialog);
-            dialog.setTitle(R.string.Do_Not_Disturb);
+            dialog.setTitle(R.string.app_name);
         }
 
         showDialog(dialog);
