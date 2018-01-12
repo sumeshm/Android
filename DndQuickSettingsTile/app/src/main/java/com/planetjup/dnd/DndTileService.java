@@ -13,9 +13,9 @@ import android.os.CountDownTimer;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -29,7 +29,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
     private static final String TAG = DndTileService.class.getSimpleName();
     private static boolean isAllowed = Boolean.FALSE;
     private SeekBar seekBar;
-    private Button buttonOk;
+    private TextView textViewSeek;
     private Dialog dialog;
 
     private AudioManager audioManager;
@@ -80,6 +80,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
             case AudioManager.RINGER_MODE_SILENT:
                 isTimerCancel = Boolean.TRUE;
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                printAudioMode();
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
@@ -111,19 +112,22 @@ public class DndTileService extends TileService implements View.OnClickListener 
                 startCountdownTimer(60 * 60 * 1000);
                 break;
 
-            case R.id.radio_infinity :
+            case R.id.radio_infinity:
                 isTimerCancel = Boolean.TRUE;
                 changeMode(AudioManager.RINGER_MODE_SILENT);
                 break;
 
             case R.id.buttonOk:
                 isTimerCancel = Boolean.FALSE;
-                changeMode(AudioManager.RINGER_MODE_SILENT);
-                startCountdownTimer(seekBar.getProgress() * 60 * 1000);
+                if (seekBar.getProgress() > 0) {
+                    changeMode(AudioManager.RINGER_MODE_SILENT);
+                    startCountdownTimer(seekBar.getProgress() * 60 * 1000);
+                }
                 break;
 
             case R.id.buttonMusic:
-                changeMusicMode(AudioManager.RINGER_MODE_SILENT);
+                Log.v(TAG, "onClick(View) : MUTE media stream");
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
                 break;
         }
 
@@ -175,13 +179,13 @@ public class DndTileService extends TileService implements View.OnClickListener 
         dialog.setContentView(R.layout.layout_dnd_dialog);
         dialog.setTitle(R.string.app_name);
 
-        buttonOk = dialog.getWindow().findViewById(R.id.buttonOk);
+        textViewSeek = dialog.getWindow().findViewById(R.id.textViewSeek);
 
         seekBar = dialog.getWindow().findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
-                buttonOk.setText(progressVal + " " + getString(R.string.Min));
+                textViewSeek.setText(progressVal + " " + getString(R.string.Min));
             }
 
             @Override
@@ -228,12 +232,6 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
             printAudioMode();
         }
-    }
-
-    private void changeMusicMode(int ringerModeSilent) {
-        Log.v(TAG, "changeMusicMode : isAllowed=" + isAllowed);
-
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
     }
 
     private void printAudioMode() {

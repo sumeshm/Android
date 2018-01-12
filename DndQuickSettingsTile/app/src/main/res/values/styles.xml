@@ -15,14 +15,10 @@
 
     <!-- custom styles -->
 
-    <style name="dnd_seek_bar1" parent="Theme.AppCompat.Light">
-        <item name="android:colorControlActivated">#0D47A1</item>
-        <item name="android:colorControlNormal">@android:color/black</item>
-    </style>
-
-    <style name="dnd_seek_bar" parent="Theme.AppCompat.Light">
-        <item name="android:colorControlActivated">#1a237e</item>
-        <item name="android:colorControlNormal">#00b0ff</item>
+    <style name="dnd_divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
     </style>
 
     <style name="dnd_dialog" parent="@android:style/Theme.DeviceDefault.Light.Dialog">

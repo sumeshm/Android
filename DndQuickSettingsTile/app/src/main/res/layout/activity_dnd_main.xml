@@ -13,18 +13,17 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        app:title="@string/app_name" >
-    </android.support.v7.widget.Toolbar>
+        app:title="@string/app_name"></android.support.v7.widget.Toolbar>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Welcome"
-        android:textSize="18sp"
+        android:layout_centerInParent="true"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="70dp"
-        android:layout_centerInParent="true"
+        android:text="@string/Welcome"
+        android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.design.widget.CoordinatorLayout>
