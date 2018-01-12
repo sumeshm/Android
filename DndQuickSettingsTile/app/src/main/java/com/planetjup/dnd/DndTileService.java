@@ -111,11 +111,17 @@ public class DndTileService extends TileService implements View.OnClickListener 
                 startCountdownTimer(60 * 60 * 1000);
                 break;
 
+            case R.id.radio_infinity :
+                isTimerCancel = Boolean.TRUE;
+                changeMode(AudioManager.RINGER_MODE_SILENT);
+                break;
+
             case R.id.buttonOk:
                 isTimerCancel = Boolean.FALSE;
                 changeMode(AudioManager.RINGER_MODE_SILENT);
                 startCountdownTimer(seekBar.getProgress() * 60 * 1000);
                 break;
+
         }
 
         hideDnDDialog();
