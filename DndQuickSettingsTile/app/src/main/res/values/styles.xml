@@ -15,7 +15,17 @@
 
     <!-- custom styles -->
 
-    <style name="dnd_dialog" parent="@android:style/Theme.Holo.Dialog">
+    <style name="dnd_seek_bar1" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlActivated">#0D47A1</item>
+        <item name="android:colorControlNormal">@android:color/black</item>
+    </style>
+
+    <style name="dnd_seek_bar" parent="Theme.AppCompat.Light">
+        <item name="android:colorControlActivated">#1a237e</item>
+        <item name="android:colorControlNormal">#00b0ff</item>
+    </style>
+
+    <style name="dnd_dialog" parent="@android:style/Theme.DeviceDefault.Light.Dialog">
         <item name="android:windowTitleStyle">@style/dnd_dialog_title</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:textColor">@android:color/black</item>

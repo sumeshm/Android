@@ -122,6 +122,9 @@ public class DndTileService extends TileService implements View.OnClickListener 
                 startCountdownTimer(seekBar.getProgress() * 60 * 1000);
                 break;
 
+            case R.id.buttonMusic:
+                changeMusicMode(AudioManager.RINGER_MODE_SILENT);
+                break;
         }
 
         hideDnDDialog();
@@ -225,6 +228,12 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
             printAudioMode();
         }
+    }
+
+    private void changeMusicMode(int ringerModeSilent) {
+        Log.v(TAG, "changeMusicMode : isAllowed=" + isAllowed);
+
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
     }
 
     private void printAudioMode() {
