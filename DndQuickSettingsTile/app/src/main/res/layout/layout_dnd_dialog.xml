@@ -6,16 +6,78 @@
     android:layout_height="wrap_content"
     tools:context="com.planetjup.dnd.DndTileService">
 
+    <TextView
+        android:id="@+id/advice_mode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="#B0BEC5"
+        android:gravity="center"
+        android:text="@string/advice_mode"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/radio_group_mode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/advice_mode">
+
+        <RadioButton
+            android:id="@+id/radio_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Filter_Total"
+            android:textSize="16sp"
+            android:textStyle="bold|italic" />
+
+        <RadioButton
+            android:id="@+id/radio_priority"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Filter_Priority"
+            android:textSize="16sp"
+            android:textStyle="bold|italic" />
+
+        <RadioButton
+            android:id="@+id/radio_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Filter_Alarm"
+            android:textSize="16sp"
+            android:textStyle="bold|italic" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/advice_duratiom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="#B0BEC5"
+        android:gravity="center"
+        android:text="@string/advice_duration"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/radio_group_mode" />
+
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radio_group"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/advice_duratiom">
 
         <RadioButton
             android:id="@+id/radio_15"
@@ -83,7 +145,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="20dp"
-        android:background="#009688"
+        android:background="#B0BEC5"
         android:onClick="onClick"
         android:text="@string/Start"
         android:textColor="@android:color/white"
@@ -92,13 +154,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radio_group" />
 
+    <TextView
+        android:id="@+id/advice_mute"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="#B0BEC5"
+        android:gravity="center"
+        android:text="@string/advice_mute"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOk" />
+
     <Button
         android:id="@+id/buttonMusic"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:drawableTop="@android:drawable/ic_lock_silent_mode"
         android:onClick="onClick"
         android:text="@string/Mute_msg"
@@ -108,6 +183,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSeek" />
+        app:layout_constraintTop_toBottomOf="@+id/advice_mute" />
 
 </android.support.constraint.ConstraintLayout>

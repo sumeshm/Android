@@ -94,34 +94,51 @@ public class DndTileService extends TileService implements View.OnClickListener 
     public void onClick(View view) {
         Log.v(TAG, "onClick(View) : view_id=" + view.getId());
 
+        int interruptionMode = NotificationManager.INTERRUPTION_FILTER_NONE;
+
+        final RadioGroup radioGroup = dialog.getWindow().findViewById(R.id.radio_group_mode);
+        switch (radioGroup.getCheckedRadioButtonId()) {
+            case R.id.radio_total:
+                interruptionMode = NotificationManager.INTERRUPTION_FILTER_NONE;
+                break;
+
+            case R.id.radio_priority:
+                interruptionMode = NotificationManager.INTERRUPTION_FILTER_PRIORITY;
+                break;
+
+            case R.id.radio_alarm:
+                interruptionMode = NotificationManager.INTERRUPTION_FILTER_ALARMS;
+                break;
+        }
+
         switch (view.getId()) {
             case R.id.radio_15:
                 isTimerCancel = Boolean.FALSE;
-                changeMode(AudioManager.RINGER_MODE_SILENT);
+                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                 startCountdownTimer(15 * 60 * 1000);
                 break;
 
             case R.id.radio_30:
                 isTimerCancel = Boolean.FALSE;
-                changeMode(AudioManager.RINGER_MODE_SILENT);
+                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                 startCountdownTimer(30 * 60 * 1000);
                 break;
 
             case R.id.radio_60:
                 isTimerCancel = Boolean.FALSE;
-                changeMode(AudioManager.RINGER_MODE_SILENT);
+                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                 startCountdownTimer(60 * 60 * 1000);
                 break;
 
             case R.id.radio_infinity:
                 isTimerCancel = Boolean.TRUE;
-                changeMode(AudioManager.RINGER_MODE_SILENT);
+                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                 break;
 
             case R.id.buttonOk:
                 isTimerCancel = Boolean.FALSE;
                 if (seekBar.getProgress() > 0) {
-                    changeMode(AudioManager.RINGER_MODE_SILENT);
+                    changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                     startCountdownTimer(seekBar.getProgress() * 60 * 1000);
                 }
                 break;
@@ -223,16 +240,15 @@ public class DndTileService extends TileService implements View.OnClickListener 
         }
     }
 
-    private void changeMode(int newRingerMode) {
-        Log.v(TAG, "changeMode : isAllowed=" + isAllowed);
+    private void changeMode(int newRingerMode, int newInterruptionMode) {
+        Log.v(TAG, "changeMode : isAllowed=" + isAllowed + ", newRingerMode=" + newRingerMode + ", newInterruptionMode=" + newInterruptionMode);
 
         if (isAllowed) {
             int ringerMode = audioManager.getRingerMode();
             if (ringerMode != newRingerMode) {
                 audioManager.setRingerMode(newRingerMode);
-                if (newRingerMode == AudioManager.RINGER_MODE_SILENT)
-                {
-                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                if (newRingerMode == AudioManager.RINGER_MODE_SILENT) {
+                    notificationManager.setInterruptionFilter(newInterruptionMode);
                 }
             }
 
@@ -278,7 +294,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
             public void onFinish() {
                 Log.v(TAG, "CountdownTimer : FINISH");
-                changeMode(AudioManager.RINGER_MODE_NORMAL);
+                changeMode(AudioManager.RINGER_MODE_NORMAL, NotificationManager.INTERRUPTION_FILTER_ALL);
             }
         }.start();
     }
@@ -290,6 +306,9 @@ public class DndTileService extends TileService implements View.OnClickListener 
             dialog = new Dialog(this);
             dialog.setContentView(R.layout.layout_dnd_dialog);
             dialog.setTitle(R.string.app_name);
+
+            RadioGroup radioGroup = dialog.getWindow().findViewById(R.id.radio_group_mode);
+            radioGroup.setSelected(true);
         }
 
         showDialog(dialog);
