@@ -26,7 +26,7 @@ public class DndMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v(TAG, "onCreate");
+        Log.v(TAG, "onCreate()");
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -41,7 +41,7 @@ public class DndMainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.v(TAG, "unregisterReceiver() called");
+        Log.v(TAG, "onDestroy()");
     }
 
     @Override

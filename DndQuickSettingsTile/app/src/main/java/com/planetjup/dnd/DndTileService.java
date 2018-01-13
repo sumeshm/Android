@@ -46,8 +46,8 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        registerListenerHere();
 
+        registerListenerHere();
         prepareDialog();
     }
 
@@ -85,6 +85,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
                 showDnDDialog();
+                exitService();
                 break;
         }
     }
@@ -135,10 +136,11 @@ public class DndTileService extends TileService implements View.OnClickListener 
     }
 
     private void registerListenerHere() {
-        Log.v(TAG, "getPermission : isAllowed=" + isAllowed);
+        Log.v(TAG, "registerListenerHere()");
         ringerModeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.v(TAG, "registerListenerHere::onReceive()");
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
             }
         };
@@ -149,7 +151,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
     }
 
     private boolean getPermission() {
-        Log.v(TAG, "getPermission : isAllowed=" + isAllowed);
+        Log.v(TAG, "getPermission() : isAllowed=" + isAllowed);
 
         if (isAllowed) {
             return Boolean.TRUE;
@@ -173,7 +175,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
     }
 
     private void prepareDialog() {
-        Log.v(TAG, "prepareDialog");
+        Log.v(TAG, "prepareDialog()");
 
         dialog = new Dialog(this, R.style.dnd_dialog);
         dialog.setContentView(R.layout.layout_dnd_dialog);
@@ -228,6 +230,10 @@ public class DndTileService extends TileService implements View.OnClickListener 
             int ringerMode = audioManager.getRingerMode();
             if (ringerMode != newRingerMode) {
                 audioManager.setRingerMode(newRingerMode);
+                if (newRingerMode == AudioManager.RINGER_MODE_SILENT)
+                {
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                }
             }
 
             printAudioMode();
@@ -256,7 +262,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
     }
 
     private void startCountdownTimer(long duration) {
-        Log.v(TAG, "startCountdownTimer : duration=" + duration);
+        Log.v(TAG, "startCountdownTimer() : duration=" + duration);
 
         isTimerCancel = Boolean.FALSE;
 
@@ -278,7 +284,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
     }
 
     private void showDnDDialog() {
-        Log.v(TAG, "showDnDDialog");
+        Log.v(TAG, "showDnDDialog()");
 
         if (dialog == null) {
             dialog = new Dialog(this);
@@ -290,17 +296,18 @@ public class DndTileService extends TileService implements View.OnClickListener 
     }
 
     private void hideDnDDialog() {
-        Log.v(TAG, "hideDnDDialog");
+        Log.v(TAG, "hideDnDDialog()");
 
         if (dialog != null) {
             final RadioGroup radioGroup = dialog.getWindow().findViewById(R.id.radio_group);
             radioGroup.clearCheck();
             dialog.dismiss();
+            dialog = null;
         }
     }
 
     private void exitService() {
-        Log.v(TAG, "exitService");
+        Log.v(TAG, "exitService()");
 
         Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         sendBroadcast(closeIntent);
