@@ -306,9 +306,6 @@ public class DndTileService extends TileService implements View.OnClickListener 
             dialog = new Dialog(this);
             dialog.setContentView(R.layout.layout_dnd_dialog);
             dialog.setTitle(R.string.app_name);
-
-            RadioGroup radioGroup = dialog.getWindow().findViewById(R.id.radio_group_mode);
-            radioGroup.setSelected(true);
         }
 
         showDialog(dialog);

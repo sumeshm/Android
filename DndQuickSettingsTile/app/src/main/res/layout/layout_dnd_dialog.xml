@@ -36,7 +36,8 @@
             android:layout_height="wrap_content"
             android:text="@string/Filter_Total"
             android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            android:textStyle="bold|italic"
+            android:checked="true" />
 
         <RadioButton
             android:id="@+id/radio_priority"
