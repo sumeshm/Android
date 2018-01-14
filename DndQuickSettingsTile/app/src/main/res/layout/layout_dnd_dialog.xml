@@ -8,14 +8,8 @@
 
     <TextView
         android:id="@+id/advice_mode"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/dnd_text_advice"
         android:layout_marginTop="20dp"
-        android:background="#B0BEC5"
-        android:gravity="center"
-        android:text="@string/advice_mode"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
@@ -34,10 +28,10 @@
             android:id="@+id/radio_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="@string/Filter_Total"
             android:textSize="16sp"
-            android:textStyle="bold|italic"
-            android:checked="true" />
+            android:textStyle="bold|italic" />
 
         <RadioButton
             android:id="@+id/radio_priority"
@@ -57,16 +51,9 @@
     </RadioGroup>
 
     <TextView
-        android:id="@+id/advice_duratiom"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/advice_duration"
+        style="@style/dnd_text_advice"
         android:layout_marginTop="30dp"
-        android:background="#B0BEC5"
-        android:gravity="center"
-        android:text="@string/advice_duration"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/radio_group_mode" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
@@ -78,7 +65,7 @@
         android:layout_marginTop="10dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advice_duratiom">
+        app:layout_constraintTop_toBottomOf="@+id/advice_duration">
 
         <RadioButton
             android:id="@+id/radio_15"
@@ -157,15 +144,8 @@
 
     <TextView
         android:id="@+id/advice_mute"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/dnd_text_advice"
         android:layout_marginTop="30dp"
-        android:background="#B0BEC5"
-        android:gravity="center"
-        android:text="@string/advice_mute"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/buttonOk" />
 
     <Button
