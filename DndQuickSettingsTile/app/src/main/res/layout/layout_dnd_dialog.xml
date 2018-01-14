@@ -26,28 +26,19 @@
 
         <RadioButton
             android:id="@+id/radio_total"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/dnd_radio_button"
             android:checked="true"
-            android:text="@string/Filter_Total"
-            android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            android:text="@string/Filter_Total" />
 
         <RadioButton
             android:id="@+id/radio_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Filter_Priority"
-            android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            style="@style/dnd_radio_button"
+            android:text="@string/Filter_Priority" />
 
         <RadioButton
             android:id="@+id/radio_alarm"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Filter_Alarm"
-            android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            style="@style/dnd_radio_button"
+            android:text="@string/Filter_Alarm" />
     </RadioGroup>
 
     <TextView
@@ -57,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/radio_group_mode" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/radio_group"
+        android:id="@+id/radio_group_time"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -69,39 +60,27 @@
 
         <RadioButton
             android:id="@+id/radio_15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/dnd_radio_button"
             android:onClick="onClick"
-            android:text="@string/Min_15"
-            android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            android:text="@string/Min_15" />
 
         <RadioButton
             android:id="@+id/radio_30"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/dnd_radio_button"
             android:onClick="onClick"
-            android:text="@string/Min_30"
-            android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            android:text="@string/Min_30" />
 
         <RadioButton
             android:id="@+id/radio_60"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/dnd_radio_button"
             android:onClick="onClick"
-            android:text="@string/Min_60"
-            android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            android:text="@string/Min_60" />
 
         <RadioButton
             android:id="@+id/radio_infinity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/dnd_radio_button"
             android:onClick="onClick"
-            android:text="@string/Min_infinity"
-            android:textSize="16sp"
-            android:textStyle="bold|italic" />
+            android:text="@string/Min_infinity" />
     </RadioGroup>
 
     <SeekBar
@@ -112,7 +91,7 @@
         android:max="120"
         app:layout_constraintEnd_toStartOf="@+id/buttonOk"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
+        app:layout_constraintTop_toBottomOf="@+id/radio_group_time" />
 
     <TextView
         android:id="@+id/textViewSeek"
@@ -140,7 +119,7 @@
         android:textSize="17sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
+        app:layout_constraintTop_toBottomOf="@+id/radio_group_time" />
 
     <TextView
         android:id="@+id/advice_mute"

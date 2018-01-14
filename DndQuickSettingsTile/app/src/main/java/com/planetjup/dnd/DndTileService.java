@@ -1,6 +1,5 @@
 package com.planetjup.dnd;
 
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,13 +12,10 @@ import android.os.CountDownTimer;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 import android.view.View;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * This class will manage the Do-Not-Disturb quick settings toggle functionality
+ * This class will manage the Do-Not-Disturb quick settings toggle tile functionality
  * <p>
  * Created by Sumesh Mani on 1/9/18.
  */
@@ -28,9 +24,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
     private static final String TAG = DndTileService.class.getSimpleName();
     private static boolean isAllowed = Boolean.FALSE;
-    private SeekBar seekBar;
-    private TextView textViewSeek;
-    private Dialog dialog;
+    private DndDialog dialog;
 
     private AudioManager audioManager;
     private NotificationManager notificationManager;
@@ -94,22 +88,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
     public void onClick(View view) {
         Log.v(TAG, "onClick(View) : view_id=" + view.getId());
 
-        int interruptionMode = NotificationManager.INTERRUPTION_FILTER_NONE;
-
-        final RadioGroup radioGroup = dialog.getWindow().findViewById(R.id.radio_group_mode);
-        switch (radioGroup.getCheckedRadioButtonId()) {
-            case R.id.radio_total:
-                interruptionMode = NotificationManager.INTERRUPTION_FILTER_NONE;
-                break;
-
-            case R.id.radio_priority:
-                interruptionMode = NotificationManager.INTERRUPTION_FILTER_PRIORITY;
-                break;
-
-            case R.id.radio_alarm:
-                interruptionMode = NotificationManager.INTERRUPTION_FILTER_ALARMS;
-                break;
-        }
+        int interruptionMode = dialog.getInterruptionMode();
 
         switch (view.getId()) {
             case R.id.radio_15:
@@ -137,9 +116,10 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
             case R.id.buttonOk:
                 isTimerCancel = Boolean.FALSE;
-                if (seekBar.getProgress() > 0) {
+                int progress = dialog.getSeekProgress();
+                if (progress > 0) {
                     changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
-                    startCountdownTimer(seekBar.getProgress() * 60 * 1000);
+                    startCountdownTimer(progress * 60 * 1000);
                 }
                 break;
 
@@ -194,27 +174,9 @@ public class DndTileService extends TileService implements View.OnClickListener 
     private void prepareDialog() {
         Log.v(TAG, "prepareDialog()");
 
-        dialog = new Dialog(this, R.style.dnd_dialog);
-        dialog.setContentView(R.layout.layout_dnd_dialog);
-        dialog.setTitle(R.string.app_name);
-
-        textViewSeek = dialog.getWindow().findViewById(R.id.textViewSeek);
-
-        seekBar = dialog.getWindow().findViewById(R.id.seekBar);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progressVal, boolean fromUser) {
-                textViewSeek.setText(progressVal + " " + getString(R.string.Min));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
+        if (dialog == null) {
+            dialog = new DndDialog(this);
+        }
     }
 
     private void changeIcon(int mode) {
@@ -303,9 +265,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
         Log.v(TAG, "showDnDDialog()");
 
         if (dialog == null) {
-            dialog = new Dialog(this);
-            dialog.setContentView(R.layout.layout_dnd_dialog);
-            dialog.setTitle(R.string.app_name);
+            prepareDialog();
         }
 
         showDialog(dialog);
@@ -315,8 +275,6 @@ public class DndTileService extends TileService implements View.OnClickListener 
         Log.v(TAG, "hideDnDDialog()");
 
         if (dialog != null) {
-            final RadioGroup radioGroup = dialog.getWindow().findViewById(R.id.radio_group);
-            radioGroup.clearCheck();
             dialog.dismiss();
             dialog = null;
         }
