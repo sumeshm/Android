@@ -19,4 +19,10 @@
     <string name="advice_mode">Chose DnD Mode</string>
     <string name="advice_duration">Choose DnD duration</string>
     <string name="advice_mute">Mute options</string>
+    <string name="toast_silent">Ringer is in Silent mode</string>
+    <string name="toast_normal">Ringer is in Normal mode</string>
+    <string name="toast_vibrte">Ringer is in Vibrate mode</string>
+    <string name="toast_post_total"> - Total Silence</string>
+    <string name="toast_post_priority"> - Priority Only</string>
+    <string name="toast_post_alarms"> - Alarms Only</string>
 </resources>

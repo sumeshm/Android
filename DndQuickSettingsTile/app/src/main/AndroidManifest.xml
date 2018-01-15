@@ -7,9 +7,9 @@
     <application
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_dnd_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_dnd_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -25,7 +25,7 @@
 
         <service
             android:name=".DndTileService"
-            android:icon="@mipmap/ic_do_not_disturb_off"
+            android:icon="@drawable/ic_dnd_tile_off"
             android:label="@string/tile_name"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>

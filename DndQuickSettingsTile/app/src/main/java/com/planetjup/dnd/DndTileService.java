@@ -74,7 +74,6 @@ public class DndTileService extends TileService implements View.OnClickListener 
             case AudioManager.RINGER_MODE_SILENT:
                 isTimerCancel = Boolean.TRUE;
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                printAudioMode();
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
@@ -141,16 +140,13 @@ public class DndTileService extends TileService implements View.OnClickListener 
                 break;
         }
 
-        if (ringerMode >= 0)
-        {
+        if (ringerMode >= 0) {
             changeMode(ringerMode, dialog.getInterruptionMode());
         }
-        if (countDownTime > 0)
-        {
+        if (countDownTime > 0) {
             startCountdownTimer(countDownTime * 60 * 1000);
         }
-        if (isHideDialog)
-        {
+        if (isHideDialog) {
             hideDnDDialog();
         }
     }
@@ -162,6 +158,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
             public void onReceive(Context context, Intent intent) {
                 Log.v(TAG, "registerListenerHere::onReceive()");
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
+                printAudioMode();
             }
         };
 
@@ -197,22 +194,18 @@ public class DndTileService extends TileService implements View.OnClickListener 
     private void changeIcon(int mode) {
         Log.v(TAG, "changeIcon : mode=" + mode);
 
-        switch (mode) {
-            case AudioManager.RINGER_MODE_SILENT:
-                if (this.getQsTile() != null) {
-                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_on));
-                }
-                break;
-
-            case AudioManager.RINGER_MODE_VIBRATE:
-            case AudioManager.RINGER_MODE_NORMAL:
-                if (this.getQsTile() != null) {
-                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.mipmap.ic_do_not_disturb_off));
-                }
-                break;
-        }
-
         if (this.getQsTile() != null) {
+            if (mode == AudioManager.RINGER_MODE_SILENT) {
+                int filter = notificationManager.getCurrentInterruptionFilter();
+                if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
+                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on_total));
+                } else {
+                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on));
+                }
+            } else {
+                this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_off));
+            }
+
             this.getQsTile().updateTile();
         }
     }
@@ -228,25 +221,38 @@ public class DndTileService extends TileService implements View.OnClickListener 
                     notificationManager.setInterruptionFilter(newInterruptionMode);
                 }
             }
-
-            printAudioMode();
         }
     }
 
     private void printAudioMode() {
         String toastMsg = "";
+        String toastPostfix = "";
+
+        switch (notificationManager.getCurrentInterruptionFilter()) {
+            case NotificationManager.INTERRUPTION_FILTER_NONE:
+                toastPostfix = getString(R.string.toast_post_total);
+                break;
+
+            case NotificationManager.INTERRUPTION_FILTER_PRIORITY:
+                toastPostfix = getString(R.string.toast_post_priority);
+                break;
+
+            case NotificationManager.INTERRUPTION_FILTER_ALARMS:
+                toastPostfix = getString(R.string.toast_post_alarms);
+                break;
+        }
 
         switch (audioManager.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
-                toastMsg = "Ringer is in Silent mode";
+                toastMsg = getString(R.string.toast_silent) + toastPostfix;
                 break;
 
             case AudioManager.RINGER_MODE_VIBRATE:
-                toastMsg = "Ringer is in Vibrate mode";
+                toastMsg = getString(R.string.toast_vibrte);
                 break;
 
             case AudioManager.RINGER_MODE_NORMAL:
-                toastMsg = "Ringer is in Normal mode";
+                toastMsg = getString(R.string.toast_normal);
                 break;
         }
 

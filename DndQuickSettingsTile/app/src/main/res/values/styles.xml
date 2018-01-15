@@ -33,14 +33,14 @@
     </style>
 
     <style name="dnd_button_mute" parent="Widget.AppCompat.Button.Borderless">
-         <item name="android:layout_width">wrap_content</item>
-         <item name="android:layout_height">wrap_content</item>
-         <item name="android:layout_marginBottom">20dp</item>
-         <item name="android:layout_marginTop">10dp</item>
-         <item name="android:onClick">onClick</item>
-         <item name="android:textColor">@android:color/darker_gray</item>
-         <item name="android:textSize">12sp</item>
-         <item name="android:textStyle">italic</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">20dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:onClick">onClick</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">italic</item>
     </style>
 
 </resources>

@@ -9,8 +9,8 @@
     <TextView
         android:id="@+id/advice_mode"
         style="@style/dnd_text_advice"
-        android:text="@string/advice_mode"
         android:layout_marginTop="20dp"
+        android:text="@string/advice_mode"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
@@ -47,8 +47,8 @@
     <TextView
         android:id="@+id/advice_duration"
         style="@style/dnd_text_advice"
-        android:text="@string/advice_duration"
         android:layout_marginTop="30dp"
+        android:text="@string/advice_duration"
         app:layout_constraintTop_toBottomOf="@+id/radio_group_mode" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
@@ -127,8 +127,8 @@
     <TextView
         android:id="@+id/advice_mute"
         style="@style/dnd_text_advice"
-        android:text="@string/advice_mute"
         android:layout_marginTop="20dp"
+        android:text="@string/advice_mute"
         app:layout_constraintTop_toBottomOf="@+id/textViewSeek" />
 
     <Button

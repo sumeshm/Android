@@ -40,11 +40,6 @@ public class DndDialog extends Dialog implements SeekBar.OnSeekBarChangeListener
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void show() {
         super.show();
         Log.v(TAG, "show()");
