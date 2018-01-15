@@ -3,11 +3,8 @@ package com.planetjup.dnd;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -18,7 +15,7 @@ import android.widget.TextView;
  * Created by Sumesh Mani on 1/15/18.
  */
 
-public class DndDialog extends Dialog implements DialogInterface.OnKeyListener, SeekBar.OnSeekBarChangeListener {
+public class DndDialog extends Dialog implements SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = DndDialog.class.getSimpleName();
 
@@ -32,7 +29,6 @@ public class DndDialog extends Dialog implements DialogInterface.OnKeyListener, 
         super(context);
 
         setContentView(R.layout.layout_dnd_dialog);
-        setOnKeyListener(this);
         setTitle(R.string.app_name);
 
         this.context = context;
@@ -44,34 +40,15 @@ public class DndDialog extends Dialog implements DialogInterface.OnKeyListener, 
     }
 
     @Override
-    protected void onStop() {
-        Log.v(TAG, "onStop()");
-        super.onStop();
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        Log.v(TAG, "show()");
         radioGroupTime.clearCheck();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
-        Log.v(TAG, "onKeyDown() : keyCode=" + keyCode + ", event=" + event);
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyLongPress(int keyCode, @NonNull KeyEvent event) {
-        Log.v(TAG, "onKeyLongPress() : keyCode=" + keyCode + ", event=" + event);
-        return super.onKeyLongPress(keyCode, event);
-    }
-
-    @Override
-    public void setOnKeyListener(@Nullable OnKeyListener onKeyListener) {
-        Log.v(TAG, "onKeyLongPress() : onKeyListener=" + onKeyListener);
-        super.setOnKeyListener(onKeyListener);
-    }
-
-    @Override
-    public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-        Log.v(TAG, "onKeyDown() : keyCode=" + keyCode + ", event=" + event);
-        return false;
     }
 
     @Override

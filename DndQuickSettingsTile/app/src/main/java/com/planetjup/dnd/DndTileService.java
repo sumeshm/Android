@@ -287,12 +287,12 @@ public class DndTileService extends TileService implements View.OnClickListener 
     private void showDnDDialog() {
         Log.v(TAG, "showDnDDialog()");
 
-        if (dialog != null && dialog.isShowing()) {
-            dialog.hide();
-        }
-
         prepareDialog();
         showDialog(dialog);
+
+        if (!dialog.isShowing()) {
+            dialog.show();
+        }
     }
 
     private void hideDnDDialog() {
