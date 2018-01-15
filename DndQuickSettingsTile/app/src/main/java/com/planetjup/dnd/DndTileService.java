@@ -88,48 +88,71 @@ public class DndTileService extends TileService implements View.OnClickListener 
     public void onClick(View view) {
         Log.v(TAG, "onClick(View) : view_id=" + view.getId());
 
-        int interruptionMode = dialog.getInterruptionMode();
+        boolean isHideDialog = Boolean.TRUE;
+        int ringerMode = AudioManager.RINGER_MODE_SILENT;
+        int countDownTime = -1;
 
         switch (view.getId()) {
             case R.id.radio_15:
-                isTimerCancel = Boolean.FALSE;
-                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
-                startCountdownTimer(15 * 60 * 1000);
+                countDownTime = 15;
                 break;
 
             case R.id.radio_30:
-                isTimerCancel = Boolean.FALSE;
-                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
-                startCountdownTimer(30 * 60 * 1000);
+                countDownTime = 30;
                 break;
 
             case R.id.radio_60:
-                isTimerCancel = Boolean.FALSE;
-                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
-                startCountdownTimer(60 * 60 * 1000);
+                countDownTime = 60;
                 break;
 
             case R.id.radio_infinity:
                 isTimerCancel = Boolean.TRUE;
-                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                 break;
 
             case R.id.buttonOk:
-                isTimerCancel = Boolean.FALSE;
-                int progress = dialog.getSeekProgress();
-                if (progress > 0) {
-                    changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
-                    startCountdownTimer(progress * 60 * 1000);
+                countDownTime = dialog.getSeekProgress();
+                if (countDownTime <= 0) {
+                    isHideDialog = Boolean.FALSE;
+                    ringerMode = -1;
+                    countDownTime = -1;
+                    Toast.makeText(this, "Use the seek bat to set timeout", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
             case R.id.buttonMusic:
                 Log.v(TAG, "onClick(View) : MUTE media stream");
+                ringerMode = -1;
+                countDownTime = -1;
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
+                break;
+
+            case R.id.buttonAlarm:
+                Log.v(TAG, "onClick(View) : MUTE alarm stream");
+                ringerMode = -1;
+                countDownTime = -1;
+                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
+                break;
+
+            case R.id.buttonRinger:
+                Log.v(TAG, "onClick(View) : MUTE ringer stream");
+                ringerMode = -1;
+                countDownTime = -1;
+                audioManager.setStreamVolume(AudioManager.STREAM_RING, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
                 break;
         }
 
-        hideDnDDialog();
+        if (ringerMode >= 0)
+        {
+            changeMode(ringerMode, dialog.getInterruptionMode());
+        }
+        if (countDownTime > 0)
+        {
+            startCountdownTimer(countDownTime * 60 * 1000);
+        }
+        if (isHideDialog)
+        {
+            hideDnDDialog();
+        }
     }
 
     private void registerListenerHere() {
@@ -169,14 +192,6 @@ public class DndTileService extends TileService implements View.OnClickListener 
         }
 
         return isAllowed;
-    }
-
-    private void prepareDialog() {
-        Log.v(TAG, "prepareDialog()");
-
-        if (dialog == null) {
-            dialog = new DndDialog(this);
-        }
     }
 
     private void changeIcon(int mode) {
@@ -236,7 +251,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
         }
 
         Log.v(TAG, "printAudioMode : toastMsg=" + toastMsg);
-        Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT).show();
     }
 
     private void startCountdownTimer(long duration) {
@@ -261,22 +276,30 @@ public class DndTileService extends TileService implements View.OnClickListener 
         }.start();
     }
 
+    private void prepareDialog() {
+        Log.v(TAG, "prepareDialog()");
+
+        if (dialog == null) {
+            dialog = new DndDialog(this);
+        }
+    }
+
     private void showDnDDialog() {
         Log.v(TAG, "showDnDDialog()");
 
-        if (dialog == null) {
-            prepareDialog();
+        if (dialog != null && dialog.isShowing()) {
+            dialog.hide();
         }
 
+        prepareDialog();
         showDialog(dialog);
     }
 
     private void hideDnDDialog() {
         Log.v(TAG, "hideDnDDialog()");
 
-        if (dialog != null) {
-            dialog.dismiss();
-            dialog = null;
+        if (dialog != null && dialog.isShowing()) {
+            dialog.hide();
         }
     }
 

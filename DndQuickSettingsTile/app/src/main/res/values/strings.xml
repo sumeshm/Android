@@ -9,8 +9,10 @@
     <string name="Min_60">60 Min</string>
     <string name="Min_infinity">End of the world ...</string>
     <string name="Err_permission">Missing DnD Permission</string>
-    <string name="Mute_msg">(mute media)</string>
-    <string name="Start">Start</string>
+    <string name="Mute_media">(mute media)</string>
+    <string name="Mute_alarm">(mute alarm)</string>
+    <string name="Mute_ringer">(mute ringer)</string>
+    <string name="Go">GO</string>
     <string name="Filter_Total">Total Silence</string>
     <string name="Filter_Priority">Priority Only</string>
     <string name="Filter_Alarm">Alarm Only</string>

@@ -29,7 +29,7 @@ public class DndDialog extends Dialog implements DialogInterface.OnKeyListener, 
     private final SeekBar seekBar;
 
     public DndDialog(@NonNull Context context) {
-        super(context, R.style.dnd_dialog);
+        super(context);
 
         setContentView(R.layout.layout_dnd_dialog);
         setOnKeyListener(this);
