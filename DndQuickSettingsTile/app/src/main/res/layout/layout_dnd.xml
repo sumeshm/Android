@@ -36,7 +36,6 @@
         <RadioButton
             android:id="@+id/radio_alarm"
             style="@style/dnd_radio_button"
-            android:layout_width="match_parent"
             android:text="@string/Filter_Alarm" />
     </RadioGroup>
 
@@ -83,7 +82,7 @@
 
     <SeekBar
         android:id="@+id/seekBar"
-        android:layout_width="260dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginStart="10dp"

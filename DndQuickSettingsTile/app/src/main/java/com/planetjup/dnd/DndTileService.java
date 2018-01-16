@@ -23,10 +23,12 @@ public class DndTileService extends TileService {
 
     public static final String KEY_INTERRUPTION_FILTER = "com.planetjup.dnd.KEY_INTERRUPTION_FILTER";
     public static final String KEY_DND_DURATION = "com.planetjup.dnd.KEY_RINGER_MODE";
+    public static final String KEY_ACTIVITY_IS_UP = "com.planetjup.dnd.KEY_ACTIVITY_IS_UP";
     public static final String ACTION_START_TIMER = "com.planetjup.dnd.ACTION_START_TIMER";
     public static final String ACTION_MUTE_RINGER = "com.planetjup.dnd.ACTION_MUTE_RINGER";
     public static final String ACTION_MUTE_MUSIC = "com.planetjup.dnd.ACTION_MUTE_MUSIC";
     public static final String ACTION_MUTE_ALARM = "com.planetjup.dnd.ACTION_MUTE_ALARM";
+    public static final String ACTION_UPDATE_ACTIVITY_STATUS = "com.planetjup.dnd.ACTION_UPDATE_ACTIVITY_STATUS";
 
     private static final String TAG = DndTileService.class.getSimpleName();
     private static boolean isAllowed = Boolean.FALSE;
@@ -36,6 +38,7 @@ public class DndTileService extends TileService {
     private BroadcastReceiver ringerModeReceiver;
 
     private boolean isTimerCancel = Boolean.FALSE;
+    private boolean isActivityUp = Boolean.FALSE;
 
 
     @Override
@@ -74,6 +77,7 @@ public class DndTileService extends TileService {
             case ACTION_START_TIMER:
                 int interruptionMode = intent.getIntExtra(KEY_INTERRUPTION_FILTER, NotificationManager.INTERRUPTION_FILTER_NONE);
                 int countDownTime = intent.getIntExtra(KEY_DND_DURATION, 0);
+                Log.v(TAG, "onStartCommand() : interruptionMode=" + interruptionMode + ", countDownTime=" + countDownTime);
 
                 changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                 if (countDownTime > 0) {
@@ -94,6 +98,11 @@ public class DndTileService extends TileService {
 
             case ACTION_MUTE_ALARM:
                 audioManager.setStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
+                break;
+
+            case ACTION_UPDATE_ACTIVITY_STATUS:
+                isActivityUp = intent.getBooleanExtra(KEY_ACTIVITY_IS_UP, Boolean.FALSE);
+                Log.v(TAG, "onStartCommand() : isActivityUp=" + isActivityUp);
                 break;
         }
 
@@ -116,7 +125,7 @@ public class DndTileService extends TileService {
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
-                showDnDDialog();
+                showDndActivity();
                 exitService();
                 break;
         }
@@ -254,8 +263,8 @@ public class DndTileService extends TileService {
         }.start();
     }
 
-    private void showDnDDialog() {
-        Log.v(TAG, "showDnDDialog()");
+    private void showDndActivity() {
+        Log.v(TAG, "showDndActivity()");
 
         Intent intent = new Intent();
         intent.setClass(this, DndPopupActivity.class);
