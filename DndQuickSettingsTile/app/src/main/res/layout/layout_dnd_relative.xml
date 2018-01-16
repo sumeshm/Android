@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.planetjup.dnd.DndTileService">
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp">
 
     <TextView
         android:id="@+id/advice_mode"
         style="@style/dnd_text_advice"
-        android:layout_marginTop="20dp"
-        android:text="@string/advice_mode"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="0dp"
+        android:text="@string/advice_mode" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radio_group_mode"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_marginEnd="5dp"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advice_mode">
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radio_total"
@@ -41,26 +36,25 @@
         <RadioButton
             android:id="@+id/radio_alarm"
             style="@style/dnd_radio_button"
+            android:layout_width="match_parent"
             android:text="@string/Filter_Alarm" />
     </RadioGroup>
 
     <TextView
-        android:id="@+id/advice_duration"
+        android:id="@+id/advice_mute"
         style="@style/dnd_text_advice"
-        android:layout_marginTop="30dp"
-        android:text="@string/advice_duration"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group_mode" />
+        android:layout_width="match_parent"
+        android:layout_marginTop="80dp"
+        android:text="@string/advice_mute" />
 
     <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/radio_group_time"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advice_duration">
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="110dp"
+        android:orientation="vertical">
 
         <RadioButton
             android:id="@+id/radio_15"
@@ -91,83 +85,73 @@
         android:id="@+id/seekBar"
         android:layout_width="260dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:max="120"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group_time" />
+        android:layout_marginTop="250dp"
+        android:max="120" />
 
     <TextView
         android:id="@+id/textViewSeek"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="270dp"
         android:text="@string/Min_0"
         android:textSize="16sp"
-        android:textStyle="italic"
-        app:layout_constraintEnd_toStartOf="@+id/buttonOk"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar" />
+        android:textStyle="italic" />
 
     <Button
         android:id="@+id/buttonOk"
         style="@style/Widget.AppCompat.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="230dp"
         android:background="@drawable/button_round"
         android:onClick="onClick"
         android:text="@string/Go"
         android:textColor="@android:color/white"
         android:textSize="17sp"
-        android:textStyle="italic"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/seekBar"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group_time" />
+        android:textStyle="italic" />
 
     <TextView
-        android:id="@+id/advice_mute"
+        android:id="@+id/advice_duration"
         style="@style/dnd_text_advice"
-        android:layout_marginTop="20dp"
-        android:text="@string/advice_mute"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSeek" />
+        android:layout_marginTop="310dp"
+        android:text="@string/advice_duration" />
 
     <Button
         android:id="@+id/buttonAlarm"
         style="@style/dnd_button_mute"
-        android:layout_marginBottom="20dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="350dp"
         android:drawableTop="@android:drawable/ic_lock_silent_mode"
         android:text="@string/Mute_alarm"
-        android:textColor="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advice_mute" />
+        android:textColor="@android:color/darker_gray" />
 
     <Button
         android:id="@+id/buttonMusic"
         style="@style/dnd_button_mute"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="350dp"
         android:drawableTop="@android:drawable/ic_lock_silent_mode"
         android:text="@string/Mute_media"
-        android:textColor="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advice_mute" />
+        android:textColor="@android:color/darker_gray" />
 
     <Button
         android:id="@+id/buttonRinger"
         style="@style/dnd_button_mute"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="350dp"
         android:drawableTop="@android:drawable/ic_lock_silent_mode"
         android:text="@string/Mute_ringer"
-        android:textColor="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advice_mute" />
+        android:textColor="@android:color/darker_gray" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
+

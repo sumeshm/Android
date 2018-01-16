@@ -23,6 +23,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".DndPopupActivity"
+            android:label="@string/app_name" >
+        </activity>
+
         <service
             android:name=".DndTileService"
             android:icon="@drawable/ic_dnd_tile_off"
