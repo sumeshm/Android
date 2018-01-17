@@ -38,7 +38,6 @@ public class DndTileService extends TileService {
     private static final String TAG = DndTileService.class.getSimpleName();
     private static boolean isAllowed = Boolean.FALSE;
 
-    private Tile dndTile;
     private AudioManager audioManager;
     private NotificationManager notificationManager;
     private BroadcastReceiver ringerModeReceiver;
@@ -52,7 +51,6 @@ public class DndTileService extends TileService {
         super.onCreate();
         Log.v(TAG, "onCreate()");
 
-        dndTile = this.getQsTile();
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -182,21 +180,21 @@ public class DndTileService extends TileService {
     private void changeIcon(int mode) {
         Log.v(TAG, "changeIcon : mode=" + mode);
 
-        if (dndTile != null) {
-            if (mode == AudioManager.RINGER_MODE_SILENT) {
-                int filter = notificationManager.getCurrentInterruptionFilter();
-                if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
-                    dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on_total));
-                } else {
-                    dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on));
-                }
-            } else {
-                dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_off));
-            }
+        Tile dndTile = this.getQsTile();
 
-            dndTile.setState(Tile.STATE_ACTIVE);
-            dndTile.updateTile();
+        if (mode == AudioManager.RINGER_MODE_SILENT) {
+            int filter = notificationManager.getCurrentInterruptionFilter();
+            if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
+                dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on_total));
+            } else {
+                dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on));
+            }
+        } else {
+            dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_off));
         }
+
+        dndTile.setState(Tile.STATE_ACTIVE);
+        dndTile.updateTile();
     }
 
     private void changeMode(int newRingerMode, int newInterruptionMode) {
