@@ -142,9 +142,8 @@ public class DndTileService extends TileService {
         ringerModeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.v(TAG, "registerListenerHere::onReceive()");
+                Log.v(TAG, "registerListenerHere::onReceive() : " + intent.getAction());
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
-                printAudioMode();
             }
         };
 
@@ -185,12 +184,12 @@ public class DndTileService extends TileService {
         if (mode == AudioManager.RINGER_MODE_SILENT) {
             int filter = notificationManager.getCurrentInterruptionFilter();
             if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
-                dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on_total));
+                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_on_total));
             } else {
-                dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on));
+                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_on));
             }
         } else {
-            dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_off));
+            dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_off));
         }
 
         dndTile.setState(Tile.STATE_ACTIVE);
@@ -207,6 +206,8 @@ public class DndTileService extends TileService {
                 if (newRingerMode == AudioManager.RINGER_MODE_SILENT) {
                     notificationManager.setInterruptionFilter(newInterruptionMode);
                 }
+
+                printAudioMode();
             }
         }
     }

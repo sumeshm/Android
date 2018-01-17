@@ -35,6 +35,7 @@
             android:name=".DndTileService"
             android:icon="@drawable/ic_dnd_tile_off"
             android:label="@string/tile_name"
+            android:enabled="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
