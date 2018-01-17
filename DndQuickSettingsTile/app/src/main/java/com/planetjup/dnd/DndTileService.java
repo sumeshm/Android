@@ -9,12 +9,17 @@ import android.graphics.drawable.Icon;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.util.Log;
 import android.widget.Toast;
 
 /**
  * This class will manage the Do-Not-Disturb quick settings toggle tile functionality
+ * 1. Provide Do-Not-Disturb features
+ * 2. Allow user to select the type of DND - Total Silence, Priority Only and Alarm Only
+ * 3. Allow user to enable DND with timeouts - 15 min, 30 min, 60 min, 0-120 min, indefinite
+ * <p>
  * <p>
  * Created by Sumesh Mani on 1/9/18.
  */
@@ -33,6 +38,7 @@ public class DndTileService extends TileService {
     private static final String TAG = DndTileService.class.getSimpleName();
     private static boolean isAllowed = Boolean.FALSE;
 
+    private Tile dndTile;
     private AudioManager audioManager;
     private NotificationManager notificationManager;
     private BroadcastReceiver ringerModeReceiver;
@@ -46,6 +52,7 @@ public class DndTileService extends TileService {
         super.onCreate();
         Log.v(TAG, "onCreate()");
 
+        dndTile = this.getQsTile();
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -175,19 +182,20 @@ public class DndTileService extends TileService {
     private void changeIcon(int mode) {
         Log.v(TAG, "changeIcon : mode=" + mode);
 
-        if (this.getQsTile() != null) {
+        if (dndTile != null) {
             if (mode == AudioManager.RINGER_MODE_SILENT) {
                 int filter = notificationManager.getCurrentInterruptionFilter();
                 if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
-                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on_total));
+                    dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on_total));
                 } else {
-                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on));
+                    dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on));
                 }
             } else {
-                this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_off));
+                dndTile.setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_off));
             }
 
-            this.getQsTile().updateTile();
+            dndTile.setState(Tile.STATE_ACTIVE);
+            dndTile.updateTile();
         }
     }
 
@@ -215,11 +223,11 @@ public class DndTileService extends TileService {
                 break;
 
             case NotificationManager.INTERRUPTION_FILTER_PRIORITY:
-                toastPostfix =  " - " + getString(R.string.toast_post_priority);
+                toastPostfix = " - " + getString(R.string.toast_post_priority);
                 break;
 
             case NotificationManager.INTERRUPTION_FILTER_ALARMS:
-                toastPostfix =  " - " + getString(R.string.toast_post_alarms);
+                toastPostfix = " - " + getString(R.string.toast_post_alarms);
                 break;
         }
 
