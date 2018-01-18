@@ -37,6 +37,7 @@ public class DndTileService extends TileService {
 
     private static final String TAG = DndTileService.class.getSimpleName();
     private static boolean isAllowed = Boolean.FALSE;
+    private static boolean isChangeRequested = Boolean.FALSE;
 
     private AudioManager audioManager;
     private NotificationManager notificationManager;
@@ -125,6 +126,7 @@ public class DndTileService extends TileService {
 
         switch (audioManager.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
+                isChangeRequested = Boolean.TRUE;
                 isTimerCancel = Boolean.TRUE;
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                 break;
@@ -144,6 +146,12 @@ public class DndTileService extends TileService {
             public void onReceive(Context context, Intent intent) {
                 Log.v(TAG, "registerListenerHere::onReceive() : " + intent.getAction());
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
+
+                if (isChangeRequested)
+                {
+                    isChangeRequested = Boolean.FALSE;
+                    printAudioMode();
+                }
             }
         };
 
@@ -202,12 +210,11 @@ public class DndTileService extends TileService {
         if (isAllowed) {
             int ringerMode = audioManager.getRingerMode();
             if (ringerMode != newRingerMode) {
+                isChangeRequested = Boolean.TRUE;
                 audioManager.setRingerMode(newRingerMode);
                 if (newRingerMode == AudioManager.RINGER_MODE_SILENT) {
                     notificationManager.setInterruptionFilter(newInterruptionMode);
                 }
-
-                printAudioMode();
             }
         }
     }
