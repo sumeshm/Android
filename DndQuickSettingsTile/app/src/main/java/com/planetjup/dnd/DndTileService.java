@@ -26,25 +26,25 @@ import android.widget.Toast;
 
 public class DndTileService extends TileService {
 
-    public static final String KEY_INTERRUPTION_FILTER = "com.planetjup.dnd.KEY_INTERRUPTION_FILTER";
-    public static final String KEY_DND_DURATION = "com.planetjup.dnd.KEY_RINGER_MODE";
-    public static final String KEY_ACTIVITY_IS_UP = "com.planetjup.dnd.KEY_ACTIVITY_IS_UP";
+    // custom actions that the dialog-activity can use to pass back user choices
     public static final String ACTION_START_TIMER = "com.planetjup.dnd.ACTION_START_TIMER";
     public static final String ACTION_MUTE_RINGER = "com.planetjup.dnd.ACTION_MUTE_RINGER";
     public static final String ACTION_MUTE_MUSIC = "com.planetjup.dnd.ACTION_MUTE_MUSIC";
     public static final String ACTION_MUTE_ALARM = "com.planetjup.dnd.ACTION_MUTE_ALARM";
-    public static final String ACTION_UPDATE_ACTIVITY_STATUS = "com.planetjup.dnd.ACTION_UPDATE_ACTIVITY_STATUS";
+
+    // keys for user data that will be passed along with the Intent's extra data
+    public static final String KEY_INTERRUPTION_FILTER = "com.planetjup.dnd.KEY_INTERRUPTION_FILTER";
+    public static final String KEY_DND_DURATION = "com.planetjup.dnd.KEY_RINGER_MODE";
 
     private static final String TAG = DndTileService.class.getSimpleName();
-    private static boolean isAllowed = Boolean.FALSE;
-    private static boolean isChangeRequested = Boolean.FALSE;
 
     private AudioManager audioManager;
     private NotificationManager notificationManager;
     private BroadcastReceiver ringerModeReceiver;
 
+    private boolean isAllowed = Boolean.FALSE;
     private boolean isTimerCancel = Boolean.FALSE;
-    private boolean isActivityUp = Boolean.FALSE;
+    private boolean isChangeRequested = Boolean.FALSE;
 
 
     @Override
@@ -88,8 +88,6 @@ public class DndTileService extends TileService {
                 changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
                 if (countDownTime > 0) {
                     startCountdownTimer(countDownTime * 60 * 1000);
-                } else {
-                    isTimerCancel = Boolean.TRUE;
                 }
 
                 break;
@@ -104,11 +102,6 @@ public class DndTileService extends TileService {
 
             case ACTION_MUTE_ALARM:
                 audioManager.setStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
-                break;
-
-            case ACTION_UPDATE_ACTIVITY_STATUS:
-                isActivityUp = intent.getBooleanExtra(KEY_ACTIVITY_IS_UP, Boolean.FALSE);
-                Log.v(TAG, "onStartCommand() : isActivityUp=" + isActivityUp);
                 break;
         }
 
@@ -126,9 +119,7 @@ public class DndTileService extends TileService {
 
         switch (audioManager.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
-                isChangeRequested = Boolean.TRUE;
-                isTimerCancel = Boolean.TRUE;
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                changeMode(AudioManager.RINGER_MODE_NORMAL, -1);
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
@@ -147,6 +138,7 @@ public class DndTileService extends TileService {
                 Log.v(TAG, "registerListenerHere::onReceive() : " + intent.getAction());
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
 
+                // show toast only if ringer mode chnage was triggered by this service
                 if (isChangeRequested)
                 {
                     isChangeRequested = Boolean.FALSE;
@@ -211,8 +203,10 @@ public class DndTileService extends TileService {
             int ringerMode = audioManager.getRingerMode();
             if (ringerMode != newRingerMode) {
                 isChangeRequested = Boolean.TRUE;
+                isTimerCancel = Boolean.TRUE;
+
                 audioManager.setRingerMode(newRingerMode);
-                if (newRingerMode == AudioManager.RINGER_MODE_SILENT) {
+                if (newInterruptionMode > 0 && newRingerMode == AudioManager.RINGER_MODE_SILENT) {
                     notificationManager.setInterruptionFilter(newInterruptionMode);
                 }
             }
@@ -272,7 +266,7 @@ public class DndTileService extends TileService {
 
             public void onFinish() {
                 Log.v(TAG, "CountdownTimer : FINISH");
-                changeMode(AudioManager.RINGER_MODE_NORMAL, NotificationManager.INTERRUPTION_FILTER_ALL);
+                changeMode(AudioManager.RINGER_MODE_NORMAL, -1);
             }
         }.start();
     }

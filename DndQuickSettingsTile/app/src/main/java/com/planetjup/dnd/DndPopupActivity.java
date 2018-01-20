@@ -77,10 +77,11 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
                 dndIntent.putExtra(DndTileService.KEY_DND_DURATION, 0);
                 break;
 
-            case R.id.buttonOk:
+            case R.id.buttonGo:
                 if (getSeekProgress() <= 0) {
                     isHideDialog = Boolean.FALSE;
                     Toast.makeText(this, "Use the seek bat to set timeout", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
                 dndIntent.setAction(DndTileService.ACTION_START_TIMER);
@@ -101,8 +102,8 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
                 break;
         }
 
-        startService(dndIntent);
         if (isHideDialog) {
+            startService(dndIntent);
             finish();
         }
     }
