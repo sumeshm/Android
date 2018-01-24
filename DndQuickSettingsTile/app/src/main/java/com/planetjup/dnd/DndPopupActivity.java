@@ -36,6 +36,7 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
 
         this.context = context;
         radioGroupMode = this.getWindow().findViewById(R.id.radio_group_mode);
+        radioGroupMode.getChildAt(0).setSelected(true);
         textViewSeek = this.getWindow().findViewById(R.id.textViewSeek);
         seekBar = this.getWindow().findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
@@ -110,7 +111,7 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Log.v(TAG, "onProgressChanged() : progress=" + progress);
+        //Log.v(TAG, "onProgressChanged() : progress=" + progress);
 
         textViewSeek.setText(progress + " " + getString(R.string.Min));
     }

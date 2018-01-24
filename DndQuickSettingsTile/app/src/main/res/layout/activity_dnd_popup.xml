@@ -7,6 +7,6 @@
 
     <include
         android:id="@+id/dialog"
-        layout="@layout/layout_dnd"/>
+        layout="@layout/layout_dnd" />
 
 </android.support.design.widget.CoordinatorLayout>

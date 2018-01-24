@@ -76,6 +76,12 @@ public class DndTileService extends TileService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if (intent == null || intent.getAction() == null) {
+            Log.e(TAG, "onStartCommand() : INVALID Intent, return");
+            return START_STICKY;
+        }
+
         String action = intent.getAction();
         Log.v(TAG, "onStartCommand() : action=" + action);
 
@@ -124,7 +130,6 @@ public class DndTileService extends TileService {
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
                 showDndActivity();
-                exitService();
                 break;
         }
     }
@@ -139,8 +144,7 @@ public class DndTileService extends TileService {
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
 
                 // show toast only if ringer mode chnage was triggered by this service
-                if (isChangeRequested)
-                {
+                if (isChangeRequested) {
                     isChangeRequested = Boolean.FALSE;
                     printAudioMode();
                 }
@@ -161,13 +165,7 @@ public class DndTileService extends TileService {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!notificationManager.isNotificationPolicyAccessGranted()) {
-
-                Intent intent = new Intent(
-                        android.provider.Settings
-                                .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-
-                startActivity(intent);
-                exitService();
+                showSettingsActivity();
             } else {
                 isAllowed = Boolean.TRUE;
             }
@@ -180,6 +178,10 @@ public class DndTileService extends TileService {
         Log.v(TAG, "changeIcon : mode=" + mode);
 
         Tile dndTile = this.getQsTile();
+        if (dndTile == null) {
+            Log.e(TAG, "changeIcon : INVALID Tile, return");
+            return;
+        }
 
         if (mode == AudioManager.RINGER_MODE_SILENT) {
             int filter = notificationManager.getCurrentInterruptionFilter();
@@ -276,13 +278,16 @@ public class DndTileService extends TileService {
 
         Intent intent = new Intent();
         intent.setClass(this, DndPopupActivity.class);
-        startActivity(intent);
+        startActivityAndCollapse(intent);
     }
 
-    private void exitService() {
-        Log.v(TAG, "exitService()");
+    private void showSettingsActivity() {
+        Log.v(TAG, "showSettingsActivity()");
 
-        Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        sendBroadcast(closeIntent);
+        Intent intent = new Intent(
+                android.provider.Settings
+                        .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+
+        startActivityAndCollapse(intent);
     }
 }
