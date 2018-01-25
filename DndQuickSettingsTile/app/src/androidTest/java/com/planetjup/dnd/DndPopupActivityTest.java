@@ -3,11 +3,10 @@ package com.planetjup.dnd;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.Build;
-import android.support.test.espresso.intent.Intents;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -26,8 +25,6 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.isInternal;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -51,38 +48,35 @@ public class DndPopupActivityTest {
 
     private static final String PACKAGE_NAME = "com.android.phone";
 
-    @Rule
-    public ActivityTestRule<DndPopupActivity> rule  = new  ActivityTestRule<>(DndPopupActivity.class);
 
     @Rule
-    public IntentsTestRule<DndPopupActivity> intentsRule = new IntentsTestRule<>(DndPopupActivity.class);
-
+    public IntentsTestRule<DndPopupActivity> rule = new IntentsTestRule<>(DndPopupActivity.class);
 
 
     @Before
     public void setUp() throws Exception {
-//        intending(toPackage("com.planetjup.dnd")).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
-//        intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
 
-        intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
-        Intents.init();
+        // stub calls to service by redirecting the Intent here
+        Intent resultData = new Intent();
+        intending(hasAction(DndTileService.ACTION_START_TIMER)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+        intending(hasAction(DndTileService.ACTION_MUTE_RINGER)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+        intending(hasAction(DndTileService.ACTION_MUTE_MUSIC)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+        intending(hasAction(DndTileService.ACTION_MUTE_ALARM)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+        intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+        intending(toPackage("com.planetjup.dnd")).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+    }
+
+    @After
+    public void tearDown() throws Exception {
     }
 
     @Before
     public void grantPhonePermission() {
-        // In M+, trying to call a number will trigger a runtime dialog. Make sure
-        // the permission is granted before running this test.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getInstrumentation().getUiAutomation().executeShellCommand(
                     "pm grant " + getTargetContext().getPackageName()
                             + " android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS");
         }
-    }
-
-
-    @After
-    public void tearDown() throws Exception {
-        Intents.release();
     }
 
 
@@ -115,14 +109,26 @@ public class DndPopupActivityTest {
     @Test
     public void testOnClick_radio_button_15()
     {
-        DndPopupActivity activity = intentsRule.getActivity();
+        DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.radio_15)).perform(click());
 
         intended(allOf(
-                hasAction(DndTileService.ACTION_MUTE_RINGER),
-                hasExtra(DndTileService.KEY_DND_DURATION, 15),
-                toPackage(PACKAGE_NAME),
-                hasComponent(DndTileService.class.getName()) ));
+                hasAction(DndTileService.ACTION_START_TIMER)
+                ));
+    }
+
+    @Test
+    public void testOnClick_radio_button_30()
+    {
+        DndPopupActivity activity = rule.getActivity();
+        onView(withId(R.id.radio_30)).perform(click());
+    }
+
+    @Test
+    public void testOnClick_radio_button_60()
+    {
+        DndPopupActivity activity = rule.getActivity();
+        onView(withId(R.id.radio_60)).perform(click());
     }
 
     @Test
@@ -130,7 +136,36 @@ public class DndPopupActivityTest {
     {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.radio_infinity)).perform(click());
+    }
 
+    @Test
+    public void testOnClick_radio_button_go()
+    {
+        DndPopupActivity activity = rule.getActivity();
+        onView(withId(R.id.seekBar)).perform(click());
+        onView(withId(R.id.buttonGo)).perform(click());
+    }
+
+    @Test
+    public void testOnClick_radio_button_ringer()
+    {
+        DndPopupActivity activity = rule.getActivity();
+        onView(withId(R.id.buttonRinger)).perform(click());
+    }
+
+    @Test
+    public void testOnClick_radio_button_music()
+    {
+        DndPopupActivity activity = rule.getActivity();
+        onView(withId(R.id.buttonMusic)).perform(click());
+    }
+
+
+    @Test
+    public void testOnClick_radio_button_alarm()
+    {
+        DndPopupActivity activity = rule.getActivity();
+        onView(withId(R.id.buttonAlarm)).perform(click());
     }
 
     @Test
