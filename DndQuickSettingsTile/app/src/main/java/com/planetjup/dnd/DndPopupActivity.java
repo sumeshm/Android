@@ -127,7 +127,7 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
     }
 
 
-    private int getInterruptionMode() {
+    protected int getInterruptionMode() {
         int interruptionMode = NotificationManager.INTERRUPTION_FILTER_NONE;
 
         switch (radioGroupMode.getCheckedRadioButtonId()) {
@@ -148,7 +148,7 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
         return interruptionMode;
     }
 
-    private int getSeekProgress() {
+    protected int getSeekProgress() {
         Log.v(TAG, "getSeekProgress() : progress=" + seekBar.getProgress());
         return seekBar.getProgress();
     }
