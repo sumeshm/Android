@@ -2,7 +2,6 @@ package com.planetjup.dnd;
 
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * This activity will be the dialog being poped up by Dnd-Tile-Service
+ * This activity will be the dialog being popped up by Dnd-Tile-Service
  * <p>
  * Created by Sumesh Mani on 1/16/18.
  */
@@ -22,7 +21,6 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
 
     private static final String TAG = DndPopupActivity.class.getSimpleName();
 
-    private Context context;
     private RadioGroup radioGroupMode;
     private TextView textViewSeek;
     private SeekBar seekBar;
@@ -34,7 +32,6 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
 
         setContentView(R.layout.activity_dnd_popup);
 
-        this.context = context;
         radioGroupMode = this.getWindow().findViewById(R.id.radio_group_mode);
         radioGroupMode.getChildAt(0).setSelected(true);
         textViewSeek = this.getWindow().findViewById(R.id.textViewSeek);

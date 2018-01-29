@@ -143,7 +143,7 @@ public class DndTileService extends TileService {
                 Log.v(TAG, "registerListenerHere::onReceive() : " + intent.getAction());
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
 
-                // show toast only if ringer mode chnage was triggered by this service
+                // show toast only if ringer mode change was triggered by this service
                 if (isChangeRequested) {
                     isChangeRequested = Boolean.FALSE;
                     printAudioMode();
@@ -239,7 +239,7 @@ public class DndTileService extends TileService {
                 break;
 
             case AudioManager.RINGER_MODE_VIBRATE:
-                toastMsg = getString(R.string.toast_vibrte);
+                toastMsg = getString(R.string.toast_vibrate);
                 break;
 
             case AudioManager.RINGER_MODE_NORMAL:
@@ -256,7 +256,7 @@ public class DndTileService extends TileService {
 
         isTimerCancel = Boolean.FALSE;
 
-        final CountDownTimer countDownTimer = new CountDownTimer(duration, 1000) {
+        new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
                 if (isTimerCancel) {

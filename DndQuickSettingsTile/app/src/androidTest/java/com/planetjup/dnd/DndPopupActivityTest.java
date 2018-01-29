@@ -25,18 +25,14 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasAction;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.isInternal;
-import static android.support.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.core.AllOf.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
 /**
- * Created by summani on 1/24/18.
+ * Created by Sumesh Mani on 1/24/18.
  * Instrumented test, which will execute on an Android device.
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
@@ -58,12 +54,15 @@ public class DndPopupActivityTest {
 
         // stub calls to service by redirecting the Intent here
         Intent resultData = new Intent();
-        intending(hasAction(DndTileService.ACTION_START_TIMER)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
-        intending(hasAction(DndTileService.ACTION_MUTE_RINGER)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
-        intending(hasAction(DndTileService.ACTION_MUTE_MUSIC)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
-        intending(hasAction(DndTileService.ACTION_MUTE_ALARM)).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
-        intending(not(isInternal())).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
-        intending(toPackage("com.planetjup.dnd")).respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData));
+        Instrumentation.ActivityResult result =
+                new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
+
+        intending(hasAction(DndTileService.ACTION_START_TIMER)).respondWith(result);
+//        intending(hasAction(DndTileService.ACTION_MUTE_RINGER)).respondWith(result);
+//        intending(hasAction(DndTileService.ACTION_MUTE_MUSIC)).respondWith(result);
+//        intending(hasAction(DndTileService.ACTION_MUTE_ALARM)).respondWith(result);
+//        intending(not(isInternal())).respondWith(result);
+//        intending(toPackage("com.planetjup.dnd")).respondWith(result);
     }
 
     @After
@@ -81,8 +80,7 @@ public class DndPopupActivityTest {
 
 
     @Test
-    public void testStructure()
-    {
+    public void testStructure() {
         DndPopupActivity activity = rule.getActivity();
 
         // 1. test Mode radio-group
@@ -107,70 +105,61 @@ public class DndPopupActivityTest {
     }
 
     @Test
-    public void testOnClick_radio_button_15()
-    {
+    public void testOnClick_radio_button_15() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.radio_15)).perform(click());
 
-        intended(allOf(
+        intended(
                 hasAction(DndTileService.ACTION_START_TIMER)
-                ));
+        );
     }
 
     @Test
-    public void testOnClick_radio_button_30()
-    {
+    public void testOnClick_radio_button_30() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.radio_30)).perform(click());
     }
 
     @Test
-    public void testOnClick_radio_button_60()
-    {
+    public void testOnClick_radio_button_60() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.radio_60)).perform(click());
     }
 
     @Test
-    public void testOnClick_radio_button_infinity()
-    {
+    public void testOnClick_radio_button_infinity() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.radio_infinity)).perform(click());
     }
 
     @Test
-    public void testOnClick_radio_button_go()
-    {
+    public void testOnClick_radio_button_go() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.seekBar)).perform(click());
         onView(withId(R.id.buttonGo)).perform(click());
     }
 
     @Test
-    public void testOnClick_radio_button_ringer()
-    {
+    public void testOnClick_radio_button_ringer() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.buttonRinger)).perform(click());
     }
 
     @Test
-    public void testOnClick_radio_button_music()
-    {
+    public void testOnClick_radio_button_music() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.buttonMusic)).perform(click());
     }
 
 
     @Test
-    public void testOnClick_radio_button_alarm()
-    {
+    public void testOnClick_radio_button_alarm() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.buttonAlarm)).perform(click());
     }
 
     @Test
-    public void testGetInterruptionMode()
-    {
+    public void testGetInterruptionMode() {
         DndPopupActivity activity = rule.getActivity();
         RadioGroup radioGroupMode = activity.findViewById(R.id.radio_group_mode);
 
@@ -185,8 +174,7 @@ public class DndPopupActivityTest {
     }
 
     @Test
-    public void testGetSeekProgress()
-    {
+    public void testGetSeekProgress() {
         DndPopupActivity activity = rule.getActivity();
         onView(withId(R.id.seekBar)).perform(click());
 
@@ -197,7 +185,7 @@ public class DndPopupActivityTest {
         assertEquals(activity.getSeekProgress(), progress);
 
         TextView textViewSeek = activity.findViewById(R.id.textViewSeek);
-        String temp = textViewSeek.getText().subSequence(0,2).toString();
+        String temp = textViewSeek.getText().subSequence(0, 2).toString();
         assertTrue(temp.equals(progressStr));
     }
 }
