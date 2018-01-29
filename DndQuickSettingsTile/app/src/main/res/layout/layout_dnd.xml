@@ -99,7 +99,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/radio_group_time"
-        android:layout_toLeftOf="@id/buttonGo"
+        android:layout_toStartOf="@id/buttonGo"
         android:layout_marginStart="10dp"
         android:layout_marginTop="190dp"
         android:max="120" />
