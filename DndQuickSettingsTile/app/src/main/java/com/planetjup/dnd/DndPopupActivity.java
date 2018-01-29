@@ -49,8 +49,6 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
     public void onClick(View view) {
         Log.v(TAG, "onClick(View) : view_id=" + view.getId());
 
-        boolean isHideDialog = Boolean.TRUE;
-
         Intent dndIntent = new Intent(this, DndTileService.class);
         dndIntent.putExtra(DndTileService.KEY_INTERRUPTION_FILTER, getInterruptionMode());
 
@@ -77,7 +75,6 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
 
             case R.id.buttonGo:
                 if (getSeekProgress() <= 0) {
-                    isHideDialog = Boolean.FALSE;
                     Toast.makeText(this, "Use the seek bat to set timeout", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -100,17 +97,16 @@ public class DndPopupActivity extends Activity implements SeekBar.OnSeekBarChang
                 break;
         }
 
-        if (isHideDialog) {
-            startService(dndIntent);
-            finish();
-        }
+        startService(dndIntent);
+        finish();
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         //Log.v(TAG, "onProgressChanged() : progress=" + progress);
 
-        textViewSeek.setText(progress + " " + getString(R.string.Min));
+        String data = Integer.toString(progress).concat(getString(R.string.Min));
+        textViewSeek.setText(data);
     }
 
     @Override
