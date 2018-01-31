@@ -14,6 +14,9 @@ import android.util.Log;
 public class ContactsTileService extends TileService {
 
     private static final String TAG = ContactsTileService.class.getSimpleName();
+    private static final int ON_CONTACTS_PERMISSION_CALLBACK_CODE = 0;
+
+    private static boolean isAllowed = Boolean.FALSE;
 
     @Override
     public void onCreate() {
