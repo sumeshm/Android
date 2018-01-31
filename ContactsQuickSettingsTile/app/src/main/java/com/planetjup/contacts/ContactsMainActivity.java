@@ -1,9 +1,6 @@
 package com.planetjup.contacts;
 
 import android.Manifest;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,24 +19,14 @@ public class ContactsMainActivity extends AppCompatActivity {
     private static final String TAG = ContactsMainActivity.class.getSimpleName();
     private static final int ON_CONTACTS_PERMISSION_CALLBACK_CODE = 0;
 
-    private static String[] PERMISSIONS_CONTACT = {Manifest.permission.READ_CONTACTS,
-            Manifest.permission.WRITE_CONTACTS};
-
     private static boolean isAllowed = Boolean.FALSE;
-
-    private NotificationManager notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
 
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if (!getPermission()) {
-            Log.v(TAG, "exitActivity : msg=" + R.string.Err_permission);
-        }
-
+        getContactsPermission();
         finish();
     }
 
@@ -59,8 +46,8 @@ public class ContactsMainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean getPermission() {
-        Log.v(TAG, "getPermission : isAllowed=" + isAllowed);
+    private boolean getContactsPermission() {
+        Log.v(TAG, "getContactsPermission : isAllowed=" + isAllowed);
 
         if (isAllowed) {
             return Boolean.TRUE;
@@ -71,7 +58,9 @@ public class ContactsMainActivity extends AppCompatActivity {
                     Manifest.permission.READ_CONTACTS)
                     || !ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.WRITE_CONTACTS)) {
-                requestPermissions(PERMISSIONS_CONTACT, ON_CONTACTS_PERMISSION_CALLBACK_CODE);
+
+                String[] permissionList = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS};
+                requestPermissions(permissionList, ON_CONTACTS_PERMISSION_CALLBACK_CODE);
             } else {
                 isAllowed = Boolean.TRUE;
             }

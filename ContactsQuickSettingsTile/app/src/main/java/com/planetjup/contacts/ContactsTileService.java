@@ -1,8 +1,10 @@
 package com.planetjup.contacts;
 
+import android.content.Intent;
 import android.os.Build;
 import android.service.quicksettings.TileService;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 /**
  * Created by summani on 1/30/18.
@@ -16,5 +18,16 @@ public class ContactsTileService extends TileService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate()");
+    }
+
+    @Override
+    public void onClick() {
+        super.onClick();
+        Log.v(TAG, "onClick()");
+
+        Intent intent = new Intent();
+        intent.setClass(this, ContactsListActivity.class);
+        startActivityAndCollapse(intent);
     }
 }
