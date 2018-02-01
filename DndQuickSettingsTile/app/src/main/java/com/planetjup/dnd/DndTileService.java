@@ -9,28 +9,42 @@ import android.graphics.drawable.Icon;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 /**
  * This class will manage the Do-Not-Disturb quick settings toggle tile functionality
+ * 1. Provide Do-Not-Disturb features
+ * 2. Allow user to select the type of DND - Total Silence, Priority Only and Alarm Only
+ * 3. Allow user to enable DND with timeouts - 15 min, 30 min, 60 min, 0-120 min, indefinite
+ * <p>
  * <p>
  * Created by Sumesh Mani on 1/9/18.
  */
 
-public class DndTileService extends TileService implements View.OnClickListener {
+public class DndTileService extends TileService {
+
+    // custom actions that the dialog-activity can use to pass back user choices
+    public static final String ACTION_START_TIMER = "com.planetjup.dnd.ACTION_START_TIMER";
+    public static final String ACTION_MUTE_RINGER = "com.planetjup.dnd.ACTION_MUTE_RINGER";
+    public static final String ACTION_MUTE_MUSIC = "com.planetjup.dnd.ACTION_MUTE_MUSIC";
+    public static final String ACTION_MUTE_ALARM = "com.planetjup.dnd.ACTION_MUTE_ALARM";
+
+    // keys for user data that will be passed along with the Intent's extra data
+    public static final String KEY_INTERRUPTION_FILTER = "com.planetjup.dnd.KEY_INTERRUPTION_FILTER";
+    public static final String KEY_DND_DURATION = "com.planetjup.dnd.KEY_RINGER_MODE";
 
     private static final String TAG = DndTileService.class.getSimpleName();
-    private static boolean isAllowed = Boolean.FALSE;
-    private DndDialog dialog;
 
     private AudioManager audioManager;
     private NotificationManager notificationManager;
     private BroadcastReceiver ringerModeReceiver;
 
+    private boolean isAllowed = Boolean.FALSE;
     private boolean isTimerCancel = Boolean.FALSE;
+    private boolean isChangeRequested = Boolean.FALSE;
 
 
     @Override
@@ -42,7 +56,6 @@ public class DndTileService extends TileService implements View.OnClickListener 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         registerListenerHere();
-        prepareDialog();
     }
 
     @Override
@@ -62,6 +75,46 @@ public class DndTileService extends TileService implements View.OnClickListener 
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if (intent == null || intent.getAction() == null) {
+            Log.e(TAG, "onStartCommand() : INVALID Intent, return");
+            return START_STICKY;
+        }
+
+        String action = intent.getAction();
+        Log.v(TAG, "onStartCommand() : action=" + action);
+
+        switch (action) {
+            case ACTION_START_TIMER:
+                int interruptionMode = intent.getIntExtra(KEY_INTERRUPTION_FILTER, NotificationManager.INTERRUPTION_FILTER_NONE);
+                int countDownTime = intent.getIntExtra(KEY_DND_DURATION, 0);
+                Log.v(TAG, "onStartCommand() : interruptionMode=" + interruptionMode + ", countDownTime=" + countDownTime);
+
+                changeMode(AudioManager.RINGER_MODE_SILENT, interruptionMode);
+                if (countDownTime > 0) {
+                    startCountdownTimer(countDownTime * 60 * 1000);
+                }
+
+                break;
+
+            case ACTION_MUTE_RINGER:
+                audioManager.setStreamVolume(AudioManager.STREAM_RING, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
+                break;
+
+            case ACTION_MUTE_MUSIC:
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
+                break;
+
+            case ACTION_MUTE_ALARM:
+                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
+                break;
+        }
+
+        return START_STICKY;
+    }
+
+    @Override
     public void onClick() {
         super.onClick();
         Log.v(TAG, "onClick()");
@@ -72,93 +125,29 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
         switch (audioManager.getRingerMode()) {
             case AudioManager.RINGER_MODE_SILENT:
-                isTimerCancel = Boolean.TRUE;
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                changeMode(AudioManager.RINGER_MODE_NORMAL, -1);
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
-                showDnDDialog();
-                exitService();
+                showDndActivity();
                 break;
         }
     }
 
-    @Override
-    public void onClick(View view) {
-        Log.v(TAG, "onClick(View) : view_id=" + view.getId());
-
-        boolean isHideDialog = Boolean.TRUE;
-        int ringerMode = AudioManager.RINGER_MODE_SILENT;
-        int countDownTime = -1;
-
-        switch (view.getId()) {
-            case R.id.radio_15:
-                countDownTime = 15;
-                break;
-
-            case R.id.radio_30:
-                countDownTime = 30;
-                break;
-
-            case R.id.radio_60:
-                countDownTime = 60;
-                break;
-
-            case R.id.radio_infinity:
-                isTimerCancel = Boolean.TRUE;
-                break;
-
-            case R.id.buttonOk:
-                countDownTime = dialog.getSeekProgress();
-                if (countDownTime <= 0) {
-                    isHideDialog = Boolean.FALSE;
-                    ringerMode = -1;
-                    countDownTime = -1;
-                    Toast.makeText(this, "Use the seek bat to set timeout", Toast.LENGTH_SHORT).show();
-                }
-                break;
-
-            case R.id.buttonMusic:
-                Log.v(TAG, "onClick(View) : MUTE media stream");
-                ringerMode = -1;
-                countDownTime = -1;
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
-                break;
-
-            case R.id.buttonAlarm:
-                Log.v(TAG, "onClick(View) : MUTE alarm stream");
-                ringerMode = -1;
-                countDownTime = -1;
-                audioManager.setStreamVolume(AudioManager.STREAM_ALARM, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
-                break;
-
-            case R.id.buttonRinger:
-                Log.v(TAG, "onClick(View) : MUTE ringer stream");
-                ringerMode = -1;
-                countDownTime = -1;
-                audioManager.setStreamVolume(AudioManager.STREAM_RING, AudioManager.ADJUST_MUTE, AudioManager.FLAG_SHOW_UI);
-                break;
-        }
-
-        if (ringerMode >= 0) {
-            changeMode(ringerMode, dialog.getInterruptionMode());
-        }
-        if (countDownTime > 0) {
-            startCountdownTimer(countDownTime * 60 * 1000);
-        }
-        if (isHideDialog) {
-            hideDnDDialog();
-        }
-    }
 
     private void registerListenerHere() {
         Log.v(TAG, "registerListenerHere()");
         ringerModeReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.v(TAG, "registerListenerHere::onReceive()");
+                Log.v(TAG, "registerListenerHere::onReceive() : " + intent.getAction());
                 changeIcon(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1));
-                printAudioMode();
+
+                // show toast only if ringer mode change was triggered by this service
+                if (isChangeRequested) {
+                    isChangeRequested = Boolean.FALSE;
+                    printAudioMode();
+                }
             }
         };
 
@@ -176,13 +165,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!notificationManager.isNotificationPolicyAccessGranted()) {
-
-                Intent intent = new Intent(
-                        android.provider.Settings
-                                .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-
-                startActivity(intent);
-                exitService();
+                showSettingsActivity();
             } else {
                 isAllowed = Boolean.TRUE;
             }
@@ -194,20 +177,25 @@ public class DndTileService extends TileService implements View.OnClickListener 
     private void changeIcon(int mode) {
         Log.v(TAG, "changeIcon : mode=" + mode);
 
-        if (this.getQsTile() != null) {
-            if (mode == AudioManager.RINGER_MODE_SILENT) {
-                int filter = notificationManager.getCurrentInterruptionFilter();
-                if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
-                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on_total));
-                } else {
-                    this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_on));
-                }
-            } else {
-                this.getQsTile().setIcon(Icon.createWithResource(getApplicationContext(), R.drawable.ic_dnd_tile_off));
-            }
-
-            this.getQsTile().updateTile();
+        Tile dndTile = this.getQsTile();
+        if (dndTile == null) {
+            Log.e(TAG, "changeIcon : INVALID Tile, return");
+            return;
         }
+
+        if (mode == AudioManager.RINGER_MODE_SILENT) {
+            int filter = notificationManager.getCurrentInterruptionFilter();
+            if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
+                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_on_total));
+            } else {
+                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_on));
+            }
+        } else {
+            dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_off));
+        }
+
+        dndTile.setState(Tile.STATE_ACTIVE);
+        dndTile.updateTile();
     }
 
     private void changeMode(int newRingerMode, int newInterruptionMode) {
@@ -216,8 +204,11 @@ public class DndTileService extends TileService implements View.OnClickListener 
         if (isAllowed) {
             int ringerMode = audioManager.getRingerMode();
             if (ringerMode != newRingerMode) {
+                isChangeRequested = Boolean.TRUE;
+                isTimerCancel = Boolean.TRUE;
+
                 audioManager.setRingerMode(newRingerMode);
-                if (newRingerMode == AudioManager.RINGER_MODE_SILENT) {
+                if (newInterruptionMode > 0 && newRingerMode == AudioManager.RINGER_MODE_SILENT) {
                     notificationManager.setInterruptionFilter(newInterruptionMode);
                 }
             }
@@ -230,15 +221,15 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
         switch (notificationManager.getCurrentInterruptionFilter()) {
             case NotificationManager.INTERRUPTION_FILTER_NONE:
-                toastPostfix = getString(R.string.toast_post_total);
+                toastPostfix = " - " + getString(R.string.toast_post_total);
                 break;
 
             case NotificationManager.INTERRUPTION_FILTER_PRIORITY:
-                toastPostfix = getString(R.string.toast_post_priority);
+                toastPostfix = " - " + getString(R.string.toast_post_priority);
                 break;
 
             case NotificationManager.INTERRUPTION_FILTER_ALARMS:
-                toastPostfix = getString(R.string.toast_post_alarms);
+                toastPostfix = " - " + getString(R.string.toast_post_alarms);
                 break;
         }
 
@@ -248,7 +239,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
                 break;
 
             case AudioManager.RINGER_MODE_VIBRATE:
-                toastMsg = getString(R.string.toast_vibrte);
+                toastMsg = getString(R.string.toast_vibrate);
                 break;
 
             case AudioManager.RINGER_MODE_NORMAL:
@@ -265,7 +256,7 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
         isTimerCancel = Boolean.FALSE;
 
-        final CountDownTimer countDownTimer = new CountDownTimer(duration, 1000) {
+        new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
                 if (isTimerCancel) {
@@ -277,42 +268,26 @@ public class DndTileService extends TileService implements View.OnClickListener 
 
             public void onFinish() {
                 Log.v(TAG, "CountdownTimer : FINISH");
-                changeMode(AudioManager.RINGER_MODE_NORMAL, NotificationManager.INTERRUPTION_FILTER_ALL);
+                changeMode(AudioManager.RINGER_MODE_NORMAL, -1);
             }
         }.start();
     }
 
-    private void prepareDialog() {
-        Log.v(TAG, "prepareDialog()");
+    private void showDndActivity() {
+        Log.v(TAG, "showDndActivity()");
 
-        if (dialog == null) {
-            dialog = new DndDialog(this);
-        }
+        Intent intent = new Intent();
+        intent.setClass(this, DndPopupActivity.class);
+        startActivityAndCollapse(intent);
     }
 
-    private void showDnDDialog() {
-        Log.v(TAG, "showDnDDialog()");
+    private void showSettingsActivity() {
+        Log.v(TAG, "showSettingsActivity()");
 
-        prepareDialog();
-        showDialog(dialog);
+        Intent intent = new Intent(
+                android.provider.Settings
+                        .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
 
-        if (!dialog.isShowing()) {
-            dialog.show();
-        }
-    }
-
-    private void hideDnDDialog() {
-        Log.v(TAG, "hideDnDDialog()");
-
-        if (dialog != null && dialog.isShowing()) {
-            dialog.hide();
-        }
-    }
-
-    private void exitService() {
-        Log.v(TAG, "exitService()");
-
-        Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        sendBroadcast(closeIntent);
+        startActivityAndCollapse(intent);
     }
 }
