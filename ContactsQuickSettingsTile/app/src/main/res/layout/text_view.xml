@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/text1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:drawableEnd="@drawable/ic_tile"
+    android:drawableEnd="@drawable/ic_dial"
     android:padding="10dp"
     android:textAppearance="?android:attr/textAppearanceLarge" />
 
