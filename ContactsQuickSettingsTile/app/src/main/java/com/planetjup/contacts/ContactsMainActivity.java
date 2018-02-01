@@ -5,9 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 /**
- * This class will manage the Do-Not-Disturb app
+ * This class will manage the Quick Dial app
  * <p>
- * Created by Sumesh Mani on 1/9/18.
+ * Created by Sumesh Mani on 1/31/18.
  */
 
 public class ContactsMainActivity extends AppCompatActivity {

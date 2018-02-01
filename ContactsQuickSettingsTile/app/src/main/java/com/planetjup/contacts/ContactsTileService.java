@@ -7,16 +7,15 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 /**
- * Created by summani on 1/30/18.
+ * This class will manage the Quick Dial Tile-Service in the quick settings
+ * <p>
+ * Created by Sumesh Mani on 1/31/18.
  */
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class ContactsTileService extends TileService {
 
     private static final String TAG = ContactsTileService.class.getSimpleName();
-    private static final int ON_CONTACTS_PERMISSION_CALLBACK_CODE = 0;
-
-    private static boolean isAllowed = Boolean.FALSE;
 
     @Override
     public void onCreate() {

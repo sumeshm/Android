@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Contacts Quick Settings Tile</string>
     <string name="tile_name">QuickDial</string>
-    <string name="Err_permission">Missing Contacts Permission</string>
     <string name="title_list_view">Quick Dial List</string>
+    <string name="err_invalid_contacts">No contacts in favorites</string>
+    <string name="err_reading_contacts">Error reading contacts, try later</string>
 </resources>
