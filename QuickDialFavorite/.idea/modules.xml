@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ContactsQuickSettingsTile.iml" filepath="$PROJECT_DIR$/ContactsQuickSettingsTile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QuickDialFavorite.iml" filepath="$PROJECT_DIR$/QuickDialFavorite.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
