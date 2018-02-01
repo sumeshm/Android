@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Contacts Quick Settings Tile</string>
+    <string name="app_name">Quick Dialer</string>
     <string name="tile_name">QuickDial</string>
     <string name="title_list_view">Quick Dial List</string>
     <string name="err_invalid_contacts">No contacts in favorites</string>

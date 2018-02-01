@@ -136,7 +136,7 @@ public class ContactsListActivity extends Activity implements AdapterView.OnItem
             cursor.close();
 
             ArrayAdapter<String> cursorAdapter = new ArrayAdapter<>(this, R.layout.text_view, contactNames);
-            ListView listView = (ListView) findViewById(R.id.listView);
+            ListView listView = findViewById(R.id.listView);
             listView.setOnItemClickListener(this);
             listView.setAdapter(cursorAdapter);
         } else {
