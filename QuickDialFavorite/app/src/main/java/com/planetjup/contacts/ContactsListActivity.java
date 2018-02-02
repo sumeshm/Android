@@ -97,8 +97,9 @@ public class ContactsListActivity extends Activity implements AdapterView.OnItem
     private void populateListView() {
         String[] columns = {ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Contacts.HAS_PHONE_NUMBER, ContactsContract.Contacts._ID};
         String selection = ContactsContract.Contacts.STARRED + "='1'";
+        String sortInfo = ContactsContract.Contacts.DISPLAY_NAME + " DESC";
 
-        Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, columns, selection, null, null);
+        Cursor cursor = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, columns, selection, null, sortInfo);
         if (cursor == null) {
             Toast.makeText(this, getResources().getString(R.string.err_reading_contacts), Toast.LENGTH_SHORT).show();
             return;
