@@ -186,12 +186,12 @@ public class DndTileService extends TileService {
         if (mode == AudioManager.RINGER_MODE_SILENT) {
             int filter = notificationManager.getCurrentInterruptionFilter();
             if (filter == NotificationManager.INTERRUPTION_FILTER_NONE) {
-                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_on_total));
+                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_tile_dnd_on_total));
             } else {
-                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_on));
+                dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_tile_dnd_on));
             }
         } else {
-            dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_dnd_tile_off));
+            dndTile.setIcon(Icon.createWithResource(getBaseContext(), R.drawable.ic_tile_dnd_off));
         }
 
         dndTile.setState(Tile.STATE_ACTIVE);

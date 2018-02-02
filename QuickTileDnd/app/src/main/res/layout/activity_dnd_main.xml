@@ -54,6 +54,6 @@
         android:layout_width="wrap_content"
         android:layout_marginTop="170dp"
         android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_dnd_tile_off" />
+        android:src="@drawable/ic_tile_dnd_off" />
 
 </android.support.design.widget.CoordinatorLayout>

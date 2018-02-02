@@ -111,7 +111,7 @@
         android:layout_alignTop="@+id/radio_group_time"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="170dp"
-        android:drawableTop="@drawable/ic_dnd_go"
+        android:drawableTop="@drawable/ic_button_go"
         android:onClick="onClick" />
 
     <TextView
@@ -127,7 +127,7 @@
         android:layout_alignTop="@+id/advice_mute"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
-        android:drawableTop="@drawable/ic_dnd_mute_alarm"
+        android:drawableTop="@drawable/ic_button_mute_alarm"
         android:text="@string/Mute_alarm"
         android:textColor="@android:color/darker_gray" />
 
@@ -137,7 +137,7 @@
         android:layout_alignTop="@+id/advice_mute"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
-        android:drawableTop="@drawable/ic_dnd_mute_media"
+        android:drawableTop="@drawable/ic_button_mute_media"
         android:text="@string/Mute_media"
         android:textColor="@android:color/darker_gray" />
 
@@ -148,7 +148,7 @@
         android:layout_alignTop="@+id/advice_mute"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="30dp"
-        android:drawableTop="@drawable/ic_dnd_mute_ringer"
+        android:drawableTop="@drawable/ic_button_mute_ringer"
         android:text="@string/Mute_ringer"
         android:textColor="@android:color/darker_gray" />
 </RelativeLayout>

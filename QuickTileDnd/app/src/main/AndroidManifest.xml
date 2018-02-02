@@ -33,7 +33,7 @@
         <service
             android:name=".DndTileService"
             android:enabled="true"
-            android:icon="@drawable/ic_dnd_tile_off"
+            android:icon="@drawable/ic_tile_dnd_off"
             android:label="@string/tile_name"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
