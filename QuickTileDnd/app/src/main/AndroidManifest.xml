@@ -34,7 +34,18 @@
             android:name=".DndTileService"
             android:enabled="true"
             android:icon="@drawable/ic_tile_dnd_off"
-            android:label="@string/tile_name"
+            android:label="@string/tile_name_dnd"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".MuteMediaTileService"
+            android:enabled="true"
+            android:icon="@drawable/ic_tile_mute_media"
+            android:label="@string/tile_name_mute_ringer"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

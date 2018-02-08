@@ -75,6 +75,18 @@ public class DndTileService extends TileService {
     }
 
     @Override
+    public void onStartListening() {
+        super.onStartListening();
+        Log.v(TAG, "onTileAdded()");
+
+        Tile dndTile = this.getQsTile();
+        if (dndTile == null) {
+            dndTile.setState(Tile.STATE_ACTIVE);
+            dndTile.updateTile();
+        }
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (intent == null || intent.getAction() == null) {

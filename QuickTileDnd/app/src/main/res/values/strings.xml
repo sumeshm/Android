@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Quick DnD Tile</string>
-    <string name="tile_name">QuickDnD</string>
+    <string name="tile_name_dnd">QuickDnD</string>
+    <string name="tile_name_mute_ringer">QuickMuteMedia</string>
     <string name="Welcome">Welcome to Dnd quick-settings tile app. Thank you for installing Dnd. Start using the app by adding following tile to the toolbar.</string>
     <string name="Min">&#160;Min</string>
     <string name="Min_0">0 Min</string>
@@ -24,4 +25,5 @@
     <string name="toast_post_total">Total Silence</string>
     <string name="toast_post_priority">Priority Only</string>
     <string name="toast_post_alarms">Alarms Only</string>
+    <string name="toast_mute_media">Media volume is set to zero</string>
 </resources>
