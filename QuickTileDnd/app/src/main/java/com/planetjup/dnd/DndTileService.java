@@ -77,10 +77,10 @@ public class DndTileService extends TileService {
     @Override
     public void onStartListening() {
         super.onStartListening();
-        Log.v(TAG, "onTileAdded()");
+        Log.v(TAG, "onStartListening()");
 
         Tile dndTile = this.getQsTile();
-        if (dndTile == null) {
+        if (dndTile != null) {
             dndTile.setState(Tile.STATE_ACTIVE);
             dndTile.updateTile();
         }
