@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="10dip" >
+    android:padding="10dip">
+
+    <ImageButton
+        android:id="@+id/button_Delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:src="@android:drawable/ic_menu_delete" />
 
     <TextView
         android:id="@+id/text_checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_marginStart="50dp"
         android:text="TextView"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -19,6 +26,6 @@
         android:layout_alignParentRight="true"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:paddingRight="10dp"/>
+        android:paddingRight="10dp" />
 
 </RelativeLayout>

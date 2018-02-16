@@ -7,26 +7,27 @@ package planetjup.com.util;
 public class TaskDetails {
     private String taskName = null;
 
-    private boolean isSelected = false;
+    private boolean isCompleted = false;
 
     public TaskDetails(String name, boolean isSelected) {
         this.taskName = name;
-        this.isSelected = isSelected;
+        this.isCompleted = isSelected;
     }
 
     public String getTaskName() {
         return taskName;
     }
 
+
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    public boolean isCompleted() {
+        return isCompleted;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
+    public void setCompleted(boolean selected) {
+        isCompleted = selected;
     }
 }

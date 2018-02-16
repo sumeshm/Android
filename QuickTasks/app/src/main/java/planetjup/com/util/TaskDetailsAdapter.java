@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -41,11 +42,29 @@ public class TaskDetailsAdapter extends ArrayAdapter<TaskDetails> implements Vie
 
     @Override
     public void onClick(View view) {
-        CheckBox checkBox = (CheckBox) view;
+        Log.v(TAG, "onClick()");
 
-        TaskDetails taskDetails = (TaskDetails) checkBox.getTag();
-        taskDetails.setSelected(checkBox.isChecked());
-        Log.v(TAG, "onClick() : " + taskDetails.getTaskName());
+        TaskDetails taskDetails = (TaskDetails) view.getTag();
+        if (taskDetails == null)
+        {
+            Log.v(TAG, "onClick() : no valid task POJO");
+            return;
+        }
+
+        switch (view.getId()) {
+            case R.id.checkBox:
+                Log.v(TAG, "onClick() : CheckBox : " + taskDetails.getTaskName());
+                CheckBox checkBox = (CheckBox) view;
+                checkBox.setClickable(!checkBox.isChecked());
+                taskDetails.setCompleted(checkBox.isChecked());
+                break;
+
+            case R.id.button_Delete:
+                Log.v(TAG, "onClick() : Delete : " + taskDetails.getTaskName());
+                remove(taskDetails);
+                notifyDataSetChanged();
+                break;
+        }
     }
 
     @NonNull
@@ -53,6 +72,7 @@ public class TaskDetailsAdapter extends ArrayAdapter<TaskDetails> implements Vie
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView textView = null;
         CheckBox checkBox = null;
+        ImageButton deleteButton = null;
         TaskDetails taskDetails = tasksList.get(position);
 
         if (convertView == null)
@@ -64,9 +84,14 @@ public class TaskDetailsAdapter extends ArrayAdapter<TaskDetails> implements Vie
         textView.setText(taskDetails.getTaskName());
 
         checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
-        checkBox.setChecked(taskDetails.isSelected());
+        checkBox.setChecked(taskDetails.isCompleted());
+        checkBox.setClickable(!taskDetails.isCompleted());
         checkBox.setTag(taskDetails);
         checkBox.setOnClickListener(this);
+
+        deleteButton = (ImageButton) convertView.findViewById(R.id.button_Delete);
+        deleteButton.setTag(taskDetails);
+        deleteButton.setOnClickListener(this);
 
         return convertView;
     }

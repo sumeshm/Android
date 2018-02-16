@@ -29,7 +29,7 @@ public class PersistenceHelper {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put(JSON_KEY_NAME, taskDetails.getTaskName());
-                jsonObject.put(JSON_KEY_STATE, taskDetails.isSelected());
+                jsonObject.put(JSON_KEY_STATE, taskDetails.isCompleted());
                 jsonArray.put(jsonObject);
             } catch (JSONException e) {
                 e.printStackTrace();
