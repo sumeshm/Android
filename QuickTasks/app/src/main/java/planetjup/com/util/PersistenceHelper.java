@@ -44,11 +44,11 @@ public class PersistenceHelper {
             editor.putString(PREFERENCES_KEY, null);
         }
 
-        editor.commit();
+        editor.apply();
     }
 
     public static ArrayList<TaskDetails> getStringArrayPref(Context context) {
-        ArrayList<TaskDetails> tasksList = new ArrayList<TaskDetails>();
+        ArrayList<TaskDetails> tasksList = new ArrayList<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         String json = prefs.getString(PREFERENCES_KEY, null);

@@ -2,8 +2,6 @@
     <string name="app_name">Quick Tasks</string>
     <string name="tooltip_action_add">Add a new task</string>
     <string name="title_action_add">Add Task</string>
-    <string name="title_list_view">Quick Tasks List</string>
     <string name="title_popup">Enter name of new task</string>
     <string name="msg_notification">You have pending tasks</string>
-    <string name="Err_permission">Notification permission missing</string>
 </resources>

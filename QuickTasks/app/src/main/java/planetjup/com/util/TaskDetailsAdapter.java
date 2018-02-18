@@ -24,9 +24,9 @@ public class TaskDetailsAdapter extends ArrayAdapter<TaskDetails> implements Vie
 
     private static final String TAG = TaskDetailsAdapter.class.getSimpleName();
 
-    private Context context;
+    final private Context context;
 
-    private ArrayList<TaskDetails> tasksList;
+    final private ArrayList<TaskDetails> tasksList;
 
 
     public TaskDetailsAdapter(@NonNull Context context, int resource, @NonNull ArrayList<TaskDetails> list) {
@@ -44,55 +44,78 @@ public class TaskDetailsAdapter extends ArrayAdapter<TaskDetails> implements Vie
     public void onClick(View view) {
         Log.v(TAG, "onClick()");
 
-        TaskDetails taskDetails = (TaskDetails) view.getTag();
-        if (taskDetails == null)
-        {
-            Log.v(TAG, "onClick() : no valid task POJO");
+        if (view.getTag() == null || view.getTag().getClass() != Container.class) {
+            Log.v(TAG, "onClick() : no valid POJO in tag");
             return;
         }
+
+        Container container = (Container) view.getTag();
+        TaskDetails taskDetails = container.taskDetails;
+        CheckBox checkBox = container.checkBox;
 
         switch (view.getId()) {
             case R.id.checkBox:
                 Log.v(TAG, "onClick() : CheckBox : " + taskDetails.getTaskName());
-                CheckBox checkBox = (CheckBox) view;
-                checkBox.setClickable(!checkBox.isChecked());
-                taskDetails.setCompleted(checkBox.isChecked());
+                boolean isChecked = checkBox.isChecked();
+                checkBox.setEnabled(!isChecked);
+                taskDetails.setCompleted(isChecked);
                 break;
 
             case R.id.button_Delete:
                 Log.v(TAG, "onClick() : Delete : " + taskDetails.getTaskName());
                 remove(taskDetails);
-                notifyDataSetChanged();
+                break;
+
+            case R.id.button_Refresh:
+                Log.v(TAG, "onClick() : Delete : " + taskDetails.getTaskName());
+                if (checkBox.isChecked()) {
+                    checkBox.setChecked(Boolean.FALSE);
+                    checkBox.setEnabled(Boolean.TRUE);
+                    taskDetails.setCompleted(Boolean.FALSE);
+                }
                 break;
         }
+
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        TextView textView = null;
-        CheckBox checkBox = null;
-        ImageButton deleteButton = null;
         TaskDetails taskDetails = tasksList.get(position);
+        Container container = new Container();
 
-        if (convertView == null)
-        {
+        if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.text_view, null);
         }
 
-        textView = (TextView) convertView.findViewById(R.id.text_checkBox);
+        TextView textView = convertView.findViewById(R.id.text_checkBox);
         textView.setText(taskDetails.getTaskName());
 
-        checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
-        checkBox.setChecked(taskDetails.isCompleted());
-        checkBox.setClickable(!taskDetails.isCompleted());
-        checkBox.setTag(taskDetails);
+        CheckBox checkBox = convertView.findViewById(R.id.checkBox);
+        boolean isChecked = taskDetails.isCompleted();
+        checkBox.setChecked(isChecked);
+        checkBox.setEnabled(!isChecked);
+        checkBox.setTag(container);
         checkBox.setOnClickListener(this);
 
-        deleteButton = (ImageButton) convertView.findViewById(R.id.button_Delete);
-        deleteButton.setTag(taskDetails);
+        ImageButton deleteButton = convertView.findViewById(R.id.button_Delete);
+        deleteButton.setTag(container);
         deleteButton.setOnClickListener(this);
 
+        ImageButton refreshButton = convertView.findViewById(R.id.button_Refresh);
+        refreshButton.setTag(container);
+        refreshButton.setOnClickListener(this);
+
+        container.checkBox = checkBox;
+        container.taskDetails = taskDetails;
+
         return convertView;
+    }
+
+
+    private class Container {
+        TaskDetails taskDetails;
+        CheckBox checkBox;
     }
 }

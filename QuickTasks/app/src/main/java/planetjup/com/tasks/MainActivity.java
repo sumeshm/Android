@@ -34,7 +34,6 @@ import planetjup.com.util.TaskDetailsAdapter;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int ON_NOTIFICATION_PERMISSION_CALLBACK_CODE = 0;
 
     private TaskDetailsAdapter arrayAdapter;
 
@@ -121,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listView.setAdapter(arrayAdapter);
     }
 
-    public void sendNotification() {
+    private void sendNotification() {
         Context context = getApplicationContext();
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(

@@ -18,11 +18,6 @@ public class TaskDetails {
         return taskName;
     }
 
-
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
-    }
-
     public boolean isCompleted() {
         return isCompleted;
     }
