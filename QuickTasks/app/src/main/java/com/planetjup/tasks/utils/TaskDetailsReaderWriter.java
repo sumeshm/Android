@@ -1,4 +1,4 @@
-package planetjup.com.util;
+package com.planetjup.tasks.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,12 +11,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by summani on 2/16/18.
+ * This class is an persistence util, that helps save and retrieve task list
+ * Created by Sumesh Mani on 2/16/18.
  */
 
-public class PersistenceHelper {
+public class TaskDetailsReaderWriter {
 
-    private static final String PREFERENCES_KEY = "planetjup.com.util.TaskDetails";
+    private static final String PREFERENCES_KEY = "com.planetjup.tasks.utils.TaskDetails";
     private static final String JSON_KEY_NAME = "name";
     private static final String JSON_KEY_STATE = "checked";
 

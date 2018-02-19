@@ -1,4 +1,4 @@
-package planetjup.com.tasks;
+package com.planetjup.tasks;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -6,24 +6,23 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import planetjup.com.util.PersistenceHelper;
-import planetjup.com.util.TaskDetails;
-import planetjup.com.util.TaskDetailsAdapter;
+import planetjup.com.tasks.R;
+import com.planetjup.tasks.utils.TaskDetailsReaderWriter;
+import com.planetjup.tasks.utils.TaskDetails;
+import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 
 /**
  * This class will manage a quick tasks list.
@@ -31,11 +30,11 @@ import planetjup.com.util.TaskDetailsAdapter;
  * Created by Sumesh Mani on 1/16/18.
  */
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private TaskDetailsAdapter arrayAdapter;
+    private TaskDetailsArrayAdapter arrayAdapter;
 
     private NotificationManager notificationManager;
 
@@ -49,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         setContentView(R.layout.activity_main);
         populateListView();
+
+        ImageButton addButton = findViewById(R.id.buttonAdd);
+        addButton.setOnClickListener(this);
     }
 
     @Override
@@ -56,19 +58,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onDestroy();
         Log.v(TAG, "onDestroy()");
 
-        PersistenceHelper.setStringArrayPref(this, arrayAdapter.getTasksList());
+        TaskDetailsReaderWriter.setStringArrayPref(this, arrayAdapter.getTasksList());
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.v(TAG, "onCreateOptionsMenu()");
-        getMenuInflater().inflate(R.menu.action_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(TAG, "onOptionsItemSelected()");
+    public void onClick(View view) {
+        Log.v(TAG, "onClick() : view.id=" + view.getId());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.title_popup);
@@ -94,13 +89,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
         builder.show();
-
-        return true;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.v(TAG, "onItemClick()");
     }
 
 
@@ -111,12 +99,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //        SimpleDateFormat sdf = new SimpleDateFormat("dd");
 //        String currDate = sdf.format(calendar.getTime());
 
-        ArrayList<TaskDetails> tasksList = PersistenceHelper.getStringArrayPref(this);
+        ArrayList<TaskDetails> tasksList = TaskDetailsReaderWriter.getStringArrayPref(this);
 
-        arrayAdapter = new TaskDetailsAdapter(this, R.layout.text_view, tasksList);
+        arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, tasksList);
 
         ListView listView = findViewById(R.id.listView);
-        listView.setOnItemClickListener(this);
         listView.setAdapter(arrayAdapter);
     }
 
@@ -137,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, getPackageName())
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentText(getString(R.string.msg_notification))
-                .setColor(Color.parseColor("#FF9800"))
+                .setColor(getColor(R.color.colorOrange))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setWhen(System.currentTimeMillis());

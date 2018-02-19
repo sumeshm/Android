@@ -1,4 +1,4 @@
-package planetjup.com.tasks;
+package com.planetjup.tasks;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

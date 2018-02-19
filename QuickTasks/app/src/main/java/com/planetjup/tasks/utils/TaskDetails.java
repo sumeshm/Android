@@ -1,7 +1,8 @@
-package planetjup.com.util;
+package com.planetjup.tasks.utils;
 
 /**
- * Created by summani on 2/16/18.
+ * This class represents the quick task
+ * Created by Sumesh Mani on 2/16/18.
  */
 
 public class TaskDetails {

@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "planetjup.com.tasks"
+        applicationId "com.planetjup.tasks"
         minSdkVersion 26
         targetSdkVersion 26
         versionCode 1

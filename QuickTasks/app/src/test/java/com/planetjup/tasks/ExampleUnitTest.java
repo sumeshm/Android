@@ -1,4 +1,4 @@
-package planetjup.com.tasks;
+package com.planetjup.tasks;
 
 import org.junit.Test;
 
