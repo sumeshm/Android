@@ -152,6 +152,15 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
             this.view.setBackgroundColor(colorInt);
             this.deleteButton.setBackgroundColor(colorInt);
             this.refreshButton.setBackgroundColor(colorInt);
+
+            if (isChecked)
+            {
+                this.checkBox.setVisibility(View.INVISIBLE);
+            }
+            else
+            {
+                this.checkBox.setVisibility(View.VISIBLE);
+            }
         }
     }
 }
