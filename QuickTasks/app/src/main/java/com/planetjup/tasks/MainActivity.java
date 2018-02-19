@@ -17,7 +17,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import planetjup.com.tasks.R;
 import com.planetjup.tasks.utils.TaskDetailsReaderWriter;
@@ -33,6 +36,8 @@ import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private int lastUpdateMonth = -1;
 
     private TaskDetailsArrayAdapter arrayAdapter;
 
@@ -58,7 +63,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         super.onDestroy();
         Log.v(TAG, "onDestroy()");
 
-        TaskDetailsReaderWriter.setStringArrayPref(this, arrayAdapter.getTasksList());
+        TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
+        TaskDetailsReaderWriter.writeTasksRefreshDate(this, lastUpdateMonth);
     }
 
     @Override
@@ -84,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                sendNotification();
+                sendNotification(System.currentTimeMillis());
             }
         });
 
@@ -95,11 +101,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     private void populateListView() {
         Log.v(TAG, "populateListView()");
 
-//        Calendar calendar = Calendar.getInstance();
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd");
-//        String currDate = sdf.format(calendar.getTime());
+        ArrayList<TaskDetails> tasksList = null;
 
-        ArrayList<TaskDetails> tasksList = TaskDetailsReaderWriter.getStringArrayPref(this);
+        if (isResetNeeded())
+        {
+            tasksList = new ArrayList<>();
+        }
+        else
+        {
+            tasksList = TaskDetailsReaderWriter.readTasksList(this);
+        }
 
         arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, tasksList);
 
@@ -107,7 +118,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         listView.setAdapter(arrayAdapter);
     }
 
-    private void sendNotification() {
+    private void sendNotification(long delay) {
+        Log.v(TAG, "sendNotification() : delay=" + new Date(delay));
+
         Context context = getApplicationContext();
         Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -123,13 +136,51 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, getPackageName())
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentText(getString(R.string.msg_notification))
+                .setContentText(getString(R.string.msg_notification) + ", for date=" + new Date(delay).toString())
                 .setColor(getColor(R.color.colorOrange))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setWhen(System.currentTimeMillis());
+                .setWhen(delay);
 
         notificationManager.notify(0, notificationBuilder.build());
+    }
+
+    private boolean isResetNeeded()
+    {
+        Log.v(TAG, "isResetNeeded()");
+
+        Calendar currCalendar = Calendar.getInstance();
+        int currentYear = currCalendar.get(Calendar.YEAR);
+        int currentMonth = currCalendar.get(Calendar.MONTH);
+        int currentDate = currCalendar.get(Calendar.DAY_OF_MONTH);
+        Log.v(TAG, "isResetNeeded() : currentMonth/currendtDate=" + currentMonth + "/" + currentDate);
+
+
+        if (currentDate > 18)
+        {
+            currentMonth++;
+        }
+        if (currentMonth == Calendar.DECEMBER)
+        {
+            currentYear++;
+        }
+
+        lastUpdateMonth = TaskDetailsReaderWriter.readTasksRefreshDate(this);
+        Log.v(TAG, "isResetNeeded() : lastUpdateMonth=" + lastUpdateMonth);
+        if (lastUpdateMonth < currentMonth)
+        {
+            lastUpdateMonth = currentMonth;
+            Calendar futureCalendar = new Calendar.Builder().
+                    set(Calendar.YEAR, currentYear).
+                    set(Calendar.MONTH, currentMonth).
+                    set(Calendar.HOUR, 11).
+                    set(Calendar.DATE, 18).
+                    build();
+
+            sendNotification(futureCalendar.getTime().getTime());
+        }
+
+        return Boolean.FALSE;
     }
 }
 
