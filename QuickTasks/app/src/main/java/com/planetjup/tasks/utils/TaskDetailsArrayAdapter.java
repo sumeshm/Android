@@ -44,6 +44,16 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         return tasksList;
     }
 
+    public void resetListView() {
+        Log.v(TAG, "onClick()");
+
+        for (TaskDetails taskDetails : tasksList) {
+            taskDetails.setCompleted(Boolean.FALSE);
+        }
+
+        notifyDataSetChanged();
+    }
+
     @SuppressLint("Range")
     @Override
     public void onClick(View view) {
@@ -106,7 +116,6 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
     }
 
 
-
     private class ListItemManager {
         final private TaskDetails taskDetails;
         final private View view;
@@ -139,9 +148,8 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
             updateLook(taskDetails.isCompleted());
         }
 
-        private void updateLook(boolean isChecked)
-        {
-            int colorInt = isChecked ? ContextCompat.getColor(view.getContext(), R.color.colorOrangeLight) : Color.WHITE;
+        private void updateLook(boolean isChecked) {
+            int colorInt = isChecked ? ContextCompat.getColor(view.getContext(), R.color.colorOrangeLight) : Color.TRANSPARENT;
 
             // update state
             this.checkBox.setChecked(isChecked);
@@ -153,12 +161,9 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
             this.deleteButton.setBackgroundColor(colorInt);
             this.refreshButton.setBackgroundColor(colorInt);
 
-            if (isChecked)
-            {
+            if (isChecked) {
                 this.checkBox.setVisibility(View.INVISIBLE);
-            }
-            else
-            {
+            } else {
                 this.checkBox.setVisibility(View.VISIBLE);
             }
         }

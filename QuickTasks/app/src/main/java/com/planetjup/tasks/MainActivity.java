@@ -17,15 +17,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import java.text.SimpleDateFormat;
+import com.planetjup.tasks.utils.TaskDetails;
+import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
+import com.planetjup.tasks.utils.TaskDetailsReaderWriter;
+
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 import planetjup.com.tasks.R;
-import com.planetjup.tasks.utils.TaskDetailsReaderWriter;
-import com.planetjup.tasks.utils.TaskDetails;
-import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 
 /**
  * This class will manage a quick tasks list.
@@ -56,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
         ImageButton addButton = findViewById(R.id.buttonAdd);
         addButton.setOnClickListener(this);
+
+        ImageButton resetButton = findViewById(R.id.buttonReset);
+        resetButton.setOnClickListener(this);
     }
 
     @Override
@@ -71,22 +73,51 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     public void onClick(View view) {
         Log.v(TAG, "onClick() : view.id=" + view.getId());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        switch (view.getId()) {
+            case R.id.buttonAdd:
+                showAddDialog();
+                break;
+            case R.id.buttonReset:
+                arrayAdapter.resetListView();
+                break;
+        }
+    }
+
+
+    private void populateListView() {
+        Log.v(TAG, "populateListView()");
+
+        ArrayList<TaskDetails> tasksList = TaskDetailsReaderWriter.readTasksList(this);
+
+        arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, tasksList);
+
+        ListView listView = findViewById(R.id.listView);
+        listView.setAdapter(arrayAdapter);
+    }
+
+    private void showAddDialog() {
+        Log.v(TAG, "showAddDialog()");
+
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_view, null);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
         builder.setTitle(R.string.title_popup);
+        builder.setIcon(R.drawable.ic_notification);
+        builder.setView(dialogView);
 
-        final EditText input = new EditText(this);
-        builder.setView(input);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.button_add, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String newTask = input.getText().toString();
-                arrayAdapter.add(new TaskDetails(newTask, false));
-                arrayAdapter.notifyDataSetChanged();
+                EditText editText = dialogView.findViewById(R.id.editText);
+                String newTask = editText.getText().toString().trim();
+                if (!newTask.isEmpty()) {
+                    arrayAdapter.add(new TaskDetails(newTask, Boolean.FALSE));
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
         });
 
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -95,27 +126,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         });
 
         builder.show();
-    }
-
-
-    private void populateListView() {
-        Log.v(TAG, "populateListView()");
-
-        ArrayList<TaskDetails> tasksList = null;
-
-        if (isResetNeeded())
-        {
-            tasksList = new ArrayList<>();
-        }
-        else
-        {
-            tasksList = TaskDetailsReaderWriter.readTasksList(this);
-        }
-
-        arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, tasksList);
-
-        ListView listView = findViewById(R.id.listView);
-        listView.setAdapter(arrayAdapter);
     }
 
     private void sendNotification(long delay) {
@@ -143,44 +153,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
                 .setWhen(delay);
 
         notificationManager.notify(0, notificationBuilder.build());
-    }
-
-    private boolean isResetNeeded()
-    {
-        Log.v(TAG, "isResetNeeded()");
-
-        Calendar currCalendar = Calendar.getInstance();
-        int currentYear = currCalendar.get(Calendar.YEAR);
-        int currentMonth = currCalendar.get(Calendar.MONTH);
-        int currentDate = currCalendar.get(Calendar.DAY_OF_MONTH);
-        Log.v(TAG, "isResetNeeded() : currentMonth/currendtDate=" + currentMonth + "/" + currentDate);
-
-
-        if (currentDate > 18)
-        {
-            currentMonth++;
-        }
-        if (currentMonth == Calendar.DECEMBER)
-        {
-            currentYear++;
-        }
-
-        lastUpdateMonth = TaskDetailsReaderWriter.readTasksRefreshDate(this);
-        Log.v(TAG, "isResetNeeded() : lastUpdateMonth=" + lastUpdateMonth);
-        if (lastUpdateMonth < currentMonth)
-        {
-            lastUpdateMonth = currentMonth;
-            Calendar futureCalendar = new Calendar.Builder().
-                    set(Calendar.YEAR, currentYear).
-                    set(Calendar.MONTH, currentMonth).
-                    set(Calendar.HOUR, 11).
-                    set(Calendar.DATE, 18).
-                    build();
-
-            sendNotification(futureCalendar.getTime().getTime());
-        }
-
-        return Boolean.FALSE;
     }
 }
 

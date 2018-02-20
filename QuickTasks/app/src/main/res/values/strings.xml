@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Quick Tasks</string>
-    <string name="tooltip_action_add">Add a new task</string>
-    <string name="title_action_add">Add Task</string>
-    <string name="title_popup">Enter name of new task</string>
+    <string name="title_popup">Task Name</string>
     <string name="msg_notification">You have pending tasks</string>
+    <string name="button_add">ADD TASK</string>
+    <string name="button_cancel">CANCEL</string>
+    <string name="hint_task_name">e.g. feed the cat</string>
 </resources>
