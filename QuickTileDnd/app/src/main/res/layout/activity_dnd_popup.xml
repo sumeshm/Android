@@ -92,9 +92,8 @@
             android:layout_alignTop="@+id/radio_group_time"
             android:layout_marginTop="140dp"
             android:gravity="center"
-            android:text="@string/Min_0"
-            android:textSize="18sp"
-            android:textStyle="italic" />
+            style="@style/dnd_text"
+            android:text="@string/Min_0" />
 
         <SeekBar
             android:id="@+id/seekBar"
