@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.planetjup.tasks.reminder.ReminderService;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 import com.planetjup.tasks.utils.TaskDetailsReaderWriter;
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
+
+        startService(new Intent(this, ReminderService.class));
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 

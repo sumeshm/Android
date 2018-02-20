@@ -21,7 +21,7 @@
             android:layout_alignTop="@+id/advice_mode"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
-            android:layout_marginVertical="40dp"
+            android:layout_marginVertical="45dp"
             android:gravity="center"
             android:orientation="horizontal">
 
