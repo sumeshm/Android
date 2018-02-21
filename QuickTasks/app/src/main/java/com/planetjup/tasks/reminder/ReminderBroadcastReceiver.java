@@ -1,5 +1,6 @@
 package com.planetjup.tasks.reminder;
 
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,42 +9,53 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.planetjup.tasks.MainActivity;
+
+import java.util.Calendar;
+
 import planetjup.com.tasks.R;
 
 /**
- * This class will start the ReminderService after phone boot-up
+ * This class will receive broadcasts sent by main activity. This class will setup repeating reminders.
+ * This reminder will be triggered every month, on the 18th day. For each trigger from AlarmManager,
+ * a push-notification is created and the next reminder is queued.
+ *
+ * This class will also listen for REBOOT event, so that the reminder can be queued again.
+ * This class will behave like a pseudo service, which does not have to be kept alive.
+ *
  * <p>
  * Created by Sumesh Mani on 2/20/18.
  */
 
 public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver {
 
+    public static final String ACTION_START_ALARM = "com.planetjup.tasks.action.START_ALARM";
     public static final String ACTION_SEND_REMINDER = "com.planetjup.tasks.action.SEND_REMINDER";
 
-    private static final String TAG = ReminderService.class.getSimpleName();
+    private static final String TAG = ReminderBroadcastReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive()");
 
-        if (intent.getAction() != null)
-        {
+        if (intent.getAction() != null) {
             Log.v(TAG, "onReceive() : Intent.Action=" + intent.getAction());
 
-            if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
-                context.startService(new Intent(context, ReminderService.class));
-            } else if (intent.getAction().equalsIgnoreCase(ACTION_SEND_REMINDER)) {
-                sendQuickTasksNotification(context);
-
-                Intent timerIntent = new Intent(context, ReminderService.class);
-                timerIntent.setAction(ReminderService.ACTION_START_TIMER);
-                context.startService(timerIntent);
+            if (intent.getAction().equalsIgnoreCase(ACTION_START_ALARM))
+            {
+                startDelayedAlarm(context.getApplicationContext());
+            }
+            else if (intent.getAction().equalsIgnoreCase(ACTION_SEND_REMINDER)) {
+                sendQuickTasksNotification(context.getApplicationContext());
+                startDelayedAlarm(context.getApplicationContext());
             }
         }
     }
 
     public void sendQuickTasksNotification(Context context) {
-        Intent reminderIntent = new Intent(context, ReminderService.class);
+        Log.v(TAG, "sendQuickTasksNotification()");
+        Intent reminderIntent = new Intent(context, MainActivity.class);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
                 0,
@@ -67,5 +79,28 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
 
         notificationManager.notify(0, notificationBuilder.build());
 
+    }
+
+    private void startDelayedAlarm(Context context) {
+        Log.v(TAG, "startDelayedAlarm()");
+        Calendar currCalendar = Calendar.getInstance();
+
+        Calendar nextCalendar = Calendar.getInstance();
+        nextCalendar.set(Calendar.MONTH, currCalendar.get(Calendar.MONTH) + 1);
+        nextCalendar.set(Calendar.DAY_OF_MONTH, 18);
+        nextCalendar.set(Calendar.HOUR_OF_DAY, 11);
+
+//        nextCalendar.set(Calendar.DAY_OF_MONTH, currCalendar.get(Calendar.DAY_OF_MONTH) + 1);
+//        nextCalendar.set(Calendar.HOUR_OF_DAY, 11);
+
+        Log.v(TAG, "startDelayedAlarm() : currCalendar=" + currCalendar.getTime());
+        Log.v(TAG, "startDelayedAlarm() : nextCalendar=" + nextCalendar.getTime());
+
+        Intent intent = new Intent(context, ReminderBroadcastReceiver.class);
+        intent.setAction(ACTION_SEND_REMINDER);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, nextCalendar.getTimeInMillis(), pendingIntent);
     }
 }

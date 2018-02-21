@@ -30,8 +30,6 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.planetjup.tasks.reminder.ReminderService" />
-
     </application>
 
 </manifest>

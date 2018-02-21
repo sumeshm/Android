@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * This class is an persistence util, that helps save and retrieve task list
@@ -19,7 +18,6 @@ import java.util.Date;
 public class TaskDetailsReaderWriter {
 
     private static final String PREFERENCES_KEY_TASKS = "com_planetjup_tasks_TasksList";
-    private static final String PREFERENCES_KEY_REFRESH_DATE = "com_planetjup_tasks_Refresh_Date";
 
     private static final String JSON_KEY_NAME = "name";
     private static final String JSON_KEY_STATE = "checked";
@@ -70,20 +68,4 @@ public class TaskDetailsReaderWriter {
 
         return tasksList;
     }
-
-    public static void writeTasksRefreshDate(Context context, int month) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        editor.putInt(PREFERENCES_KEY_REFRESH_DATE, month);
-        editor.apply();
-    }
-
-    public static int readTasksRefreshDate(Context context) {
-        Date retVal = null;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-        return prefs.getInt(PREFERENCES_KEY_REFRESH_DATE, -1);
-    }
-
 }

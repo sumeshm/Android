@@ -1,13 +1,8 @@
 package com.planetjup.tasks;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,13 +12,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import com.planetjup.tasks.reminder.ReminderService;
+import com.planetjup.tasks.reminder.ReminderBroadcastReceiver;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 import com.planetjup.tasks.utils.TaskDetailsReaderWriter;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import planetjup.com.tasks.R;
 
@@ -37,11 +31,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private int lastUpdateMonth = -1;
-
     private TaskDetailsArrayAdapter arrayAdapter;
-
-    private NotificationManager notificationManager;
 
 
     @Override
@@ -49,9 +39,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
 
-        startService(new Intent(this, ReminderService.class));
-
-        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // trigger a reminder every month (on 18th day) about pending tasks
+        startAlarmBroadcast();
 
         setContentView(R.layout.activity_main);
         populateListView();
@@ -69,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         Log.v(TAG, "onDestroy()");
 
         TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
-        TaskDetailsReaderWriter.writeTasksRefreshDate(this, lastUpdateMonth);
     }
 
     @Override
@@ -124,38 +112,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                sendNotification(System.currentTimeMillis());
             }
         });
 
         builder.show();
     }
 
-    private void sendNotification(long delay) {
-        Log.v(TAG, "sendNotification() : delay=" + new Date(delay));
-
-        Context context = getApplicationContext();
-        Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
-        NotificationChannel channel = new NotificationChannel(getPackageName(),
-                getString(R.string.app_name),
-                NotificationManager.IMPORTANCE_DEFAULT);
-        notificationManager.createNotificationChannel(channel);
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, getPackageName())
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentText(getString(R.string.msg_notification) + ", for date=" + new Date(delay).toString())
-                .setColor(getColor(R.color.colorOrange))
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setWhen(delay);
-
-        notificationManager.notify(0, notificationBuilder.build());
+    private void startAlarmBroadcast() {
+        Log.v(TAG, "startDelayedAlarm()");
+        Intent intent = new Intent(this, ReminderBroadcastReceiver.class);
+        intent.setAction(ReminderBroadcastReceiver.ACTION_START_ALARM);
+        sendBroadcast(intent);
     }
 }
 
