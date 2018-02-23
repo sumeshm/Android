@@ -21,7 +21,7 @@ public class DndMainActivity extends AppCompatActivity {
 
     private static boolean isAllowed = Boolean.FALSE;
 
-    private NotificationManager notificationManager;
+    NotificationManager notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +32,7 @@ public class DndMainActivity extends AppCompatActivity {
 
         if (!getPermission()) {
             Log.v(TAG, "exitActivity : msg=" + R.string.Err_permission);
-            finish();
-        } else {
-            setContentView(R.layout.activity_dnd_main);
+            //finish();
         }
     }
 
@@ -45,19 +43,41 @@ public class DndMainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult :: requestCode=" + requestCode);
+    protected void onStart() {
+        super.onStart();
+        Log.v(TAG, "onStart()");
 
-        if (requestCode == DndMainActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE) {
-            Log.v(TAG, "onActivityResult: ON_DO_NOT_DISTURB_CALLBACK_CODE");
+        if (isAllowed) {
+            startDndService();
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v(TAG, "onStop()");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(TAG, "onActivityResult() :: requestCode=" + requestCode);
+
+        if (requestCode == DndMainActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE && notificationManager.isNotificationPolicyAccessGranted()) {
+            Log.v(TAG, "onActivityResult: ON_DO_NOT_DISTURB_CALLBACK_CODE = Granted");
             isAllowed = true;
+        }
+        else {
+            Log.v(TAG, "onActivityResult: ON_DO_NOT_DISTURB_CALLBACK_CODE = NOT Granted");
+            finish();
         }
     }
 
     private boolean getPermission() {
-        Log.v(TAG, "getPermission : isAllowed=" + isAllowed);
+        Log.v(TAG, "getPermission() : isAllowed=" + isAllowed);
 
         if (isAllowed) {
+            startDndService();
             return Boolean.TRUE;
         }
 
@@ -75,5 +95,14 @@ public class DndMainActivity extends AppCompatActivity {
         }
 
         return isAllowed;
+    }
+
+    private void startDndService()
+    {
+        Log.v(TAG, "startDndService()");
+
+        Intent dndIntent = new Intent(this, DndTileService.class);
+        dndIntent.setAction(DndTileService.ACTION_SHOW_POPUP);
+        startService(dndIntent);
     }
 }

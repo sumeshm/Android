@@ -27,10 +27,11 @@ import android.widget.Toast;
 public class DndTileService extends TileService {
 
     // custom actions that the dialog-activity can use to pass back user choices
-    public static final String ACTION_START_TIMER = "com.planetjup.dnd.ACTION_START_TIMER";
-    public static final String ACTION_MUTE_RINGER = "com.planetjup.dnd.ACTION_MUTE_RINGER";
-    public static final String ACTION_MUTE_MUSIC = "com.planetjup.dnd.ACTION_MUTE_MUSIC";
-    public static final String ACTION_MUTE_ALARM = "com.planetjup.dnd.ACTION_MUTE_ALARM";
+    public static final String ACTION_SHOW_POPUP = "com.planetjup.dnd.SHOW_POPUP";
+    public static final String ACTION_START_TIMER = "com.planetjup.dnd.START_TIMER";
+    public static final String ACTION_MUTE_RINGER = "com.planetjup.dnd.MUTE_RINGER";
+    public static final String ACTION_MUTE_MUSIC = "com.planetjup.dnd.MUTE_MUSIC";
+    public static final String ACTION_MUTE_ALARM = "com.planetjup.dnd.MUTE_ALARM";
 
     // keys for user data that will be passed along with the Intent's extra data
     public static final String KEY_INTERRUPTION_FILTER = "com.planetjup.dnd.KEY_INTERRUPTION_FILTER";
@@ -98,6 +99,10 @@ public class DndTileService extends TileService {
         Log.v(TAG, "onStartCommand() : action=" + action);
 
         switch (action) {
+            case ACTION_SHOW_POPUP:
+                showDndActivity(false);
+                break;
+
             case ACTION_START_TIMER:
                 int interruptionMode = intent.getIntExtra(KEY_INTERRUPTION_FILTER, NotificationManager.INTERRUPTION_FILTER_NONE);
                 int countDownTime = intent.getIntExtra(KEY_DND_DURATION, 0);
@@ -141,7 +146,7 @@ public class DndTileService extends TileService {
                 break;
             case AudioManager.RINGER_MODE_VIBRATE:
             case AudioManager.RINGER_MODE_NORMAL:
-                showDndActivity();
+                showDndActivity(true);
                 break;
         }
     }
@@ -285,12 +290,18 @@ public class DndTileService extends TileService {
         }.start();
     }
 
-    private void showDndActivity() {
-        Log.v(TAG, "showDndActivity()");
+    private void showDndActivity(boolean isCollapse) {
+        Log.v(TAG, "showDndActivity() : isCollapse=" + isCollapse);
 
-        Intent intent = new Intent();
-        intent.setClass(this, DndPopupActivity.class);
-        startActivityAndCollapse(intent);
+        Intent intent = new Intent(this, DndPopupActivity.class);
+        if (isCollapse == Boolean.TRUE)
+        {
+            startActivityAndCollapse(intent);
+        }
+        else
+        {
+            startActivity(intent);
+        }
     }
 
     private void showSettingsActivity() {
