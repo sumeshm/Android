@@ -86,12 +86,15 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
         Calendar currCalendar = Calendar.getInstance();
 
         Calendar nextCalendar = Calendar.getInstance();
+        nextCalendar.set(Calendar.SECOND, 0);
+        nextCalendar.set(Calendar.MINUTE, 0);
+        nextCalendar.set(Calendar.HOUR, 11);
+        nextCalendar.set(Calendar.AM_PM, Calendar.AM);
         nextCalendar.set(Calendar.MONTH, currCalendar.get(Calendar.MONTH) + 1);
         nextCalendar.set(Calendar.DAY_OF_MONTH, 18);
-        nextCalendar.set(Calendar.HOUR_OF_DAY, 11);
 
-//        nextCalendar.set(Calendar.DAY_OF_MONTH, currCalendar.get(Calendar.DAY_OF_MONTH) + 1);
-//        nextCalendar.set(Calendar.HOUR_OF_DAY, 11);
+        //nextCalendar.set(Calendar.HOUR_OF_DAY, 11);
+//        nextCalendar.set(Calendar.MINUTE, currCalendar.get(Calendar.MINUTE) + 1);
 
         Log.v(TAG, "startDelayedAlarm() : currCalendar=" + currCalendar.getTime());
         Log.v(TAG, "startDelayedAlarm() : nextCalendar=" + nextCalendar.getTime());
@@ -101,6 +104,6 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC, nextCalendar.getTimeInMillis(), pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, nextCalendar.getTimeInMillis(), pendingIntent);
     }
 }
