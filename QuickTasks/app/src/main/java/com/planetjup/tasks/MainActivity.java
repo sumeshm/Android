@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
 
-        // trigger a reminder every month (on 18th day) about pending tasks
+        // trigger a reminder every month (on 18th day at 11 am) about pending tasks
         startAlarmBroadcast();
 
         setContentView(R.layout.activity_main);
@@ -56,6 +56,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     protected void onDestroy() {
         super.onDestroy();
         Log.v(TAG, "onDestroy()");
+
+        TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v(TAG, "onStop()");
+
+        TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v(TAG, "onPause()");
 
         TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
     }
