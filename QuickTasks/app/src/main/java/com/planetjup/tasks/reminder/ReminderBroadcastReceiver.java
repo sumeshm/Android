@@ -1,12 +1,14 @@
 package com.planetjup.tasks.reminder;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.planetjup.tasks.MainActivity;
@@ -63,22 +65,24 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
                 reminderIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationChannel channel = new NotificationChannel(context.getPackageName(),
+        NotificationChannel channel = new NotificationChannel(
+                context.getPackageName(),
                 context.getString(R.string.app_name),
                 NotificationManager.IMPORTANCE_DEFAULT);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(channel);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, context.getPackageName())
+        Notification notification = new NotificationCompat.Builder(context, channel.getId())
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentText(context.getString(R.string.msg_notification))
                 .setColor(context.getColor(R.color.colorOrange))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setWhen(0);
+                .setWhen(0)
+                .build();
 
-        notificationManager.notify(0, notificationBuilder.build());
+        notificationManager.notify(0, notification);
     }
 
     private void startDelayedAlarm(Context context, int targetDayOfMonth) {
@@ -100,7 +104,7 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
             nextCalendar.set(Calendar.MONTH, currCalendar.get(Calendar.MONTH) + 1);
         }
 
-        // nextCalendar.set(Calendar.MINUTE, currCalendar.get(Calendar.MINUTE) + 1);
+//         nextCalendar.set(Calendar.MINUTE, currCalendar.get(Calendar.MINUTE) + 1);
 
         Log.v(TAG, "startDelayedAlarm() : currCalendar=" + currCalendar.getTime());
         Log.v(TAG, "startDelayedAlarm() : nextCalendar=" + nextCalendar.getTime());

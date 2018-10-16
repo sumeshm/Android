@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <item
+        android:id="@+id/menuAdd"
+        android:icon="@drawable/ic_button_add"
+        android:title=""
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/menuReset"
+        android:icon="@drawable/ic_button_refresh"
+        android:title=""
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/menuExport"
+        android:title="EXPORT" />
+
+    <item
+        android:id="@+id/menuImport"
+        android:title="IMPORT" />
+
+    <item
+        android:id="@+id/menuReminder"
+        android:title="REMINDER" />
+</menu>

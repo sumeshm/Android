@@ -5,12 +5,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.planetjup.tasks.reminder.ReminderBroadcastReceiver;
 import com.planetjup.tasks.utils.TaskDetails;
@@ -21,13 +26,14 @@ import java.util.ArrayList;
 
 import planetjup.com.tasks.R;
 
+
 /**
  * This class will manage a quick tasks list.
  * <p>
  * Created by Sumesh Mani on 1/16/18.
  */
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -45,11 +51,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
         setContentView(R.layout.activity_main);
         populateListView();
 
-        ImageButton addButton = findViewById(R.id.buttonAdd);
-        addButton.setOnClickListener(this);
-
-        ImageButton resetButton = findViewById(R.id.buttonReset);
-        resetButton.setOnClickListener(this);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -77,17 +80,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnCli
     }
 
     @Override
-    public void onClick(View view) {
-        Log.v(TAG, "onClick() : view.id=" + view.getId());
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.toolbar_options, menu);
 
-        switch (view.getId()) {
-            case R.id.buttonAdd:
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+            case R.id.menuAdd:
                 showAddDialog();
                 break;
-            case R.id.buttonReset:
+
+            case R.id.menuReset:
                 arrayAdapter.resetListView();
                 break;
+
+            case R.id.menuImport:
+                Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.menuExport:
+                Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.menuReminder:
+                Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
+                break;
         }
+
+        return true;
     }
 
 
