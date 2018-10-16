@@ -11,10 +11,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.planetjup.tasks.reminder.ReminderBroadcastReceiver;
@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private TaskDetailsArrayAdapter arrayAdapter;
-
+    private int reminderDay = 15;
+    private int reminderHour = 11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.menuReminder:
-                Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
+                showPickerDialog();
                 break;
         }
 
@@ -159,10 +160,48 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
+    private void showPickerDialog() {
+        Log.v(TAG, "showPickerDialog()");
+
+        final View dialogPicker = getLayoutInflater().inflate(R.layout.dialog_picker, null);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        builder.setTitle(R.string.title_picker);
+        builder.setIcon(R.drawable.ic_notification);
+        builder.setView(dialogPicker);
+
+        final NumberPicker pickerDayOfMonth = dialogPicker.findViewById(R.id.pickerDayOfMonth);
+        pickerDayOfMonth.setMinValue(1);
+        pickerDayOfMonth.setMaxValue(28);
+        pickerDayOfMonth.setValue(reminderDay);
+
+        final NumberPicker pickerHourOfDay = dialogPicker.findViewById(R.id.pickerHourOfDay);
+        pickerHourOfDay.setMinValue(0);
+        pickerHourOfDay.setMaxValue(23);
+        pickerHourOfDay.setValue(reminderHour);
+
+        final AlertDialog dialog = builder.show();
+
+        Button submitButton = dialogPicker.findViewById(R.id.submitButton);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reminderDay = pickerDayOfMonth.getValue();
+                reminderHour = pickerHourOfDay.getValue();
+                dialog.cancel();
+                startAlarmBroadcast();
+            }
+        });
+    }
+
     private void startAlarmBroadcast() {
-        Log.v(TAG, "startDelayedAlarm()");
+        Log.v(TAG, "startAlarmBroadcast()");
+        Log.v(TAG, "startAlarmBroadcast(): HOUR=" + reminderHour);
+        Log.v(TAG, "startAlarmBroadcast():  DAY=" + reminderDay);
         Intent intent = new Intent(this, ReminderBroadcastReceiver.class);
         intent.setAction(ReminderBroadcastReceiver.ACTION_START_ALARM);
+        intent.putExtra(ReminderBroadcastReceiver.EXTRA_DAY, reminderDay);
+        intent.putExtra(ReminderBroadcastReceiver.EXTRA_HOUR, reminderHour);
         sendBroadcast(intent);
     }
 }

@@ -34,10 +34,13 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
     public static final String ACTION_START_ALARM = "com.planetjup.tasks.action.START_ALARM";
     public static final String ACTION_SEND_REMINDER = "com.planetjup.tasks.action.SEND_REMINDER";
 
-    public static final int REMINDER_FIRST_DAY = 15;
-    public static final int REMINDER_SECOND_DAY = 20;
+    public static final String EXTRA_DAY = "com.planetjup.tasks.extra.EXTRA_DAY";
+    public static final String EXTRA_HOUR = "com.planetjup.tasks.extra.EXTRA_HOUR";
 
     private static final String TAG = ReminderBroadcastReceiver.class.getSimpleName();
+
+    public int reminderDay;
+    public int reminderHour;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -50,8 +53,11 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
                 sendQuickTasksNotification(context.getApplicationContext());
             }
 
-            startDelayedAlarm(context.getApplicationContext(), REMINDER_FIRST_DAY);
-            startDelayedAlarm(context.getApplicationContext(), REMINDER_SECOND_DAY);
+            reminderDay = intent.getIntExtra(EXTRA_DAY, 0);
+            reminderHour = intent.getIntExtra(EXTRA_HOUR, 0);
+
+            startDelayedAlarm(context.getApplicationContext());
+            startDelayedAlarm(context.getApplicationContext());
         }
     }
 
@@ -85,7 +91,7 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
         notificationManager.notify(0, notification);
     }
 
-    private void startDelayedAlarm(Context context, int targetDayOfMonth) {
+    private void startDelayedAlarm(Context context) {
         Log.v(TAG, "startDelayedAlarm()");
         Calendar currCalendar = Calendar.getInstance();
         int currDayOfMonth = currCalendar.get(Calendar.DAY_OF_MONTH);
@@ -93,10 +99,10 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
         Calendar nextCalendar = Calendar.getInstance();
         nextCalendar.set(Calendar.SECOND, 0);
         nextCalendar.set(Calendar.MINUTE, 0);
-        nextCalendar.set(Calendar.HOUR_OF_DAY, 11);
-        nextCalendar.set(Calendar.DAY_OF_MONTH, targetDayOfMonth);
+        nextCalendar.set(Calendar.HOUR_OF_DAY, reminderHour);
+        nextCalendar.set(Calendar.DAY_OF_MONTH, reminderDay);
 
-        if (currDayOfMonth < targetDayOfMonth) {
+        if (currDayOfMonth < reminderDay) {
             // notify starting this month
             nextCalendar.set(Calendar.MONTH, currCalendar.get(Calendar.MONTH));
         } else {

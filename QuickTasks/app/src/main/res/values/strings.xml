@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Quick Tasks</string>
     <string name="title_popup">Task Name</string>
+    <string name="title_picker">Select Day of Month and Hour of Day for Reminder</string>
     <string name="msg_notification">You have pending tasks, click here to see them</string>
     <string name="button_add">ADD TASK</string>
     <string name="button_cancel">CANCEL</string>
+    <string name="button_submit">SUBMIT</string>
     <string name="hint_task_name">e.g. feed the cat</string>
+    <string name="picker_day">DAY</string>
+    <string name="picker_hour">HOUR</string>
 </resources>

@@ -10,15 +10,13 @@
         android:id="@+id/menuAdd"
         android:icon="@drawable/ic_button_add"
         android:title=""
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menuReset"
         android:icon="@drawable/ic_button_refresh"
         android:title=""
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/menuExport"
