@@ -4,43 +4,50 @@
     android:layout_height="wrap_content"
     android:padding="4dp" >
 
-    <TextView
-        android:id="@+id/textHourOfDay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/picker_day"
-        android:layout_marginStart="70dp"
-        android:layout_marginTop="10dp"
-        android:textSize="20dp" />
-
-    <TextView
-        android:id="@+id/textDayOfMonth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="65dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/picker_hour"
-        android:textSize="20dp" />
-
     <NumberPicker
-        android:id="@+id/pickerDayOfMonth"
+        android:id="@+id/pickerDay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="50dp"
-        android:textSize="60dp" />
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        style="@style/pickerText"
+        android:id="@+id/textDay"
+        android:layout_marginStart="65dp"
+        android:layout_below="@+id/pickerDay"
+        android:text="@string/picker_day" />
 
     <NumberPicker
-        android:id="@+id/pickerHourOfDay"
+        android:id="@+id/pickerHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        style="@style/pickerText"
+        android:id="@+id/textHour"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/pickerHour"
+        android:text="@string/picker_hour" />
+
+    <NumberPicker
+        android:id="@+id/pickerMinute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="50dp" />
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        style="@style/pickerText"
+        android:id="@+id/textMinute"
+        android:layout_marginEnd="65dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/pickerMinute"
+        android:text="@string/picker_minute" />
 
     <Button
         android:id="@+id/submitButton"

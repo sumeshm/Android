@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name="com.planetjup.tasks.reminder.ReminderBroadcastReceiver">
+        <receiver android:name="com.planetjup.tasks.reminder.AlarmManager">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.planetjup.tasks.action.SEND_REMINDER" />

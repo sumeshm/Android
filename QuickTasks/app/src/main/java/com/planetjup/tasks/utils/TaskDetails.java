@@ -6,9 +6,9 @@ package com.planetjup.tasks.utils;
  */
 
 public class TaskDetails {
-    private String taskName = null;
+    private final String taskName;
 
-    private boolean isCompleted = false;
+    private boolean isCompleted;
 
     public TaskDetails(String name, boolean isSelected) {
         this.taskName = name;

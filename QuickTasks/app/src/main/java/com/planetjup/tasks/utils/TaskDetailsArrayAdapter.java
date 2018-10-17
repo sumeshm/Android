@@ -96,7 +96,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
             convertView = LayoutInflater.from(context).inflate(R.layout.text_view, null);
         }
 
-        ListItemManager listItemManager = new ListItemManager(tasksList.get(position), convertView, this);
+        new ListItemManager(tasksList.get(position), convertView, this);
 
         return convertView;
     }
@@ -124,7 +124,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         final private ImageButton deleteButton;
         final private ImageButton refreshButton;
 
-        public ListItemManager(@NonNull TaskDetails taskDetails, @NonNull View view, @NonNull View.OnClickListener listener) {
+        private ListItemManager(@NonNull TaskDetails taskDetails, @NonNull View view, @NonNull View.OnClickListener listener) {
             this.taskDetails = taskDetails;
 
             this.view = view;

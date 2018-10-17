@@ -1,6 +1,5 @@
 package com.planetjup.tasks.reminder;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -8,10 +7,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.planetjup.tasks.MainActivity;
+import com.planetjup.tasks.utils.ReminderDetails;
 
 import java.util.Calendar;
 
@@ -21,26 +20,25 @@ import planetjup.com.tasks.R;
  * This class will receive broadcasts sent by main activity. This class will setup repeating reminders.
  * This reminder will be triggered every month, on the 18th day. For each trigger from AlarmManager,
  * a push-notification is created and the next reminder is queued.
- *
+ * <p>
  * This class will also listen for REBOOT event, so that the reminder can be queued again.
  * This class will behave like a pseudo service, which does not have to be kept alive.
- *
+ * <p>
  * <p>
  * Created by Sumesh Mani on 2/20/18.
  */
 
-public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver {
+public class AlarmManager extends android.content.BroadcastReceiver {
 
     public static final String ACTION_START_ALARM = "com.planetjup.tasks.action.START_ALARM";
-    public static final String ACTION_SEND_REMINDER = "com.planetjup.tasks.action.SEND_REMINDER";
+    private static final String ACTION_SEND_REMINDER = "com.planetjup.tasks.action.SEND_REMINDER";
 
-    public static final String EXTRA_DAY = "com.planetjup.tasks.extra.EXTRA_DAY";
-    public static final String EXTRA_HOUR = "com.planetjup.tasks.extra.EXTRA_HOUR";
+    public static final String EXTRA_REMINDER_TYPE = "com.planetjup.tasks.extra.EXTRA_REMINDER_TYPE";
+    public static final String EXTRA_REMINDER_DAY = "com.planetjup.tasks.extra.EXTRA_REMINDER_DAY";
+    public static final String EXTRA_REMINDER_HOUR = "com.planetjup.tasks.extra.EXTRA_REMINDER_HOUR";
+    public static final String EXTRA_REMINDER_MINUTE = "com.planetjup.tasks.extra.EXTRA_REMINDER_MINUTE";
 
-    private static final String TAG = ReminderBroadcastReceiver.class.getSimpleName();
-
-    public int reminderDay;
-    public int reminderHour;
+    private static final String TAG = AlarmManager.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -53,15 +51,17 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
                 sendQuickTasksNotification(context.getApplicationContext());
             }
 
-            reminderDay = intent.getIntExtra(EXTRA_DAY, 0);
-            reminderHour = intent.getIntExtra(EXTRA_HOUR, 0);
+            int type = intent.getIntExtra(EXTRA_REMINDER_TYPE, 0);
+            int day = intent.getIntExtra(EXTRA_REMINDER_DAY, 0);
+            int hour = intent.getIntExtra(EXTRA_REMINDER_HOUR, 0);
+            int minute = intent.getIntExtra(EXTRA_REMINDER_MINUTE, 0);
 
-            startDelayedAlarm(context.getApplicationContext());
-            startDelayedAlarm(context.getApplicationContext());
+            ReminderDetails reminderDetails = new ReminderDetails(ReminderDetails.REMINDER_TYPE.getType(type), day, hour, minute);
+            startDelayedAlarm(context.getApplicationContext(), reminderDetails);
         }
     }
 
-    public void sendQuickTasksNotification(Context context) {
+    private void sendQuickTasksNotification(Context context) {
         Log.v(TAG, "sendQuickTasksNotification()");
         Intent reminderIntent = new Intent(context, MainActivity.class);
 
@@ -77,32 +77,37 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
                 NotificationManager.IMPORTANCE_DEFAULT);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.createNotificationChannel(channel);
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel(channel);
 
-        Notification notification = new NotificationCompat.Builder(context, channel.getId())
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentText(context.getString(R.string.msg_notification))
-                .setColor(context.getColor(R.color.colorOrange))
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent)
-                .setWhen(0)
-                .build();
+            Notification notification = new NotificationCompat.Builder(context, channel.getId())
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentText(context.getString(R.string.msg_notification))
+                    .setColor(context.getColor(R.color.colorOrange))
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .setWhen(0)
+                    .build();
 
-        notificationManager.notify(0, notification);
+            notificationManager.notify(0, notification);
+        } else {
+            Log.e(TAG, "sendQuickTasksNotification(): failed to get NotificationManager");
+        }
     }
 
-    private void startDelayedAlarm(Context context) {
+    private void startDelayedAlarm(Context context, ReminderDetails reminderDetails) {
         Log.v(TAG, "startDelayedAlarm()");
         Calendar currCalendar = Calendar.getInstance();
-        int currDayOfMonth = currCalendar.get(Calendar.DAY_OF_MONTH);
+        int currDay = currCalendar.get(Calendar.DAY_OF_MONTH);
+        int currMin = currCalendar.get(Calendar.MINUTE);
 
         Calendar nextCalendar = Calendar.getInstance();
         nextCalendar.set(Calendar.SECOND, 0);
-        nextCalendar.set(Calendar.MINUTE, 0);
-        nextCalendar.set(Calendar.HOUR_OF_DAY, reminderHour);
-        nextCalendar.set(Calendar.DAY_OF_MONTH, reminderDay);
+        nextCalendar.set(Calendar.MINUTE, reminderDetails.getMinute());
+        nextCalendar.set(Calendar.HOUR_OF_DAY, reminderDetails.getHour());
+        nextCalendar.set(Calendar.DAY_OF_MONTH, reminderDetails.getDay());
 
-        if (currDayOfMonth < reminderDay) {
+        if (currDay <= reminderDetails.getDay() && currMin < reminderDetails.getMinute()) {
             // notify starting this month
             nextCalendar.set(Calendar.MONTH, currCalendar.get(Calendar.MONTH));
         } else {
@@ -115,11 +120,15 @@ public class ReminderBroadcastReceiver extends android.content.BroadcastReceiver
         Log.v(TAG, "startDelayedAlarm() : currCalendar=" + currCalendar.getTime());
         Log.v(TAG, "startDelayedAlarm() : nextCalendar=" + nextCalendar.getTime());
 
-        Intent intent = new Intent(context, ReminderBroadcastReceiver.class);
+        Intent intent = new Intent(context, AlarmManager.class);
         intent.setAction(ACTION_SEND_REMINDER);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, nextCalendar.getTimeInMillis(), pendingIntent);
+        android.app.AlarmManager alarmManager = (android.app.AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager != null) {
+            alarmManager.set(android.app.AlarmManager.RTC_WAKEUP, nextCalendar.getTimeInMillis(), pendingIntent);
+        } else {
+            Log.e(TAG, "startDelayedAlarm(): failed to get AlarmManager");
+        }
     }
 }

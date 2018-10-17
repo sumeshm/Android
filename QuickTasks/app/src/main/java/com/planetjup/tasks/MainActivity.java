@@ -17,12 +17,14 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
-import com.planetjup.tasks.reminder.ReminderBroadcastReceiver;
+import com.planetjup.tasks.reminder.AlarmManager;
+import com.planetjup.tasks.utils.PersistenceManager;
+import com.planetjup.tasks.utils.ReminderDetails;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
-import com.planetjup.tasks.utils.TaskDetailsReaderWriter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import planetjup.com.tasks.R;
 
@@ -38,16 +40,17 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private TaskDetailsArrayAdapter arrayAdapter;
-    private int reminderDay = 15;
-    private int reminderHour = 11;
+    private List<ReminderDetails> reminderList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
 
-        // trigger a reminder every month (on 18th day at 11 am) about pending tasks
-        startAlarmBroadcast();
+        reminderList = PersistenceManager.readReminderList(this);
+        for (ReminderDetails details : reminderList) {
+            startAlarmBroadcast(details);
+        }
 
         setContentView(R.layout.activity_main);
         populateListView();
@@ -61,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.v(TAG, "onDestroy()");
 
-        TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeReminderList(this, reminderList);
     }
 
     @Override
@@ -69,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.v(TAG, "onStop()");
 
-        TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeReminderList(this, reminderList);
     }
 
     @Override
@@ -77,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.v(TAG, "onPause()");
 
-        TaskDetailsReaderWriter.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeReminderList(this, reminderList);
     }
 
     @Override
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menuAdd:
                 showAddDialog();
                 break;
@@ -100,16 +106,20 @@ public class MainActivity extends AppCompatActivity {
                 arrayAdapter.resetListView();
                 break;
 
+            case R.id.menuReminderOne:
+                showPickerDialog(reminderList.get(0));
+                break;
+
+            case R.id.menuReminderTwo:
+                showPickerDialog(reminderList.get(1));
+                break;
+
             case R.id.menuImport:
                 Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.menuExport:
                 Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.menuReminder:
-                showPickerDialog();
                 break;
         }
 
@@ -120,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     private void populateListView() {
         Log.v(TAG, "populateListView()");
 
-        ArrayList<TaskDetails> tasksList = TaskDetailsReaderWriter.readTasksList(this);
+        ArrayList<TaskDetails> tasksList = PersistenceManager.readTasksList(this);
 
         arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, tasksList);
 
@@ -160,25 +170,46 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void showPickerDialog() {
-        Log.v(TAG, "showPickerDialog()");
+    private void showPickerDialog(final ReminderDetails reminderDetails) {
+        Log.v(TAG, "showPickerDialog(): reminderDetails=" + reminderDetails);
 
         final View dialogPicker = getLayoutInflater().inflate(R.layout.dialog_picker, null);
+        dialogPicker.setId(reminderDetails.getReminderType().getValue());
+
+        int titleId;
+        switch (reminderDetails.getReminderType()) {
+            case REMINDER_TYPE_ONE:
+                titleId = R.string.title_picker_one;
+                break;
+
+            case REMINDER_TYPE_TWO:
+                titleId = R.string.title_picker_two;
+                break;
+
+            default:
+                titleId = R.string.title_picker;
+                break;
+        }
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
-        builder.setTitle(R.string.title_picker);
+        builder.setTitle(titleId);
         builder.setIcon(R.drawable.ic_notification);
         builder.setView(dialogPicker);
 
-        final NumberPicker pickerDayOfMonth = dialogPicker.findViewById(R.id.pickerDayOfMonth);
-        pickerDayOfMonth.setMinValue(1);
-        pickerDayOfMonth.setMaxValue(28);
-        pickerDayOfMonth.setValue(reminderDay);
+        final NumberPicker pickerMonth = dialogPicker.findViewById(R.id.pickerDay);
+        pickerMonth.setMinValue(1);
+        pickerMonth.setMaxValue(28);
+        pickerMonth.setValue(reminderDetails.getDay());
 
-        final NumberPicker pickerHourOfDay = dialogPicker.findViewById(R.id.pickerHourOfDay);
-        pickerHourOfDay.setMinValue(0);
-        pickerHourOfDay.setMaxValue(23);
-        pickerHourOfDay.setValue(reminderHour);
+        final NumberPicker pickerHour = dialogPicker.findViewById(R.id.pickerHour);
+        pickerHour.setMinValue(0);
+        pickerHour.setMaxValue(23);
+        pickerHour.setValue(reminderDetails.getHour());
+
+        final NumberPicker pickerMinute = dialogPicker.findViewById(R.id.pickerMinute);
+        pickerMinute.setMinValue(0);
+        pickerMinute.setMaxValue(59);
+        pickerMinute.setValue(reminderDetails.getMinute());
 
         final AlertDialog dialog = builder.show();
 
@@ -186,22 +217,30 @@ public class MainActivity extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                reminderDay = pickerDayOfMonth.getValue();
-                reminderHour = pickerHourOfDay.getValue();
+                reminderDetails.setDay(pickerMonth.getValue());
+                reminderDetails.setHour(pickerHour.getValue());
+                reminderDetails.setMinute(pickerMinute.getValue());
+
+                startAlarmBroadcast(reminderDetails);
+                PersistenceManager.writeReminderList(view.getContext(), reminderList);
+
                 dialog.cancel();
-                startAlarmBroadcast();
             }
         });
     }
 
-    private void startAlarmBroadcast() {
-        Log.v(TAG, "startAlarmBroadcast()");
-        Log.v(TAG, "startAlarmBroadcast(): HOUR=" + reminderHour);
-        Log.v(TAG, "startAlarmBroadcast():  DAY=" + reminderDay);
-        Intent intent = new Intent(this, ReminderBroadcastReceiver.class);
-        intent.setAction(ReminderBroadcastReceiver.ACTION_START_ALARM);
-        intent.putExtra(ReminderBroadcastReceiver.EXTRA_DAY, reminderDay);
-        intent.putExtra(ReminderBroadcastReceiver.EXTRA_HOUR, reminderHour);
+    private void startAlarmBroadcast(ReminderDetails details) {
+        Log.v(TAG, "startAlarmBroadcast(): TYPE=" + details.getReminderType());
+        Log.v(TAG, "startAlarmBroadcast():  DAY=" + details.getDay());
+        Log.v(TAG, "startAlarmBroadcast(): HOUR=" + details.getHour());
+        Log.v(TAG, "startAlarmBroadcast():  MIN=" + details.getMinute());
+
+        Intent intent = new Intent(this, AlarmManager.class);
+        intent.setAction(AlarmManager.ACTION_START_ALARM);
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_TYPE, details.getReminderType().getValue());
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_DAY, details.getDay());
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_HOUR, details.getHour());
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_MINUTE, details.getMinute());
         sendBroadcast(intent);
     }
 }

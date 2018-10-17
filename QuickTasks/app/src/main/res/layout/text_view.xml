@@ -6,6 +6,7 @@
 
     <ImageButton
         android:id="@+id/button_Delete"
+        android:contentDescription="@string/button_desc_remove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -14,6 +15,7 @@
 
     <ImageButton
         android:id="@+id/button_Refresh"
+        android:contentDescription="@string/button_desc_reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/button_Delete"
