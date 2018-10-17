@@ -47,21 +47,22 @@ public class AlarmManager extends android.content.BroadcastReceiver {
         if (intent.getAction() != null) {
             Log.v(TAG, "onReceive() : Intent.Action=" + intent.getAction());
 
-            if (intent.getAction().equalsIgnoreCase(ACTION_SEND_REMINDER)) {
-                sendQuickTasksNotification(context.getApplicationContext());
-            }
-
             int type = intent.getIntExtra(EXTRA_REMINDER_TYPE, 0);
             int day = intent.getIntExtra(EXTRA_REMINDER_DAY, 0);
             int hour = intent.getIntExtra(EXTRA_REMINDER_HOUR, 0);
             int minute = intent.getIntExtra(EXTRA_REMINDER_MINUTE, 0);
 
             ReminderDetails reminderDetails = new ReminderDetails(ReminderDetails.REMINDER_TYPE.getType(type), day, hour, minute);
+
+            if (intent.getAction().equalsIgnoreCase(ACTION_SEND_REMINDER)) {
+                sendQuickTasksNotification(context.getApplicationContext(), reminderDetails.getReminderType().getValue());
+            }
+
             startDelayedAlarm(context.getApplicationContext(), reminderDetails);
         }
     }
 
-    private void sendQuickTasksNotification(Context context) {
+    private void sendQuickTasksNotification(Context context, int requestType) {
         Log.v(TAG, "sendQuickTasksNotification()");
         Intent reminderIntent = new Intent(context, MainActivity.class);
 
@@ -72,7 +73,7 @@ public class AlarmManager extends android.content.BroadcastReceiver {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationChannel channel = new NotificationChannel(
-                context.getPackageName(),
+                context.getPackageName() + requestType,
                 context.getString(R.string.app_name),
                 NotificationManager.IMPORTANCE_DEFAULT);
 
@@ -115,15 +116,18 @@ public class AlarmManager extends android.content.BroadcastReceiver {
             nextCalendar.set(Calendar.MONTH, currCalendar.get(Calendar.MONTH) + 1);
         }
 
-//         nextCalendar.set(Calendar.MINUTE, currCalendar.get(Calendar.MINUTE) + 1);
-
+        Log.v(TAG, "startDelayedAlarm() : reminder_type=" + reminderDetails.getReminderType());
         Log.v(TAG, "startDelayedAlarm() : currCalendar=" + currCalendar.getTime());
         Log.v(TAG, "startDelayedAlarm() : nextCalendar=" + nextCalendar.getTime());
 
         Intent intent = new Intent(context, AlarmManager.class);
         intent.setAction(ACTION_SEND_REMINDER);
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_TYPE, reminderDetails.getReminderType().getValue());
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_DAY, reminderDetails.getDay());
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_HOUR, reminderDetails.getHour());
+        intent.putExtra(AlarmManager.EXTRA_REMINDER_MINUTE, reminderDetails.getMinute());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, reminderDetails.getReminderType().getValue(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         android.app.AlarmManager alarmManager = (android.app.AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             alarmManager.set(android.app.AlarmManager.RTC_WAKEUP, nextCalendar.getTimeInMillis(), pendingIntent);
