@@ -3,6 +3,9 @@ package com.planetjup.tasks.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -149,22 +152,18 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         }
 
         private void updateLook(boolean isChecked) {
-            int colorInt = isChecked ? ContextCompat.getColor(view.getContext(), R.color.colorOrangeLight) : Color.TRANSPARENT;
-
             // update state
             this.checkBox.setChecked(isChecked);
             this.checkBox.setEnabled(!isChecked);
             this.taskDetails.setCompleted(isChecked);
 
-            // update background color
-            this.view.setBackgroundColor(colorInt);
-            this.deleteButton.setBackgroundColor(colorInt);
-            this.refreshButton.setBackgroundColor(colorInt);
-
+            // update checkbox visibility and text color
             if (isChecked) {
                 this.checkBox.setVisibility(View.INVISIBLE);
+                this.textView.setTextColor(getContext().getColor(R.color.colorTextInctive));
             } else {
                 this.checkBox.setVisibility(View.VISIBLE);
+                this.textView.setTextColor(getContext().getColor(R.color.colorTextActive));
             }
         }
     }

@@ -144,4 +144,12 @@ public class PersistenceManager {
 
         return retList;
     }
+
+    public static void importPreference() {
+
+    }
+
+    public static void exportPreference() {
+
+    }
 }

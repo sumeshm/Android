@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         Log.v(TAG, "onDestroy()");
 
         PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
-        PersistenceManager.writeReminderList(this, reminderList);
     }
 
     @Override
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         Log.v(TAG, "onStop()");
 
         PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
-        PersistenceManager.writeReminderList(this, reminderList);
     }
 
     @Override
@@ -83,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         Log.v(TAG, "onPause()");
 
         PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
-        PersistenceManager.writeReminderList(this, reminderList);
     }
 
     @Override
@@ -115,11 +112,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.menuImport:
-                Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
+                PersistenceManager.importPreference();
+                Toast.makeText(this, R.string.toastImport, Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.menuExport:
-                Toast.makeText(this, "You clicked logout", Toast.LENGTH_SHORT).show();
+                PersistenceManager.exportPreference();
+                Toast.makeText(this, R.string.toastExport, Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -196,17 +195,27 @@ public class MainActivity extends AppCompatActivity {
         builder.setIcon(R.drawable.ic_notification);
         builder.setView(dialogPicker);
 
+        NumberPicker.Formatter twoDigitFormatter = new NumberPicker.Formatter() {
+            @Override
+            public String format(int value) {
+                return String.format("%02d", value);
+            }
+        };
+
         final NumberPicker pickerMonth = dialogPicker.findViewById(R.id.pickerDay);
+        pickerMonth.setFormatter(twoDigitFormatter);
         pickerMonth.setMinValue(1);
         pickerMonth.setMaxValue(28);
         pickerMonth.setValue(reminderDetails.getDay());
 
         final NumberPicker pickerHour = dialogPicker.findViewById(R.id.pickerHour);
+        pickerHour.setFormatter(twoDigitFormatter);
         pickerHour.setMinValue(0);
         pickerHour.setMaxValue(23);
         pickerHour.setValue(reminderDetails.getHour());
 
         final NumberPicker pickerMinute = dialogPicker.findViewById(R.id.pickerMinute);
+        pickerMinute.setFormatter(twoDigitFormatter);
         pickerMinute.setMinValue(0);
         pickerMinute.setMaxValue(59);
         pickerMinute.setValue(reminderDetails.getMinute());
@@ -220,10 +229,11 @@ public class MainActivity extends AppCompatActivity {
                 reminderDetails.setDay(pickerMonth.getValue());
                 reminderDetails.setHour(pickerHour.getValue());
                 reminderDetails.setMinute(pickerMinute.getValue());
-
                 startAlarmBroadcast(reminderDetails);
+
                 PersistenceManager.writeReminderList(view.getContext(), reminderList);
 
+                Toast.makeText(view.getContext(), R.string.toastReminder, Toast.LENGTH_SHORT).show();
                 dialog.cancel();
             }
         });
