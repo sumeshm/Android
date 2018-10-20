@@ -13,8 +13,7 @@ import android.widget.Toast;
  * <p>
  * Created by Sumesh Mani on 2/8/18.
  */
-public class MuteMediaTileService extends TileService
-{
+public class MuteMediaTileService extends TileService {
     private static final String TAG = DndTileService.class.getSimpleName();
 
     private AudioManager audioManager;
@@ -33,16 +32,12 @@ public class MuteMediaTileService extends TileService
         Log.v(TAG, "onStartListening()");
 
         Tile muteMediaTile = this.getQsTile();
-        if (muteMediaTile != null)
-        {
+        if (muteMediaTile != null) {
             int mediaVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             Log.v(TAG, "onStartListening() : mediaVolume=" + mediaVolume);
-            if (mediaVolume == 0)
-            {
+            if (mediaVolume == 0) {
                 muteMediaTile.setState(Tile.STATE_UNAVAILABLE);
-            }
-            else
-            {
+            } else {
                 muteMediaTile.setState(Tile.STATE_ACTIVE);
             }
 

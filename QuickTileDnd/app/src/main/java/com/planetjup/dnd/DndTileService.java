@@ -294,12 +294,10 @@ public class DndTileService extends TileService {
         Log.v(TAG, "showDndActivity() : isCollapse=" + isCollapse);
 
         Intent intent = new Intent(this, DndPopupActivity.class);
-        if (isCollapse == Boolean.TRUE)
-        {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (isCollapse == Boolean.TRUE) {
             startActivityAndCollapse(intent);
-        }
-        else
-        {
+        } else {
             startActivity(intent);
         }
     }

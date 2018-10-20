@@ -17,13 +17,12 @@
     <style name="dnd_text_advice" parent="android:Widget.TextView">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/colorOrangeAccent</item>
+        <item name="android:background">@drawable/gradient_title</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:paddingTop">1dp</item>
-        <item name="android:paddingBottom">1dp</item>
+        <item name="android:padding">1dp</item>
     </style>
 
     <style name="dnd_text" parent="android:Widget.TextView">
@@ -33,13 +32,22 @@
         <item name="android:typeface">sans</item>
     </style>
 
-    <style name="dnd_radio_button" parent="dnd_text">
+    <style name="mode_button" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:paddingStart">2dp</item>
-        <item name="android:paddingEnd">2dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingBottom">5dp</item>
+        <item name="android:onClick">onButtonClick</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:layout_marginTop">50dp</item>
+    </style>
+
+    <style name="time_button" parent="Widget.AppCompat.Button.Small">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:onClick">onClick</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/gradient</item>
+        <item name="android:layout_weight">1</item>
     </style>
 
     <style name="dnd_icon_button" parent="Widget.AppCompat.Button.Borderless">
@@ -50,5 +58,4 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">italic</item>
     </style>
-
 </resources>

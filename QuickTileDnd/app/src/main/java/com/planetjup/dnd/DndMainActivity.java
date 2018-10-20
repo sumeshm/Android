@@ -21,7 +21,7 @@ public class DndMainActivity extends AppCompatActivity {
 
     private static boolean isAllowed = Boolean.FALSE;
 
-    NotificationManager notificationManager;
+    private NotificationManager notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,8 +66,7 @@ public class DndMainActivity extends AppCompatActivity {
         if (requestCode == DndMainActivity.ON_DO_NOT_DISTURB_CALLBACK_CODE && notificationManager.isNotificationPolicyAccessGranted()) {
             Log.v(TAG, "onActivityResult: ON_DO_NOT_DISTURB_CALLBACK_CODE = Granted");
             isAllowed = true;
-        }
-        else {
+        } else {
             Log.v(TAG, "onActivityResult: ON_DO_NOT_DISTURB_CALLBACK_CODE = NOT Granted");
             finish();
         }
@@ -97,8 +96,7 @@ public class DndMainActivity extends AppCompatActivity {
         return isAllowed;
     }
 
-    private void startDndService()
-    {
+    private void startDndService() {
         Log.v(TAG, "startDndService()");
 
         Intent dndIntent = new Intent(this, DndTileService.class);

@@ -18,6 +18,7 @@
         android:id="@+id/textDay"
         android:layout_marginStart="65dp"
         android:layout_below="@+id/pickerDay"
+        android:textStyle="bold"
         android:text="@string/picker_day" />
 
     <NumberPicker
@@ -33,6 +34,7 @@
         android:id="@+id/textHour"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/pickerHour"
+        android:textStyle="bold"
         android:text="@string/picker_hour" />
 
     <NumberPicker
@@ -50,6 +52,7 @@
         android:layout_marginEnd="65dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/pickerMinute"
+        android:textStyle="bold"
         android:text="@string/picker_minute" />
 
     <Button
@@ -60,5 +63,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="250dp"
         android:textColor="@color/colorOrange"
+        android:textSize="20dp"
         android:background="@android:color/transparent"/>
 </RelativeLayout>

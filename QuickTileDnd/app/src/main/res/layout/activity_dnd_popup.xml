@@ -5,7 +5,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/advice_mode"
@@ -14,120 +14,115 @@
             android:layout_marginTop="0dp"
             android:text="@string/advice_mode" />
 
-        <RadioGroup
-            android:id="@+id/radio_group_mode"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/advice_mode"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginVertical="45dp"
-            android:gravity="center"
-            android:orientation="horizontal">
+        <Button
+            android:id="@+id/buttonModeTotal"
+            style="@style/mode_button"
+            android:background="@drawable/gradient_clicked"
+            android:layout_toStartOf="@id/buttonModePriority"
+            android:layout_marginEnd="25dp"
+            android:text="@string/Filter_Total" />
 
-            <RadioButton
-                android:id="@+id/radio_total"
-                style="@style/dnd_radio_button"
-                android:checked="true"
-                android:text="@string/Filter_Total" />
+        <Button
+            android:id="@+id/buttonModePriority"
+            style="@style/mode_button"
+            android:background="@drawable/gradient"
+            android:layout_centerHorizontal="true"
+            android:text="@string/Filter_Priority" />
 
-            <RadioButton
-                android:id="@+id/radio_priority"
-                style="@style/dnd_radio_button"
-                android:text="@string/Filter_Priority" />
-
-            <RadioButton
-                android:id="@+id/radio_alarm"
-                style="@style/dnd_radio_button"
-                android:text="@string/Filter_Alarm" />
-        </RadioGroup>
+        <Button
+            android:id="@+id/buttonModeAlarm"
+            style="@style/mode_button"
+            android:background="@drawable/gradient"
+            android:layout_toEndOf="@id/buttonModePriority"
+            android:layout_marginStart="25dp"
+            android:text="@string/Filter_Alarm" />
 
         <TextView
             android:id="@+id/advice_duration"
             style="@style/dnd_text_advice"
             android:layout_width="match_parent"
-            android:layout_alignTop="@+id/radio_group_mode"
-            android:layout_marginTop="50dp"
+            android:layout_alignTop="@+id/buttonModePriority"
+            android:layout_marginTop="70dp"
             android:text="@string/advice_duration" />
 
-        <RadioGroup
-            android:id="@+id/radio_group_time"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:id="@+id/timeButtons"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
             android:layout_alignTop="@+id/advice_duration"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="30dp"
-            android:orientation="vertical">
+            android:layout_marginTop="60dp">
 
-            <RadioButton
-                android:id="@+id/radio_15"
-                style="@style/dnd_radio_button"
-                android:onClick="onClick"
+            <Button
+                android:id="@+id/buttonTime_15"
+                style="@style/time_button"
+                android:layout_marginStart="20dp"
                 android:text="@string/Min_15" />
 
-            <RadioButton
-                android:id="@+id/radio_30"
-                style="@style/dnd_radio_button"
-                android:onClick="onClick"
+            <Button
+                android:id="@+id/buttonTime_30"
+                style="@style/time_button"
+                android:layout_marginStart="10dp"
                 android:text="@string/Min_30" />
 
-            <RadioButton
-                android:id="@+id/radio_60"
-                style="@style/dnd_radio_button"
-                android:onClick="onClick"
+            <Button
+                android:id="@+id/buttonTime_60"
+                style="@style/time_button"
+                android:layout_marginStart="10dp"
                 android:text="@string/Min_60" />
 
-            <RadioButton
-                android:id="@+id/radio_infinity"
-                style="@style/dnd_radio_button"
-                android:onClick="onClick"
+            <Button
+                android:id="@+id/buttonTime_Infinity"
+                style="@style/time_button"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"
                 android:text="@string/Min_infinity" />
-        </RadioGroup>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textViewSeek"
+            style="@style/dnd_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/radio_group_time"
-            android:layout_marginTop="140dp"
+            android:padding="2dp"
+            android:layout_alignTop="@+id/timeButtons"
+            android:layout_marginTop="70dp"
             android:gravity="center"
-            style="@style/dnd_text"
             android:text="@string/Min_0" />
 
         <SeekBar
             android:id="@+id/seekBar"
-            android:layout_width="match_parent"
+            android:thumb="@drawable/seekbar_thumb"
+            android:progressDrawable="@drawable/seekbar"
+            android:thumbOffset="1dp"
+            android:layout_width="2000dp"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/radio_group_time"
-            android:layout_toStartOf="@id/buttonGo"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="190dp"
+            android:layout_alignTop="@+id/textViewSeek"
+            android:layout_marginTop="40dp"
             android:max="120" />
 
         <Button
             android:id="@+id/buttonGo"
             style="@style/dnd_icon_button"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/radio_group_time"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="170dp"
-            android:drawableTop="@drawable/ic_button_go"
-            android:onClick="onClick" />
+            android:layout_centerHorizontal="true"
+            android:layout_alignTop="@+id/seekBar"
+            android:layout_marginTop="40dp"
+            android:drawableTop="@drawable/ic_button_go" />
 
         <TextView
             android:id="@+id/advice_mute"
             style="@style/dnd_text_advice"
-            android:layout_alignTop="@+id/radio_group_time"
-            android:layout_marginTop="230dp"
+            android:layout_alignTop="@+id/buttonGo"
+            android:layout_marginTop="70dp"
             android:text="@string/advice_mute" />
 
         <Button
             android:id="@+id/buttonAlarm"
             style="@style/dnd_icon_button"
             android:layout_alignTop="@+id/advice_mute"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="40dp"
             android:drawableTop="@drawable/ic_button_mute_alarm"
             android:text="@string/Mute_alarm"
             android:textColor="@android:color/darker_gray" />
@@ -137,7 +132,7 @@
             style="@style/dnd_icon_button"
             android:layout_alignTop="@+id/advice_mute"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="40dp"
             android:drawableTop="@drawable/ic_button_mute_media"
             android:text="@string/Mute_media"
             android:textColor="@android:color/darker_gray" />
@@ -147,8 +142,8 @@
             style="@style/dnd_icon_button"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/advice_mute"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="40dp"
             android:drawableTop="@drawable/ic_button_mute_ringer"
             android:text="@string/Mute_ringer"
             android:textColor="@android:color/darker_gray" />
