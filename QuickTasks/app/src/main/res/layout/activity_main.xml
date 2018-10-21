@@ -15,20 +15,13 @@
         app:logo="@drawable/ic_notification"
         app:title="@string/app_name"
         app:contentInsetLeft="10dp"
-        app:titleMarginStart="30dp"
-    />
-
-    <View
-        android:id="@+id/separator"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_below="@+id/toolbar"
-        android:background="@android:color/holo_orange_dark" />
+        app:titleMarginStart="30dp" />
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/separator" />
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="2dp" />
 
 </RelativeLayout>

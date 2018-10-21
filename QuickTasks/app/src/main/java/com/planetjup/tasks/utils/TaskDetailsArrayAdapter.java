@@ -2,13 +2,8 @@ package com.planetjup.tasks.utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,9 +26,9 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
 
     private static final String TAG = TaskDetailsArrayAdapter.class.getSimpleName();
 
-    final private Context context;
-
-    final private ArrayList<TaskDetails> tasksList;
+    private final Context context;
+    private final ArrayList<TaskDetails> tasksList;
+    private final int[] bgGradient = new int[] { R.drawable.gradient_odd, R.drawable.gradient_even };
 
 
     public TaskDetailsArrayAdapter(@NonNull Context context, int resource, @NonNull ArrayList<TaskDetails> list) {
@@ -98,6 +93,9 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.text_view, null);
         }
+
+        int colorPosition = position % bgGradient.length;
+        convertView.setBackground(this.context.getDrawable(bgGradient[colorPosition]));
 
         new ListItemManager(tasksList.get(position), convertView, this);
 
