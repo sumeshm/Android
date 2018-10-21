@@ -38,10 +38,9 @@
         <item name="android:onClick">onButtonClick</item>
         <item name="android:textSize">12sp</item>
         <item name="android:padding">5dp</item>
-        <item name="android:layout_marginTop">50dp</item>
     </style>
 
-    <style name="time_button" parent="Widget.AppCompat.Button.Small">
+    <style name="time_button" parent="Widget.AppCompat.Button">
         <item name="android:layout_width">70dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:onClick">onClick</item>
@@ -50,12 +49,20 @@
         <item name="android:layout_weight">1</item>
     </style>
 
-    <style name="dnd_icon_button" parent="Widget.AppCompat.Button.Borderless">
+    <style name="icon_button" parent="Base.Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:onClick">onClick</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="icon_text_button" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:onClick">onClick</item>
         <item name="android:textColor">@android:color/darker_gray</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">italic</item>
+        <item name="android:layout_weight">1</item>
     </style>
 </resources>

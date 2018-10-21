@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,45 +11,50 @@
             android:id="@+id/advice_mode"
             style="@style/dnd_text_advice"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="0dp"
             android:text="@string/advice_mode" />
 
-        <Button
-            android:id="@+id/buttonModeTotal"
-            style="@style/mode_button"
-            android:background="@drawable/gradient_clicked"
-            android:layout_toStartOf="@id/buttonModePriority"
-            android:layout_marginEnd="25dp"
-            android:text="@string/Filter_Total" />
-
-        <Button
-            android:id="@+id/buttonModePriority"
-            style="@style/mode_button"
-            android:background="@drawable/gradient"
+        <LinearLayout
+            android:id="@+id/modeButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="@string/Filter_Priority" />
+            android:layout_alignTop="@+id/advice_mode"
+            android:gravity="center"
+            android:layout_marginTop="60dp"
+            android:layout_marginStart="30dp" >
+            <Button
+                android:id="@+id/buttonModeTotal"
+                style="@style/mode_button"
+                android:background="@drawable/gradient_clicked"
+                android:text="@string/Filter_Total" />
 
-        <Button
-            android:id="@+id/buttonModeAlarm"
-            style="@style/mode_button"
-            android:background="@drawable/gradient"
-            android:layout_toEndOf="@id/buttonModePriority"
-            android:layout_marginStart="25dp"
-            android:text="@string/Filter_Alarm" />
+            <Button
+                android:id="@+id/buttonModePriority"
+                style="@style/mode_button"
+                android:background="@drawable/gradient"
+                android:text="@string/Filter_Priority"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp" />
+
+            <Button
+                android:id="@+id/buttonModeAlarm"
+                style="@style/mode_button"
+                android:background="@drawable/gradient"
+                android:text="@string/Filter_Alarm" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/advice_duration"
             style="@style/dnd_text_advice"
             android:layout_width="match_parent"
-            android:layout_alignTop="@+id/buttonModePriority"
-            android:layout_marginTop="70dp"
+            android:layout_alignTop="@+id/modeButtons"
+            android:layout_marginTop="80dp"
             android:text="@string/advice_duration" />
 
         <LinearLayout
             android:id="@+id/timeButtons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_centerHorizontal="true"
             android:layout_alignTop="@+id/advice_duration"
             android:layout_marginTop="60dp">
@@ -102,51 +107,53 @@
             android:layout_marginTop="40dp"
             android:max="120" />
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonGo"
-            style="@style/dnd_icon_button"
+            style="@style/icon_button"
             android:layout_centerHorizontal="true"
             android:layout_alignTop="@+id/seekBar"
             android:layout_marginTop="40dp"
-            android:drawableTop="@drawable/ic_button_go" />
+            android:src="@drawable/ic_button_go" />
 
         <TextView
             android:id="@+id/advice_mute"
             style="@style/dnd_text_advice"
             android:layout_alignTop="@+id/buttonGo"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="60dp"
             android:text="@string/advice_mute" />
 
-        <Button
-            android:id="@+id/buttonAlarm"
-            style="@style/dnd_icon_button"
+        <LinearLayout
+            android:id="@+id/muteButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_alignTop="@+id/advice_mute"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="40dp"
-            android:drawableTop="@drawable/ic_button_mute_alarm"
-            android:text="@string/Mute_alarm"
-            android:textColor="@android:color/darker_gray" />
+            android:layout_marginTop="40dp" >
 
-        <Button
-            android:id="@+id/buttonMusic"
-            style="@style/dnd_icon_button"
-            android:layout_alignTop="@+id/advice_mute"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:drawableTop="@drawable/ic_button_mute_media"
-            android:text="@string/Mute_media"
-            android:textColor="@android:color/darker_gray" />
+            <Button
+                android:id="@+id/buttonAlarm"
+                style="@style/icon_text_button"
+                android:layout_alignTop="@+id/advice_mute"
+                android:drawableTop="@drawable/ic_button_mute_alarm"
+                android:text="@string/Mute_alarm"
+                android:textColor="@android:color/darker_gray" />
 
-        <Button
-            android:id="@+id/buttonRinger"
-            style="@style/dnd_icon_button"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/advice_mute"
-            android:layout_marginEnd="30dp"
-            android:layout_marginTop="40dp"
-            android:drawableTop="@drawable/ic_button_mute_ringer"
-            android:text="@string/Mute_ringer"
-            android:textColor="@android:color/darker_gray" />
+            <Button
+                android:id="@+id/buttonMusic"
+                style="@style/icon_text_button"
+                android:layout_alignTop="@+id/advice_mute"
+                android:drawableTop="@drawable/ic_button_mute_media"
+                android:text="@string/Mute_media"
+                android:textColor="@android:color/darker_gray" />
 
+            <Button
+                android:id="@+id/buttonRinger"
+                style="@style/icon_text_button"
+                android:layout_alignTop="@+id/advice_mute"
+                android:drawableTop="@drawable/ic_button_mute_ringer"
+                android:text="@string/Mute_ringer"
+                android:textColor="@android:color/darker_gray" />
+        </LinearLayout>
     </RelativeLayout>
 </ScrollView>
