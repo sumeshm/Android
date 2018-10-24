@@ -2,8 +2,8 @@
     <string name="app_name">Quick Tasks</string>
     <string name="title_popup">Task Name</string>
     <string name="title_picker">Select [Day : Month : Hour] for Reminder</string>
-    <string name="title_picker_one">REMINDER-1 : select [Day : Month : Hour]</string>
-    <string name="title_picker_two">REMINDER-2 : select [Day : Month : Hour]</string>
+    <string name="title_picker_one">Schedule your first reminder\ne.g. 15th day @ 11:00 am</string>
+    <string name="title_picker_two">Schedule your first reminder\ne.g. 18th day @ 19:00 pm</string>
     <string name="msg_notification">You have pending tasks, click here to see them</string>
     <string name="button_desc_remove">Remove</string>
     <string name="button_desc_reset">Reset</string>

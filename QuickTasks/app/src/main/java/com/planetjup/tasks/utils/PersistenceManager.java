@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class is an persistence util, that helps save and retrieve task list
@@ -26,6 +25,7 @@ public class PersistenceManager {
 
     private static final String JSON_KEY_TASK_NAME = "name";
     private static final String JSON_KEY_TASK_STATE = "checked";
+    private static final String JSON_KEY_REMINDER_ORIGIN = "reminderOrigin";
     private static final String JSON_KEY_REMINDER_TYPE = "reminderType";
     private static final String JSON_KEY_REMINDER_DAY = "reminderDay";
     private static final String JSON_KEY_REMINDER_HOUR = "reminderHour";
@@ -36,6 +36,7 @@ public class PersistenceManager {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
 
+        editor.putString(PREFERENCES_KEY_TASKS, null);
         if (!tasksList.isEmpty()) {
             JSONArray jsonArray = new JSONArray();
             for (TaskDetails taskDetails : tasksList) {
@@ -81,7 +82,7 @@ public class PersistenceManager {
         return tasksList;
     }
 
-    public static void writeReminderList(Context context, List<ReminderDetails> reminderList) {
+    public static void writeReminderList(Context context, ArrayList<ReminderDetails> reminderList) {
         Log.v(TAG, "writeReminderList()");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -93,6 +94,7 @@ public class PersistenceManager {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put(JSON_KEY_REMINDER_TYPE, reminderDetails.getReminderType().getValue());
+                    jsonObject.put(JSON_KEY_REMINDER_ORIGIN, reminderDetails.getReminderOrigin().getValue());
                     jsonObject.put(JSON_KEY_REMINDER_DAY, reminderDetails.getDay());
                     jsonObject.put(JSON_KEY_REMINDER_HOUR, reminderDetails.getHour());
                     jsonObject.put(JSON_KEY_REMINDER_MINUTE, reminderDetails.getMinute());
@@ -112,34 +114,41 @@ public class PersistenceManager {
 
     public static ArrayList<ReminderDetails> readReminderList(Context context) {
         Log.v(TAG, "writeReminderList()");
-        ArrayList<ReminderDetails> retList = new ArrayList<>();
+        ArrayList<ReminderDetails> retList = null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         String json = prefs.getString(PREFERENCES_KEY_REMINDER, null);
         Log.v(TAG, "writeReminderList(): json=" + json);
         if (json != null && !json.isEmpty()) {
             try {
+                retList = new ArrayList<>();
                 JSONArray jsonArray = new JSONArray(json);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
+
                     int type = jsonObject.getInt(JSON_KEY_REMINDER_TYPE);
-                    ReminderDetails.REMINDER_TYPE reminderType = ReminderDetails.REMINDER_TYPE.getType(type);
+                    ReminderDetails.REMINDER_TYPE reminderType = ReminderDetails.REMINDER_TYPE.getEnum(type);
+
+                    int origin = jsonObject.getInt(JSON_KEY_REMINDER_ORIGIN);
+                    ReminderDetails.REMINDER_ORIGIN reminderOrigin = ReminderDetails.REMINDER_ORIGIN.getEnum(origin);
+
                     ReminderDetails reminderDetails = new ReminderDetails(
                             reminderType,
+                            reminderOrigin,
                             jsonObject.getInt(JSON_KEY_REMINDER_DAY),
                             jsonObject.getInt(JSON_KEY_REMINDER_HOUR),
                             jsonObject.getInt(JSON_KEY_REMINDER_MINUTE)
                     );
+
                     retList.add(reminderDetails);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else {
-            ReminderDetails one = new ReminderDetails(ReminderDetails.REMINDER_TYPE.REMINDER_TYPE_ONE, 15, 11, 0);
-            ReminderDetails two = new ReminderDetails(ReminderDetails.REMINDER_TYPE.REMINDER_TYPE_TWO, 20, 11, 0);
-            retList.add(one);
-            retList.add(two);
+        }
+
+        if (retList == null || retList.isEmpty()) {
+            retList = writeDefaultReminderList(context);
         }
 
         return retList;
@@ -151,5 +160,27 @@ public class PersistenceManager {
 
     public static void exportPreference() {
 
+    }
+
+    private static ArrayList<ReminderDetails> writeDefaultReminderList(Context context) {
+        ReminderDetails one = new ReminderDetails(
+                ReminderDetails.REMINDER_TYPE.REMINDER_TYPE_ONE,
+                ReminderDetails.REMINDER_ORIGIN.ACTIVITY,
+                15,
+                11,
+                0);
+        ReminderDetails two = new ReminderDetails(
+                ReminderDetails.REMINDER_TYPE.REMINDER_TYPE_TWO,
+                ReminderDetails.REMINDER_ORIGIN.ACTIVITY,
+                20,
+                11,
+                0);
+
+        ArrayList<ReminderDetails> retList = new ArrayList<>();
+        retList.add(one);
+        retList.add(two);
+        writeReminderList(context, retList);
+
+        return retList;
     }
 }

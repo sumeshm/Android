@@ -10,6 +10,7 @@ public class ReminderDetails {
     private int hour;
     private int minute;
     private final REMINDER_TYPE reminderType;
+    private final REMINDER_ORIGIN reminderOrigin;
 
     public enum REMINDER_TYPE {
         REMINDER_TYPE_NONE(-1),
@@ -26,7 +27,7 @@ public class ReminderDetails {
             return type;
         }
 
-        public static REMINDER_TYPE getType(int value) {
+        public static REMINDER_TYPE getEnum(int value) {
             switch (value) {
                 case 0:
                     return REMINDER_TYPE_ONE;
@@ -38,8 +39,37 @@ public class ReminderDetails {
         }
     }
 
-    public ReminderDetails(REMINDER_TYPE reminderType, int day, int hour, int minute) {
+
+    public enum REMINDER_ORIGIN {
+        NONE(-1),
+        ACTIVITY(0),
+        SERVICE(1);
+
+        private final int type;
+
+        REMINDER_ORIGIN(int type) {
+            this.type = type;
+        }
+
+        public int getValue() {
+            return type;
+        }
+
+        public static REMINDER_ORIGIN getEnum(int value) {
+            switch (value) {
+                case 0:
+                    return ACTIVITY;
+                case 1:
+                    return SERVICE;
+            }
+
+            return NONE;
+        }
+    }
+
+    public ReminderDetails(REMINDER_TYPE reminderType, REMINDER_ORIGIN reminderOrigin, int day, int hour, int minute) {
         this.reminderType = reminderType;
+        this.reminderOrigin = reminderOrigin;
         this.day = day;
         this.hour = hour;
         this.minute = minute;
@@ -71,5 +101,9 @@ public class ReminderDetails {
 
     public REMINDER_TYPE getReminderType() {
         return reminderType;
+    }
+
+    public REMINDER_ORIGIN getReminderOrigin() {
+        return reminderOrigin;
     }
 }

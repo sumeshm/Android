@@ -28,7 +28,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
 
     private final Context context;
     private final ArrayList<TaskDetails> tasksList;
-    private final int[] bgGradient = new int[] { R.drawable.gradient_odd, R.drawable.gradient_even };
+    private final int[] bgGradient = new int[]{R.drawable.gradient_odd, R.drawable.gradient_even};
 
 
     public TaskDetailsArrayAdapter(@NonNull Context context, int resource, @NonNull ArrayList<TaskDetails> list) {
@@ -158,7 +158,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
             // update checkbox visibility and text color
             if (isChecked) {
                 this.checkBox.setVisibility(View.INVISIBLE);
-                this.textView.setTextColor(getContext().getColor(R.color.colorTextInctive));
+                this.textView.setTextColor(getContext().getColor(R.color.colorTextInactive));
             } else {
                 this.checkBox.setVisibility(View.VISIBLE);
                 this.textView.setTextColor(getContext().getColor(R.color.colorTextActive));

@@ -1,7 +1,10 @@
 package com.planetjup.tasks;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,14 +20,14 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
-import com.planetjup.tasks.reminder.AlarmManager;
+import com.planetjup.tasks.reminder.AlarmJobService;
 import com.planetjup.tasks.utils.PersistenceManager;
 import com.planetjup.tasks.utils.ReminderDetails;
+import com.planetjup.tasks.utils.ReminderSchedulerUtil;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import planetjup.com.tasks.R;
 
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private TaskDetailsArrayAdapter arrayAdapter;
-    private List<ReminderDetails> reminderList;
+    private ArrayList<ReminderDetails> reminderList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +51,14 @@ public class MainActivity extends AppCompatActivity {
         Log.v(TAG, "onCreate()");
 
         reminderList = PersistenceManager.readReminderList(this);
-        for (ReminderDetails details : reminderList) {
-            startAlarmBroadcast(details);
+        for (ReminderDetails reminderDetails : reminderList) {
+            // kick off JobService
+            final JobInfo jobInfo = ReminderSchedulerUtil.getJobInfo(reminderDetails, new ComponentName(this, AlarmJobService.class));
+            final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            if (jobScheduler != null) {
+                final int result = jobScheduler.schedule(jobInfo);
+                Log.v(TAG, "onCreate(): Reminder-" + reminderDetails.getReminderType().getValue() + " : schedule.result=" + result);
+            }
         }
 
         setContentView(R.layout.activity_main);
@@ -229,29 +238,22 @@ public class MainActivity extends AppCompatActivity {
                 reminderDetails.setDay(pickerMonth.getValue());
                 reminderDetails.setHour(pickerHour.getValue());
                 reminderDetails.setMinute(pickerMinute.getValue());
-                startAlarmBroadcast(reminderDetails);
 
+                // kick off JobService
+                final JobInfo jobInfo = ReminderSchedulerUtil.getJobInfo(reminderDetails, new ComponentName(view.getContext(), AlarmJobService.class));
+                final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                if (jobScheduler != null) {
+                    final int result = jobScheduler.schedule(jobInfo);
+                    Log.v(TAG, "onClick(): Reminder-" + reminderDetails.getReminderType().getValue() + " : schedule.result=" + result);
+                }
+
+                // record change to reminder
                 PersistenceManager.writeReminderList(view.getContext(), reminderList);
 
                 Toast.makeText(view.getContext(), R.string.toastReminder, Toast.LENGTH_SHORT).show();
                 dialog.cancel();
             }
         });
-    }
-
-    private void startAlarmBroadcast(ReminderDetails details) {
-        Log.v(TAG, "startAlarmBroadcast(): TYPE=" + details.getReminderType());
-        Log.v(TAG, "startAlarmBroadcast():  DAY=" + details.getDay());
-        Log.v(TAG, "startAlarmBroadcast(): HOUR=" + details.getHour());
-        Log.v(TAG, "startAlarmBroadcast():  MIN=" + details.getMinute());
-
-        Intent intent = new Intent(this, AlarmManager.class);
-        intent.setAction(AlarmManager.ACTION_START_ALARM);
-        intent.putExtra(AlarmManager.EXTRA_REMINDER_TYPE, details.getReminderType().getValue());
-        intent.putExtra(AlarmManager.EXTRA_REMINDER_DAY, details.getDay());
-        intent.putExtra(AlarmManager.EXTRA_REMINDER_HOUR, details.getHour());
-        intent.putExtra(AlarmManager.EXTRA_REMINDER_MINUTE, details.getMinute());
-        sendBroadcast(intent);
     }
 }
 
