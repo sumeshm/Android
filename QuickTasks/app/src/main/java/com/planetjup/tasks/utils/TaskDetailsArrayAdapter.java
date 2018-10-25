@@ -27,7 +27,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
     private static final String TAG = TaskDetailsArrayAdapter.class.getSimpleName();
 
     private final Context context;
-    private final ArrayList<TaskDetails> tasksList;
+    private final ArrayList<TaskDetails> taskList;
     private final int[] bgGradient = new int[]{R.drawable.gradient_odd, R.drawable.gradient_even};
 
 
@@ -35,17 +35,17 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         super(context, resource, list);
 
         this.context = context;
-        this.tasksList = new ArrayList<>(list);
+        this.taskList = new ArrayList<>(list);
     }
 
-    public ArrayList<TaskDetails> getTasksList() {
-        return tasksList;
+    public ArrayList<TaskDetails> getTaskList() {
+        return taskList;
     }
 
     public void resetListView() {
         Log.v(TAG, "onClick()");
 
-        for (TaskDetails taskDetails : tasksList) {
+        for (TaskDetails taskDetails : taskList) {
             taskDetails.setCompleted(Boolean.FALSE);
         }
 
@@ -97,7 +97,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         int colorPosition = position % bgGradient.length;
         convertView.setBackground(this.context.getDrawable(bgGradient[colorPosition]));
 
-        new ListItemManager(tasksList.get(position), convertView, this);
+        new ListItemManager(taskList.get(position), convertView, this);
 
         return convertView;
     }
@@ -105,14 +105,14 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
     @Override
     public void add(@Nullable TaskDetails taskDetails) {
         Log.v(TAG, "add()");
-        tasksList.add(taskDetails);
+        taskList.add(taskDetails);
         super.add(taskDetails);
     }
 
     @Override
     public void remove(@Nullable TaskDetails taskDetails) {
         Log.v(TAG, "remove()");
-        tasksList.remove(getPosition(taskDetails));
+        taskList.remove(getPosition(taskDetails));
         super.remove(taskDetails);
     }
 

@@ -9,6 +9,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -25,11 +31,12 @@ public class PersistenceManager {
 
     private static final String JSON_KEY_TASK_NAME = "name";
     private static final String JSON_KEY_TASK_STATE = "checked";
-    private static final String JSON_KEY_REMINDER_ORIGIN = "reminderOrigin";
     private static final String JSON_KEY_REMINDER_TYPE = "reminderType";
     private static final String JSON_KEY_REMINDER_DAY = "reminderDay";
     private static final String JSON_KEY_REMINDER_HOUR = "reminderHour";
     private static final String JSON_KEY_REMINDER_MINUTE = "reminderMinute";
+
+    private static final String BKP_FILE_NAME = "quickTask.txt";
 
     public static void writeTasksList(Context context, ArrayList<TaskDetails> tasksList) {
         Log.v(TAG, "writeTasksList()");
@@ -94,7 +101,6 @@ public class PersistenceManager {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put(JSON_KEY_REMINDER_TYPE, reminderDetails.getReminderType().getValue());
-                    jsonObject.put(JSON_KEY_REMINDER_ORIGIN, reminderDetails.getReminderOrigin().getValue());
                     jsonObject.put(JSON_KEY_REMINDER_DAY, reminderDetails.getDay());
                     jsonObject.put(JSON_KEY_REMINDER_HOUR, reminderDetails.getHour());
                     jsonObject.put(JSON_KEY_REMINDER_MINUTE, reminderDetails.getMinute());
@@ -129,12 +135,8 @@ public class PersistenceManager {
                     int type = jsonObject.getInt(JSON_KEY_REMINDER_TYPE);
                     ReminderDetails.REMINDER_TYPE reminderType = ReminderDetails.REMINDER_TYPE.getEnum(type);
 
-                    int origin = jsonObject.getInt(JSON_KEY_REMINDER_ORIGIN);
-                    ReminderDetails.REMINDER_ORIGIN reminderOrigin = ReminderDetails.REMINDER_ORIGIN.getEnum(origin);
-
                     ReminderDetails reminderDetails = new ReminderDetails(
                             reminderType,
-                            reminderOrigin,
                             jsonObject.getInt(JSON_KEY_REMINDER_DAY),
                             jsonObject.getInt(JSON_KEY_REMINDER_HOUR),
                             jsonObject.getInt(JSON_KEY_REMINDER_MINUTE)
@@ -154,24 +156,83 @@ public class PersistenceManager {
         return retList;
     }
 
-    public static void importPreference() {
+    public static ArrayList<TaskDetails> importPreference(Context context) {
+        Log.v(TAG, "importPreference()");
+        ArrayList<TaskDetails> tasksList = new ArrayList<>();
 
+        try {
+            FileInputStream inputStream = context.openFileInput(BKP_FILE_NAME);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+
+            String json = stringBuilder.toString();
+            Log.v(TAG, "importPreference(): DONE: json=" + json);
+
+            if (!json.isEmpty()) {
+                JSONArray jsonArray = new JSONArray(json);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    TaskDetails taskDetails = new TaskDetails(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE));
+                    tasksList.add(taskDetails);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return tasksList;
     }
 
-    public static void exportPreference() {
+    public static void exportPreference(Context context, ArrayList<TaskDetails> tasksList) {
+        Log.v(TAG, "exportPreference()");
 
+        if (!tasksList.isEmpty()) {
+            JSONArray jsonArray = new JSONArray();
+            for (TaskDetails taskDetails : tasksList) {
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(JSON_KEY_TASK_NAME, taskDetails.getTaskName());
+                    jsonObject.put(JSON_KEY_TASK_STATE, taskDetails.isCompleted());
+                    jsonArray.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.v(TAG, "exportPreference(): json=" + jsonArray.toString());
+
+            try {
+                byte[] jsonBytes = jsonArray.toString().getBytes();
+
+                FileOutputStream outputStream = context.openFileOutput(BKP_FILE_NAME, Context.MODE_PRIVATE);
+                outputStream.write(jsonBytes);
+                outputStream.close();
+
+                Log.v(TAG, "exportPreference(): DONE");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static ArrayList<ReminderDetails> writeDefaultReminderList(Context context) {
         ReminderDetails one = new ReminderDetails(
                 ReminderDetails.REMINDER_TYPE.REMINDER_TYPE_ONE,
-                ReminderDetails.REMINDER_ORIGIN.ACTIVITY,
                 15,
                 11,
                 0);
         ReminderDetails two = new ReminderDetails(
                 ReminderDetails.REMINDER_TYPE.REMINDER_TYPE_TWO,
-                ReminderDetails.REMINDER_ORIGIN.ACTIVITY,
                 20,
                 11,
                 0);

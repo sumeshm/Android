@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private final int MAX_LENGTH = 20;
+
     private TaskDetailsArrayAdapter arrayAdapter;
     private ArrayList<ReminderDetails> reminderList;
 
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         reminderList = PersistenceManager.readReminderList(this);
         for (ReminderDetails reminderDetails : reminderList) {
             // kick off JobService
-            final JobInfo jobInfo = ReminderSchedulerUtil.getJobInfo(reminderDetails, new ComponentName(this, AlarmJobService.class));
+            final JobInfo jobInfo = ReminderSchedulerUtil.getActivityJobInfo(reminderDetails, new ComponentName(this, AlarmJobService.class));
             final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
             if (jobScheduler != null) {
                 final int result = jobScheduler.schedule(jobInfo);
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.v(TAG, "onDestroy()");
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
     }
 
     @Override
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.v(TAG, "onStop()");
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
     }
 
     @Override
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.v(TAG, "onPause()");
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTasksList());
+        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
     }
 
     @Override
@@ -121,12 +123,19 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.menuImport:
-                PersistenceManager.importPreference();
+                ArrayList<TaskDetails> taskList = PersistenceManager.importPreference(this);
+
+                arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, taskList);
+
+                ListView listView = findViewById(R.id.listView);
+                listView.setAdapter(arrayAdapter);
+
                 Toast.makeText(this, R.string.toastImport, Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.menuExport:
-                PersistenceManager.exportPreference();
+                PersistenceManager.exportPreference(this, arrayAdapter.getTaskList());
+
                 Toast.makeText(this, R.string.toastExport, Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -161,7 +170,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 EditText editText = dialogView.findViewById(R.id.editText);
                 String newTask = editText.getText().toString().trim();
+
                 if (!newTask.isEmpty()) {
+                    // trim length if needed
+                    if (newTask.length() > MAX_LENGTH) {
+                        newTask = newTask.substring(0, MAX_LENGTH - 1);
+                    }
+
                     arrayAdapter.add(new TaskDetails(newTask, Boolean.FALSE));
                     arrayAdapter.notifyDataSetChanged();
                 }
@@ -240,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                 reminderDetails.setMinute(pickerMinute.getValue());
 
                 // kick off JobService
-                final JobInfo jobInfo = ReminderSchedulerUtil.getJobInfo(reminderDetails, new ComponentName(view.getContext(), AlarmJobService.class));
+                final JobInfo jobInfo = ReminderSchedulerUtil.getActivityJobInfo(reminderDetails, new ComponentName(view.getContext(), AlarmJobService.class));
                 final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
                 if (jobScheduler != null) {
                     final int result = jobScheduler.schedule(jobInfo);
