@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <item
+        android:id="@+id/menuAdd"
+        android:icon="@drawable/ic_button_add"
+        android:title=""
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuReset"
+        android:icon="@drawable/ic_button_refresh"
+        android:title=""
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuReminderOne"
+        android:title="@string/menu_reminder_one" />
+
+    <item
+        android:id="@+id/menuReminderTwo"
+        android:title="@string/menu_reminder_two" />
+
+    <item
+        android:id="@+id/menuExport"
+        android:title="@string/menu_export" />
+
+    <item
+        android:id="@+id/menuImport"
+        android:title="@string/menu_import" />
+</menu>
