@@ -1,4 +1,4 @@
-package com.planetjup.tasks.utils;
+package com.planetjup.tasks.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -13,6 +13,8 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.planetjup.tasks.utils.TaskDetails;
+
 import java.util.ArrayList;
 
 import planetjup.com.tasks.R;
@@ -26,6 +28,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
 
     private static final String TAG = TaskDetailsArrayAdapter.class.getSimpleName();
 
+    private final int resource;
     private final Context context;
     private final ArrayList<TaskDetails> taskList;
     private final int[] bgGradient = new int[]{R.drawable.gradient_odd, R.drawable.gradient_even};
@@ -34,6 +37,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
     public TaskDetailsArrayAdapter(@NonNull Context context, int resource, @NonNull ArrayList<TaskDetails> list) {
         super(context, resource, list);
 
+        this.resource = resource;
         this.context = context;
         this.taskList = new ArrayList<>(list);
     }
@@ -91,7 +95,9 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.text_view, null);
+//            convertView = LayoutInflater.from(context).inflate(R.layout.text_view, null);
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            convertView = inflater.inflate(this.resource, parent, false);
         }
 
         int colorPosition = position % bgGradient.length;

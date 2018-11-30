@@ -15,7 +15,7 @@ import android.os.PersistableBundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.planetjup.tasks.MainActivity;
+import com.planetjup.tasks.MainTabActivity;
 import com.planetjup.tasks.utils.ReminderSchedulerUtil;
 
 import java.text.SimpleDateFormat;
@@ -61,7 +61,7 @@ public class AlarmJobService extends JobService {
 
     private void sendQuickTasksNotification(Context context, PersistableBundle bundle) {
         Log.v(TAG, "sendQuickTasksNotification()");
-        Intent reminderIntent = new Intent(context, MainActivity.class);
+        Intent reminderIntent = new Intent(context, MainTabActivity.class);
 
         int requestType = bundle.getInt(EXTRA_REMINDER_TYPE, 0);
 

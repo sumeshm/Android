@@ -6,6 +6,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,54 +25,76 @@ import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.planetjup.tasks.adapter.TaskDetailsArrayAdapter;
+import com.planetjup.tasks.fragments.DailyFragment;
+import com.planetjup.tasks.fragments.MonthlyFragment;
 import com.planetjup.tasks.reminder.AlarmJobService;
 import com.planetjup.tasks.utils.PersistenceManager;
 import com.planetjup.tasks.utils.ReminderDetails;
 import com.planetjup.tasks.utils.ReminderSchedulerUtil;
 import com.planetjup.tasks.utils.TaskDetails;
-import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import planetjup.com.tasks.R;
 
+public class MainTabActivity extends AppCompatActivity {
 
-/**
- * This class will manage a quick tasks list.
- * <p>
- * Created by Sumesh Mani on 1/16/18.
- */
+    private static final String TAG = MainTabActivity.class.getSimpleName();
 
-public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
+    private TaskDetailsArrayAdapter arrayAdapterMonthly;
+    private ArrayList<ReminderDetails> reminderList;
 
     private final int MAX_LENGTH = 20;
+    private final int[] tabIcons = {
+            R.drawable.ic_monthly,
+            R.drawable.ic_daily
+    };
+    private final int[] tabNames = {
+            R.string.tabMonthly,
+            R.string.tabDaily
+    };
 
-    private TaskDetailsArrayAdapter arrayAdapter;
-    private ArrayList<ReminderDetails> reminderList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
 
-        reminderList = PersistenceManager.readReminderList(this);
-        for (ReminderDetails reminderDetails : reminderList) {
-            // kick off JobService
-            final JobInfo jobInfo = ReminderSchedulerUtil.getActivityJobInfo(reminderDetails, new ComponentName(this, AlarmJobService.class));
-            final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            if (jobScheduler != null) {
-                final int result = jobScheduler.schedule(jobInfo);
-                Log.v(TAG, "onCreate(): Reminder-" + reminderDetails.getReminderType().getValue() + " : schedule.result=" + result);
-            }
-        }
+        setContentView(R.layout.activity_tabs);
 
-        setContentView(R.layout.activity_main);
-        populateListView();
+        // add trip to DB
+        String tripName = getIntent().getStringExtra("tripName");
+        setTitle(tripName);
+
+        setupTabs();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //populateListView();
+    }
+
+    private void setupTabs() {
+        Log.v(TAG, "setupTabs()");
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        TabPagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new DailyFragment());
+        adapter.addFragment(new MonthlyFragment());
+
+        this.viewPager = findViewById(R.id.viewpager);
+        this.viewPager.setAdapter(adapter);
+
+        this.tabLayout = findViewById(R.id.tabs);
+        this.tabLayout.setupWithViewPager(viewPager);
+        this.tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        this.tabLayout.getTabAt(1).setIcon(tabIcons[1]);
     }
 
     @Override
@@ -75,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.v(TAG, "onDestroy()");
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
+        PersistenceManager.writeTasksList(this, arrayAdapterMonthly.getTaskList());
     }
 
     @Override
@@ -83,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         Log.v(TAG, "onStop()");
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
+        PersistenceManager.writeTasksList(this, arrayAdapterMonthly.getTaskList());
     }
 
     @Override
@@ -91,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.v(TAG, "onPause()");
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
+        PersistenceManager.writeTasksList(this, arrayAdapterMonthly.getTaskList());
     }
 
     @Override
@@ -111,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.menuReset:
-                arrayAdapter.resetListView();
+                arrayAdapterMonthly.resetListView();
                 break;
 
             case R.id.menuReminderOne:
@@ -121,39 +148,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuReminderTwo:
                 showPickerDialog(reminderList.get(1));
                 break;
-
-            case R.id.menuImport:
-                ArrayList<TaskDetails> taskList = PersistenceManager.importPreference(this);
-
-                arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, taskList);
-
-                ListView listView = findViewById(R.id.listView);
-                listView.setAdapter(arrayAdapter);
-
-                Toast.makeText(this, R.string.toastImport, Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.menuExport:
-                PersistenceManager.exportPreference(this, arrayAdapter.getTaskList());
-
-                Toast.makeText(this, R.string.toastExport, Toast.LENGTH_SHORT).show();
-                break;
         }
 
         return true;
     }
 
-
-    private void populateListView() {
-        Log.v(TAG, "populateListView()");
-
-        ArrayList<TaskDetails> tasksList = PersistenceManager.readTasksList(this);
-
-        arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, tasksList);
-
-        ListView listView = findViewById(R.id.listView);
-        listView.setAdapter(arrayAdapter);
-    }
 
     private void showAddDialog() {
         Log.v(TAG, "showAddDialog()");
@@ -177,8 +176,8 @@ public class MainActivity extends AppCompatActivity {
                         newTask = newTask.substring(0, MAX_LENGTH - 1);
                     }
 
-                    arrayAdapter.add(new TaskDetails(newTask, Boolean.FALSE));
-                    arrayAdapter.notifyDataSetChanged();
+                    arrayAdapterMonthly.add(new TaskDetails(newTask, Boolean.FALSE));
+                    arrayAdapterMonthly.notifyDataSetChanged();
                 }
             }
         });
@@ -270,5 +269,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-}
 
+    class TabPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> fragmentList = new ArrayList<>();
+
+        public TabPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment) {
+            fragmentList.add(fragment);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            //return getString(tabNames[position]);
+            return null;
+        }
+    }
+}
