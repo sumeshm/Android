@@ -2,6 +2,7 @@ package planetjup.com.quickexpense.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import planetjup.com.quickexpense.R;
+import planetjup.com.quickexpense.activity.TripTabsActivity;
 import planetjup.com.quickexpense.pojo.TripDetails;
 
 /**
@@ -22,16 +24,15 @@ import planetjup.com.quickexpense.pojo.TripDetails;
  * Created by Sumesh Mani on 2/16/18.
  */
 
-public class TripDetailsArrayAdapter extends ArrayAdapter<TripDetails> implements View.OnClickListener {
+public class TripArrayAdapter extends ArrayAdapter<TripDetails> implements View.OnClickListener {
 
-    private static final String TAG = TripDetailsArrayAdapter.class.getSimpleName();
+    private static final String TAG = TripArrayAdapter.class.getSimpleName();
 
     private final Context context;
     private final ArrayList<TripDetails> tripList;
-    private final int[] bgGradient = new int[]{R.drawable.gradient_odd, R.drawable.gradient_even};
 
 
-    public TripDetailsArrayAdapter(@NonNull Context context, int resource, @NonNull ArrayList<TripDetails> list) {
+    public TripArrayAdapter(@NonNull Context context, int resource, @NonNull ArrayList<TripDetails> list) {
         super(context, resource, list);
 
         this.context = context;
@@ -45,7 +46,7 @@ public class TripDetailsArrayAdapter extends ArrayAdapter<TripDetails> implement
     @SuppressLint("Range")
     @Override
     public void onClick(View view) {
-        Log.v(TAG, "onClick()");
+        Log.v(TAG, "onClick(): id=" + view.getId());
 
         if (view.getTag() == null || view.getTag().getClass() != ListItemManager.class) {
             Log.v(TAG, "onClick() : no valid POJO in tag");
@@ -61,6 +62,12 @@ public class TripDetailsArrayAdapter extends ArrayAdapter<TripDetails> implement
                 remove(tripDetails);
                 notifyDataSetChanged();
                 break;
+            case R.id.list_view:
+                Log.v(TAG, "onClick() : List : Trip=" + tripDetails.getTripName() + ", index=" + getPosition(tripDetails));
+                Intent tripTabIntent = new Intent(context, TripTabsActivity.class);
+                tripTabIntent.putExtra("tripName", tripDetails.getTripName());
+                context.startActivity(tripTabIntent);
+                break;
         }
     }
 
@@ -69,11 +76,9 @@ public class TripDetailsArrayAdapter extends ArrayAdapter<TripDetails> implement
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.list_view, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.list_view_trip, null);
+            convertView.setOnClickListener(this);
         }
-
-        int colorPosition = position % bgGradient.length;
-        convertView.setBackground(this.context.getDrawable(bgGradient[colorPosition]));
 
         new ListItemManager(tripList.get(position), convertView, this);
 

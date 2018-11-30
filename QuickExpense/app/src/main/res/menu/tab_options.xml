@@ -12,12 +12,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menuReset"
-        android:icon="@drawable/ic_button_refresh"
-        android:title=""
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/menuReminderOne"
         android:title="@string/menu_reminder_one" />
 

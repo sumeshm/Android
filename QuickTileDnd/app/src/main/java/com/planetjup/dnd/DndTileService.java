@@ -1,6 +1,9 @@
 package com.planetjup.dnd;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,10 +12,14 @@ import android.graphics.drawable.Icon;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.PersistableBundle;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class will manage the Do-Not-Disturb quick settings toggle tile functionality
@@ -43,9 +50,10 @@ public class DndTileService extends TileService {
     private NotificationManager notificationManager;
     private BroadcastReceiver ringerModeReceiver;
 
+    private AtomicBoolean isTimerCancel = new AtomicBoolean();
     private boolean isAllowed = Boolean.FALSE;
-    private boolean isTimerCancel = Boolean.FALSE;
     private boolean isChangeRequested = Boolean.FALSE;
+    private long pendingDuration;
 
 
     @Override
@@ -222,7 +230,7 @@ public class DndTileService extends TileService {
             int ringerMode = audioManager.getRingerMode();
             if (ringerMode != newRingerMode) {
                 isChangeRequested = Boolean.TRUE;
-                isTimerCancel = Boolean.TRUE;
+                isTimerCancel.set(Boolean.TRUE);
 
                 audioManager.setRingerMode(newRingerMode);
                 if (newInterruptionMode > 0 && newRingerMode == AudioManager.RINGER_MODE_SILENT) {
@@ -271,23 +279,31 @@ public class DndTileService extends TileService {
     private void startCountdownTimer(long duration) {
         Log.v(TAG, "startCountdownTimer() : duration=" + duration);
 
-        isTimerCancel = Boolean.FALSE;
+        isTimerCancel.set(Boolean.FALSE);
 
         new CountDownTimer(duration, 1000) {
             @Override
             public void onTick(long l) {
-                if (isTimerCancel) {
+                if (isTimerCancel.get()) {
                     Log.v(TAG, "CountdownTimer : CANCEL");
                     cancel();
-                    isTimerCancel = Boolean.FALSE;
+                    isTimerCancel.set(Boolean.FALSE);
+                    pendingDuration = 0;
                 }
+
+                pendingDuration--;
+                showCountdownNotification(getApplicationContext());
             }
 
             public void onFinish() {
                 Log.v(TAG, "CountdownTimer : FINISH");
                 changeMode(AudioManager.RINGER_MODE_NORMAL, -1);
+                stopForeground(Boolean.TRUE);
+                pendingDuration = 0;
             }
         }.start();
+
+        this.pendingDuration = duration;
     }
 
     private void showDndActivity(boolean isCollapse) {
@@ -310,5 +326,34 @@ public class DndTileService extends TileService {
                         .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
 
         startActivityAndCollapse(intent);
+    }
+
+    public void showCountdownNotification(Context context)
+    {
+        Log.v(TAG, "showCountdownNotification()");
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationChannel channel = new NotificationChannel(
+                context.getPackageName(),
+                context.getString(R.string.app_name),
+                NotificationManager.IMPORTANCE_DEFAULT);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                new Intent(this, DndTileService.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(context, channel.getId())
+                .setSmallIcon(R.drawable.ic_tile_dnd_on)
+                .setContentText("Time Left: " + (pendingDuration % 1000) + " seconds")
+                .setContentIntent(pendingIntent)
+                .setWhen(0)
+                .build();
+
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= Notification.FLAG_FOREGROUND_SERVICE;
+
+        startForeground(2422, notification);
     }
 }

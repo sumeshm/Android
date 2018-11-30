@@ -21,11 +21,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.TripActivity"
-            android:label="@string/title_activity_trip"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
             android:name=".activity.TripTabsActivity"
             android:label="@string/title_activity_trip"
             android:parentActivityName=".activity.MainActivity" >

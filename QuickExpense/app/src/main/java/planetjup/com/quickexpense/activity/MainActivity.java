@@ -17,7 +17,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import planetjup.com.quickexpense.R;
-import planetjup.com.quickexpense.adapters.TripDetailsArrayAdapter;
+import planetjup.com.quickexpense.adapters.TripArrayAdapter;
 import planetjup.com.quickexpense.pojo.TripDetails;
 
 
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int ACTIVITY_USER = 1;
     private static final int MAX_LENGTH = 20;
 
-    private TripDetailsArrayAdapter arrayAdapter;
+    private TripArrayAdapter arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.toolbar_options, menu);
+        menuInflater.inflate(R.menu.trip_options, menu);
 
         return true;
     }
@@ -79,11 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.menuAdd:
-                //showAddTripDialog();
                 showPopupDialog();
-                break;
-
-            case R.id.menuReset:
                 break;
 
             case R.id.menuReminderOne:
@@ -96,26 +92,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent returnIntent) {
-        super.onActivityResult(requestCode, resultCode, returnIntent);
-        Log.v(TAG, "onActivityResult(): requestCode=" + requestCode + ", resultCode=" + resultCode + ", returnIntent=" + returnIntent);
-
-        if (returnIntent == null || resultCode != RESULT_OK) {
-            Log.v(TAG, "onActivityResult(): return due to invalid input");
-            return;
-        }
-
-        switch (requestCode) {
-            case ACTIVITY_TRIP:
-                String tripName = returnIntent.getStringExtra("tripName");
-
-                break;
-            case ACTIVITY_USER:
-                break;
-        }
-    }
-
     private void populateListView() {
         Log.v(TAG, "populateListView()");
 
@@ -124,19 +100,10 @@ public class MainActivity extends AppCompatActivity {
         tripList.add( new TripDetails("Paris"));
         tripList.add( new TripDetails("Rome"));
 
-        arrayAdapter = new TripDetailsArrayAdapter(this, R.layout.list_view, tripList);
+        arrayAdapter = new TripArrayAdapter(this, R.layout.list_view_trip, tripList);
 
         ListView listView = findViewById(R.id.listView_trip);
         listView.setAdapter(arrayAdapter);
-    }
-
-    private void showAddTripDialog() {
-        Log.v(TAG, "showAddTripDialog()");
-
-//        Intent intent = new Intent(this, TripActivity.class);
-//        startActivityForResult(intent, ACTIVITY_TRIP);
-
-        startActivity(new Intent(MainActivity.this, TripTabsActivity.class));
     }
 
     private void showPopupDialog() {
@@ -161,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                         newTrip = newTrip.substring(0, MAX_LENGTH - 1);
                     }
 
+                    // call Trip-Tab-Activity
                     Intent tripTabIntent = new Intent(MainActivity.this, TripTabsActivity.class);
                     tripTabIntent.putExtra("tripName", newTrip);
                     startActivity(tripTabIntent);
