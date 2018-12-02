@@ -26,7 +26,8 @@ public class PersistenceManager {
 
     private static final String TAG = PersistenceManager.class.getSimpleName();
 
-    private static final String PREFERENCES_KEY_TASKS = "com_planetjup_tasks_TasksList";
+    private static final String PREFERENCES_KEY_TASKS_MONTHLY = "com_planetjup_tasks_Monthly";
+    private static final String PREFERENCES_KEY_TASKS_DAILY = "com_planetjup_tasks_Daily";
     private static final String PREFERENCES_KEY_REMINDER = "com_planetjup_tasks_ReminderList";
 
     private static final String JSON_KEY_TASK_NAME = "name";
@@ -38,12 +39,12 @@ public class PersistenceManager {
 
     private static final String BKP_FILE_NAME = "quickTask.txt";
 
-    public static void writeTasksList(Context context, ArrayList<TaskDetails> tasksList) {
-        Log.v(TAG, "writeTasksList()");
+    public static void writeMonthlyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        Log.v(TAG, "writeMonthlyTasksList()");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.putString(PREFERENCES_KEY_TASKS, null);
+        editor.putString(PREFERENCES_KEY_TASKS_MONTHLY, null);
         if (!tasksList.isEmpty()) {
             JSONArray jsonArray = new JSONArray();
             for (TaskDetails taskDetails : tasksList) {
@@ -58,20 +59,71 @@ public class PersistenceManager {
                 }
             }
 
-            editor.putString(PREFERENCES_KEY_TASKS, jsonArray.toString());
+            editor.putString(PREFERENCES_KEY_TASKS_MONTHLY, jsonArray.toString());
         } else {
-            editor.putString(PREFERENCES_KEY_TASKS, null);
+            editor.putString(PREFERENCES_KEY_TASKS_MONTHLY, null);
         }
 
         editor.apply();
     }
 
-    public static ArrayList<TaskDetails> readTasksList(Context context) {
-        Log.v(TAG, "readTasksList()");
+    public static ArrayList<TaskDetails> readMonthlyTasksList(Context context) {
+        Log.v(TAG, "readMonthlyTasksList()");
         ArrayList<TaskDetails> tasksList = new ArrayList<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String json = prefs.getString(PREFERENCES_KEY_TASKS, null);
+        String json = prefs.getString(PREFERENCES_KEY_TASKS_MONTHLY, null);
+        Log.v(TAG, "writeTasksList(): json=" + json);
+        if (json != null && !json.isEmpty()) {
+            try {
+                JSONArray jsonArray = new JSONArray(json);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    TaskDetails taskDetails = new TaskDetails(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE));
+                    tasksList.add(taskDetails);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return tasksList;
+    }
+
+    public static void writeDailyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        Log.v(TAG, "writeDailyTasksList()");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putString(PREFERENCES_KEY_TASKS_DAILY, null);
+        if (!tasksList.isEmpty()) {
+            JSONArray jsonArray = new JSONArray();
+            for (TaskDetails taskDetails : tasksList) {
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(JSON_KEY_TASK_NAME, taskDetails.getTaskName());
+                    jsonObject.put(JSON_KEY_TASK_STATE, taskDetails.isCompleted());
+                    jsonArray.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            editor.putString(PREFERENCES_KEY_TASKS_DAILY, jsonArray.toString());
+        } else {
+            editor.putString(PREFERENCES_KEY_TASKS_DAILY, null);
+        }
+
+        editor.apply();
+    }
+
+    public static ArrayList<TaskDetails> readDailyTasksList(Context context) {
+        Log.v(TAG, "readDailyTasksList()");
+        ArrayList<TaskDetails> tasksList = new ArrayList<>();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String json = prefs.getString(PREFERENCES_KEY_TASKS_DAILY, null);
         Log.v(TAG, "writeTasksList(): json=" + json);
         if (json != null && !json.isEmpty()) {
             try {

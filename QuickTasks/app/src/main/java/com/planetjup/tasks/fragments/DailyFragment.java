@@ -1,9 +1,7 @@
 package com.planetjup.tasks.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,21 +16,10 @@ import java.util.ArrayList;
 
 import planetjup.com.tasks.R;
 
-public class DailyFragment extends Fragment {
+public class DailyFragment extends TaskListFragment {
 
     private static final String TAG = DailyFragment.class.getSimpleName();
 
-    private TaskDetailsArrayAdapter arrayAdapter;
-
-    public DailyFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.v(TAG, "onCreate()");
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,13 +31,10 @@ public class DailyFragment extends Fragment {
         return view;
     }
 
-    private void populateTaskList(View view) {
+    protected void populateTaskList(View view) {
         Log.v(TAG, "populateTaskList()");
 
-        ArrayList<TaskDetails> tasksList = PersistenceManager.readTasksList(getContext());
-        tasksList.add(new TaskDetails("123", true));
-        tasksList.add(new TaskDetails("456", false));
-
+        ArrayList<TaskDetails> tasksList = PersistenceManager.readDailyTasksList(getContext());
         arrayAdapter = new TaskDetailsArrayAdapter(getContext(), R.layout.text_view, tasksList);
 
         ListView listView = view.findViewById(R.id.listViewDaily);

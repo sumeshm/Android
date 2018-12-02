@@ -21,13 +21,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.planetjup.tasks.adapter.TaskDetailsArrayAdapter;
 import com.planetjup.tasks.fragments.DailyFragment;
 import com.planetjup.tasks.fragments.MonthlyFragment;
+import com.planetjup.tasks.fragments.TaskListFragment;
 import com.planetjup.tasks.reminder.AlarmJobService;
 import com.planetjup.tasks.utils.PersistenceManager;
 import com.planetjup.tasks.utils.ReminderDetails;
@@ -39,14 +39,15 @@ import java.util.List;
 
 import planetjup.com.tasks.R;
 
-public class MainTabActivity extends AppCompatActivity {
+public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener {
 
     private static final String TAG = MainTabActivity.class.getSimpleName();
 
+    private int currentTabIndex;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private TaskDetailsArrayAdapter arrayAdapterMonthly;
     private ArrayList<ReminderDetails> reminderList;
+    private ArrayList<TaskListFragment> fragmentList;
 
     private final int MAX_LENGTH = 20;
     private final int[] tabIcons = {
@@ -74,8 +75,6 @@ public class MainTabActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //populateListView();
     }
 
     private void setupTabs() {
@@ -84,9 +83,12 @@ public class MainTabActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        fragmentList = new ArrayList<>();
+        fragmentList.add(new MonthlyFragment());
+        fragmentList.add(new DailyFragment());
         TabPagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new DailyFragment());
-        adapter.addFragment(new MonthlyFragment());
+        adapter.addFragment(fragmentList.get(0));
+        adapter.addFragment(fragmentList.get(1));
 
         this.viewPager = findViewById(R.id.viewpager);
         this.viewPager.setAdapter(adapter);
@@ -95,30 +97,8 @@ public class MainTabActivity extends AppCompatActivity {
         this.tabLayout.setupWithViewPager(viewPager);
         this.tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         this.tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.v(TAG, "onDestroy()");
-
-        PersistenceManager.writeTasksList(this, arrayAdapterMonthly.getTaskList());
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.v(TAG, "onStop()");
-
-        PersistenceManager.writeTasksList(this, arrayAdapterMonthly.getTaskList());
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.v(TAG, "onPause()");
-
-        PersistenceManager.writeTasksList(this, arrayAdapterMonthly.getTaskList());
+        this.tabLayout.addOnTabSelectedListener(this);
     }
 
     @Override
@@ -138,7 +118,7 @@ public class MainTabActivity extends AppCompatActivity {
                 break;
 
             case R.id.menuReset:
-                arrayAdapterMonthly.resetListView();
+                fragmentList.get(currentTabIndex).resetListView();
                 break;
 
             case R.id.menuReminderOne:
@@ -153,6 +133,21 @@ public class MainTabActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        Log.v(TAG, "onTabSelected(): " + tab.getPosition());
+        currentTabIndex = tab.getPosition();
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+
+    }
 
     private void showAddDialog() {
         Log.v(TAG, "showAddDialog()");
@@ -176,8 +171,7 @@ public class MainTabActivity extends AppCompatActivity {
                         newTask = newTask.substring(0, MAX_LENGTH - 1);
                     }
 
-                    arrayAdapterMonthly.add(new TaskDetails(newTask, Boolean.FALSE));
-                    arrayAdapterMonthly.notifyDataSetChanged();
+                    fragmentList.get(currentTabIndex).addTask(newTask);
                 }
             }
         });
