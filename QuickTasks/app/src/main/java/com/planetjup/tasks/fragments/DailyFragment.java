@@ -1,7 +1,6 @@
 package com.planetjup.tasks.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,17 +26,19 @@ public class DailyFragment extends TaskListFragment {
         Log.v(TAG, "onCreateView()");
 
         View view = inflater.inflate(R.layout.fragment_daily, container, false);
-        populateTaskList(view);
-        return view;
-    }
-
-    protected void populateTaskList(View view) {
-        Log.v(TAG, "populateTaskList()");
 
         ArrayList<TaskDetails> tasksList = PersistenceManager.readDailyTasksList(getContext());
         arrayAdapter = new TaskDetailsArrayAdapter(getContext(), R.layout.text_view, tasksList);
 
-        ListView listView = view.findViewById(R.id.listViewDaily);
+        listView = view.findViewById(R.id.listViewDaily);
         listView.setAdapter(arrayAdapter);
+
+        return view;
+    }
+
+    protected void persistTaskList() {
+        Log.v(TAG, "populateListView()");
+
+        PersistenceManager.writeDailyTasksList(getContext(), arrayAdapter.getTaskList());
     }
 }

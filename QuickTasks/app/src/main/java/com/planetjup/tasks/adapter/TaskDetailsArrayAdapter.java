@@ -54,6 +54,7 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         }
 
         notifyDataSetChanged();
+
     }
 
     @SuppressLint("Range")
@@ -122,6 +123,14 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         super.remove(taskDetails);
     }
 
+    @Override
+    public void clear() {
+        Log.v(TAG, "remove()");
+        for (TaskDetails task : taskList) {
+            super.remove(task);
+        }
+        taskList.clear();
+    }
 
     private class ListItemManager {
         final private TaskDetails taskDetails;

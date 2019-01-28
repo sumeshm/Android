@@ -24,7 +24,6 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
-import com.planetjup.tasks.adapter.TaskDetailsArrayAdapter;
 import com.planetjup.tasks.fragments.DailyFragment;
 import com.planetjup.tasks.fragments.MonthlyFragment;
 import com.planetjup.tasks.fragments.TaskListFragment;
@@ -46,17 +45,13 @@ public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTa
     private int currentTabIndex;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private ArrayList<ReminderDetails> reminderList;
+    private ArrayList<ReminderDetails> reminderList = new ArrayList<>();
     private ArrayList<TaskListFragment> fragmentList;
 
     private final int MAX_LENGTH = 20;
     private final int[] tabIcons = {
             R.drawable.ic_monthly,
             R.drawable.ic_daily
-    };
-    private final int[] tabNames = {
-            R.string.tabMonthly,
-            R.string.tabDaily
     };
 
 
@@ -128,6 +123,21 @@ public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTa
             case R.id.menuReminderTwo:
                 showPickerDialog(reminderList.get(1));
                 break;
+
+            case R.id.menuExport:
+                PersistenceManager.exportTaskLists(getApplicationContext(), fragmentList.get(0).getTaskList(), fragmentList.get(1).getTaskList());
+                break;
+
+            case R.id.menuImport:
+                ArrayList<TaskDetails> monthlyTaskLists = PersistenceManager.importMonthlyTaskLists(getApplicationContext());
+                fragmentList.get(0).clearListView();
+                fragmentList.get(0).addMultipleTasks(monthlyTaskLists);
+
+                ArrayList<TaskDetails> dailyTaskLists = PersistenceManager.importDailyTaskLists(getApplicationContext());
+                fragmentList.get(1).clearListView();
+                fragmentList.get(1).addMultipleTasks(dailyTaskLists);
+
+                break;
         }
 
         return true;
@@ -141,12 +151,10 @@ public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTa
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
-
     }
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
-
     }
 
     private void showAddDialog() {
