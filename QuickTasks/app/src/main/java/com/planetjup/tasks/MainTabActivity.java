@@ -54,6 +54,20 @@ public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTa
             R.drawable.ic_daily
     };
 
+    enum TabIndex {
+        MONTHLY(0),
+        DAILY(1);
+
+        private int value;
+
+        private TabIndex(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +96,16 @@ public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTa
         fragmentList.add(new MonthlyFragment());
         fragmentList.add(new DailyFragment());
         TabPagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(fragmentList.get(0));
-        adapter.addFragment(fragmentList.get(1));
+        adapter.addFragment(fragmentList.get(TabIndex.MONTHLY.getValue()));
+        adapter.addFragment(fragmentList.get(TabIndex.DAILY.getValue()));
 
         this.viewPager = findViewById(R.id.viewpager);
         this.viewPager.setAdapter(adapter);
 
         this.tabLayout = findViewById(R.id.tabs);
         this.tabLayout.setupWithViewPager(viewPager);
-        this.tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        this.tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+        this.tabLayout.getTabAt(TabIndex.MONTHLY.getValue()).setIcon(tabIcons[TabIndex.MONTHLY.getValue()]);
+        this.tabLayout.getTabAt(TabIndex.DAILY.getValue()).setIcon(tabIcons[TabIndex.DAILY.getValue()]);
 
         this.tabLayout.addOnTabSelectedListener(this);
     }
@@ -117,26 +131,30 @@ public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTa
                 break;
 
             case R.id.menuReminderOne:
-                showPickerDialog(reminderList.get(0));
+                showPickerDialog(reminderList.get(TabIndex.MONTHLY.getValue()));
                 break;
 
             case R.id.menuReminderTwo:
-                showPickerDialog(reminderList.get(1));
+                showPickerDialog(reminderList.get(TabIndex.DAILY.getValue()));
                 break;
 
             case R.id.menuExport:
-                PersistenceManager.exportTaskLists(getApplicationContext(), fragmentList.get(0).getTaskList(), fragmentList.get(1).getTaskList());
+                PersistenceManager.exportTaskLists(getApplicationContext(), fragmentList.get(TabIndex.MONTHLY.getValue()).getTaskList(),
+                        fragmentList.get(TabIndex.DAILY.getValue()).getTaskList());
+
+                Toast.makeText(getApplicationContext(), R.string.toastExport, Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.menuImport:
                 ArrayList<TaskDetails> monthlyTaskLists = PersistenceManager.importMonthlyTaskLists(getApplicationContext());
-                fragmentList.get(0).clearListView();
-                fragmentList.get(0).addMultipleTasks(monthlyTaskLists);
+                fragmentList.get(TabIndex.MONTHLY.getValue()).clearListView();
+                fragmentList.get(TabIndex.MONTHLY.getValue()).addMultipleTasks(monthlyTaskLists);
 
                 ArrayList<TaskDetails> dailyTaskLists = PersistenceManager.importDailyTaskLists(getApplicationContext());
-                fragmentList.get(1).clearListView();
-                fragmentList.get(1).addMultipleTasks(dailyTaskLists);
+                fragmentList.get(TabIndex.DAILY.getValue()).clearListView();
+                fragmentList.get(TabIndex.DAILY.getValue()).addMultipleTasks(dailyTaskLists);
 
+                Toast.makeText(getApplicationContext(), R.string.toastImport, Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -263,7 +281,9 @@ public class MainTabActivity extends AppCompatActivity implements TabLayout.OnTa
                     Log.v(TAG, "onClick(): Reminder-" + reminderDetails.getReminderType().getValue() + " : schedule.result=" + result);
                 }
 
-                // record change to reminder
+                // record change to
+                //
+                // reminder
                 PersistenceManager.writeReminderList(view.getContext(), reminderList);
 
                 Toast.makeText(view.getContext(), R.string.toastReminder, Toast.LENGTH_SHORT).show();

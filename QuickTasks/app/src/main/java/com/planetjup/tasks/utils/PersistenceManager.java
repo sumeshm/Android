@@ -80,8 +80,7 @@ public class PersistenceManager {
         return convertToArray(jsonData);
     }
 
-    private static ArrayList<TaskDetails> convertToArray(String jsonData)
-    {
+    private static ArrayList<TaskDetails> convertToArray(String jsonData) {
         Log.v(TAG, "convertToArray(): jsonData=" + jsonData);
         ArrayList<TaskDetails> tasksList = new ArrayList<>();
 
@@ -102,8 +101,7 @@ public class PersistenceManager {
         return tasksList;
     }
 
-    private static JSONArray convertToJsonArray(ArrayList<TaskDetails> tasksList)
-    {
+    private static JSONArray convertToJsonArray(ArrayList<TaskDetails> tasksList) {
         Log.v(TAG, "convertToJsonArray() : tasksList=" + tasksList);
 
         JSONArray jsonArray = new JSONArray();
@@ -128,8 +126,8 @@ public class PersistenceManager {
     }
 
     /*
-    * Permanent backup/restore to phone memory
-    */
+     * Permanent backup/restore to phone memory
+     */
 
     public static Boolean exportTaskLists(Context context, ArrayList<TaskDetails> monthlyTasksList, ArrayList<TaskDetails> dailyTasksList) {
         Log.v(TAG, "exportTaskLists()");
@@ -231,9 +229,6 @@ public class PersistenceManager {
         Log.v(TAG, "importDailyTaskLists(): tasksList=" + tasksList.toString());
         return tasksList;
     }
-
-
-
 
 
     public static void writeReminderList(Context context, ArrayList<ReminderDetails> reminderList) {
