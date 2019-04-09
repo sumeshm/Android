@@ -16,7 +16,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/calendar_widget_info" />
+                android:resource="@xml/widget_provider" />
         </receiver>
 
         <activity android:name=".MainActivity">
@@ -28,4 +28,5 @@
         </activity>
     </application>
 
+    <uses-permission android:name="android.permission.READ_CALENDAR"></uses-permission>
 </manifest>
