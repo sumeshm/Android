@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">QuickCalendarWidget</string>
-    <string name="appwidget_text">Quick Calendar Widget</string>
-    <string name="add_widget">Add widget</string>
     <string name="day_monday">Mon</string>
     <string name="day_tuesday">Tue</string>
     <string name="day_wednesday">Wed</string>
-    <string name="day_thursdy">Thu</string>
+    <string name="day_thursday">Thu</string>
     <string name="day_friday">Fri</string>
     <string name="day_saturday">Sat</string>
     <string name="day_sunday">Sun</string>

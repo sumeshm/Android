@@ -8,17 +8,28 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="CalenderViewCustom" parent="Theme.AppCompat">
-        <item name="colorAccent">@android:color/holo_blue_dark</item>
-        <item name="colorPrimary">@android:color/darker_gray</item>
-        <item name="android:textColorPrimary">@color/colorPrimary</item>
+    <style name="linearLayout" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/gradient</item>
     </style>
 
-    <style name="CalenderViewDateCustomText" parent="android:TextAppearance.DeviceDefault.Small">
-        <item name="android:textColor">@android:color/holo_orange_dark</item>
+    <style name="textView" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">16dp</item>
+        <item name="android:alpha">30</item>
     </style>
 
-    <style name="CalenderViewWeekCustomText" parent="android:TextAppearance.DeviceDefault.Small">
-        <item name="android:textColor">@android:color/holo_green_dark</item>
+    <style name="textViewEvent" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14dp</item>
     </style>
+
 </resources>

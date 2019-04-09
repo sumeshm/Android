@@ -19,11 +19,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        customTableLayout = findViewById(R.id.tableView);
-        customTableLayout.removeAllViews();
-        populateTableView();
+//        setContentView(R.layout.activity_main);
+//
+//        customTableLayout = findViewById(R.id.tableView);
+//        customTableLayout.removeAllViews();
+//        populateTableView();
+        finish();
     }
 
     private void populateTableView() {
@@ -31,19 +32,19 @@ public class MainActivity extends AppCompatActivity {
         dayList.add(getString(R.string.day_monday));
         dayList.add(getString(R.string.day_tuesday));
         dayList.add(getString(R.string.day_wednesday));
-        dayList.add(getString(R.string.day_thursdy));
+        dayList.add(getString(R.string.day_thursday));
         dayList.add(getString(R.string.day_friday));
         dayList.add(getString(R.string.day_saturday));
         dayList.add(getString(R.string.day_sunday));
 
         TableRow rowDay = new TableRow(this);
-        rowDay.setBackground(getBaseContext().getDrawable(R.drawable.gradient_odd));
+        rowDay.setBackground(getBaseContext().getDrawable(R.drawable.gradient));
 
         TableRow rowDate = new TableRow(this);
-        rowDate.setBackground(getBaseContext().getDrawable(R.drawable.gradient_even));
+        rowDate.setBackground(getBaseContext().getDrawable(R.drawable.gradient));
 
         TableRow rowEvent = new TableRow(this);
-        rowEvent.setBackground(getBaseContext().getDrawable(R.drawable.gradient_odd));
+        rowEvent.setBackground(getBaseContext().getDrawable(R.drawable.gradient));
 
         Calendar today = Calendar.getInstance();
         today.setFirstDayOfWeek(Calendar.MONDAY);

@@ -23,7 +23,7 @@ public class CalendarWidget extends AppWidgetProvider {
         dayList.add(context.getString(R.string.day_monday));
         dayList.add(context.getString(R.string.day_tuesday));
         dayList.add(context.getString(R.string.day_wednesday));
-        dayList.add(context.getString(R.string.day_thursdy));
+        dayList.add(context.getString(R.string.day_thursday));
         dayList.add(context.getString(R.string.day_friday));
         dayList.add(context.getString(R.string.day_saturday));
         dayList.add(context.getString(R.string.day_sunday));
@@ -71,10 +71,6 @@ public class CalendarWidget extends AppWidgetProvider {
             remoteViews.setTextViewText(idDay, dayList.get(count));
             remoteViews.setTextViewText(idDate, "" + today.get(Calendar.DAY_OF_MONTH));
             remoteViews.setTextViewText(idEvent, "e-" + today.get(Calendar.DAY_OF_MONTH));
-
-            remoteViews.setTextViewTextSize(idDay, TypedValue.COMPLEX_UNIT_PX, 45);
-            remoteViews.setTextViewTextSize(idDate, TypedValue.COMPLEX_UNIT_PX, 45);
-            remoteViews.setTextViewTextSize(idEvent, TypedValue.COMPLEX_UNIT_PX, 30);
 
             // mark current day
             int newDayOfMonth = today.get(Calendar.DAY_OF_MONTH);

@@ -1,206 +1,144 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <LinearLayout style="@style/linearLayout">
 
         <TextView
             android:id="@+id/textDay1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_sunday"
-            android:textSize="20px" />
+            style="@style/textView"
+            android:text="@string/day_sunday" />
 
         <TextView
             android:id="@+id/textDate1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_sunday"
-            android:textSize="20px" />
+            style="@style/textView"
+            android:text="@string/day_sunday" />
 
         <TextView
             android:id="@+id/textEvent1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_sunday"
-            android:textSize="20px" />
+            style="@style/textViewEvent"
+            android:text="@string/day_sunday" />
 
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <LinearLayout style="@style/linearLayout" >
 
         <TextView
             android:id="@+id/textDay2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_monday"
-            android:textSize="20px" />
+            style="@style/textView"
+            android:text="@string/day_monday" />
 
         <TextView
             android:id="@+id/textDate2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_monday"
-            android:textSize="20px" />
+            style="@style/textView"
+            android:text="@string/day_monday" />
 
         <TextView
             android:id="@+id/textEvent2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_monday"
-            android:textSize="20px" />
+            style="@style/textViewEvent"
+            android:text="@string/day_monday" />
 
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <LinearLayout style="@style/linearLayout" >
 
         <TextView
             android:id="@+id/textDay3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_tuesday" />
 
         <TextView
             android:id="@+id/textDate3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_tuesday" />
 
         <TextView
             android:id="@+id/textEvent3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textViewEvent"
             android:text="@string/day_tuesday" />
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <LinearLayout style="@style/linearLayout" >
 
         <TextView
             android:id="@+id/textDay4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_wednesday" />
 
         <TextView
             android:id="@+id/textDate4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_wednesday" />
 
         <TextView
             android:id="@+id/textEvent4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textViewEvent"
             android:text="@string/day_wednesday" />
 
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <LinearLayout style="@style/linearLayout" >
 
         <TextView
             android:id="@+id/textDay5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_thursdy" />
+            style="@style/textView"
+            android:text="@string/day_thursday" />
 
         <TextView
             android:id="@+id/textDate5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_thursdy" />
+            style="@style/textView"
+            android:text="@string/day_thursday" />
 
         <TextView
             android:id="@+id/textEvent5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/day_thursdy" />
+            style="@style/textViewEvent"
+            android:text="@string/day_thursday" />
 
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <LinearLayout style="@style/linearLayout" >
 
         <TextView
             android:id="@+id/textDay6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_friday" />
 
         <TextView
             android:id="@+id/textDate6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_friday" />
 
         <TextView
             android:id="@+id/textEvent6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textViewEvent"
             android:text="@string/day_friday" />
 
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:orientation="vertical">
+    <LinearLayout style="@style/linearLayout" >
 
         <TextView
             android:id="@+id/textDay7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_saturday" />
 
         <TextView
             android:id="@+id/textDate7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textView"
             android:text="@string/day_saturday" />
 
         <TextView
             android:id="@+id/textEvent7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/textViewEvent"
             android:text="@string/day_saturday" />
 
     </LinearLayout>
