@@ -1,8 +1,16 @@
 package planetjup.com.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.provider.CalendarContract;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
@@ -18,6 +26,55 @@ public class CalendarWidget extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
+        Log.v(TAG, "updateAppWidget()");
+
+        // initializing widget layout
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+        updateUI(context, remoteViews);
+
+        // Instruct the widget manager to update the widget
+        appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.v(TAG, "onReceive(): action=" + intent.getAction());
+        super.onReceive(context, intent);
+
+        if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction()) || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+            updateUI(context, remoteViews);
+
+            // Instruct the widget manager to update the widget
+            ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
+
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
+        }
+    }
+
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Log.v(TAG, "onUpdate(): appWidgetIds=" + appWidgetIds.toString());
+        // There may be multiple widgets active, so update all of them
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
+    }
+
+    @Override
+    public void onEnabled(Context context) {
+        Log.v(TAG, "onEnabled()");
+        // Enter relevant functionality for when the first widget is created
+    }
+
+    @Override
+    public void onDisabled(Context context) {
+        // Enter relevant functionality for when the last widget is disabled
+    }
+
+    private static void updateUI(Context context, RemoteViews remoteViews) {
+        Log.v(TAG, "updateUI()");
 
         ArrayList<String> dayList = new ArrayList<>();
         dayList.add(context.getString(R.string.day_monday));
@@ -61,8 +118,10 @@ public class CalendarWidget extends AppWidgetProvider {
         int delta = firstDay - dayOfWeek;
         today.add(Calendar.DAY_OF_WEEK, delta);
 
-        // initializing widget layout
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+        Intent intent = new Intent(context, Calendar.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,
+                0, intent, 0);
+
         for (int count = 0; count < dayList.size(); count++) {
             int idDay = idList.get(count);
             int idDate = idList.get(count + 7);
@@ -73,36 +132,22 @@ public class CalendarWidget extends AppWidgetProvider {
             remoteViews.setTextViewText(idEvent, "e-" + today.get(Calendar.DAY_OF_MONTH));
 
             // mark current day
+            int colorId = R.color.colorPrimaryDark;
             int newDayOfMonth = today.get(Calendar.DAY_OF_MONTH);
             if (newDayOfMonth == dayOfMonth) {
-                remoteViews.setTextColor(idDay, context.getColor(R.color.colorAccent));
-                remoteViews.setTextColor(idDate, context.getColor(R.color.colorAccent));
-                remoteViews.setTextColor(idEvent, context.getColor(R.color.colorAccent));
+                colorId = R.color.colorAccent;
             }
+
+            remoteViews.setTextColor(idDay, context.getColor(colorId));
+            remoteViews.setTextColor(idDate, context.getColor(colorId));
+            remoteViews.setTextColor(idEvent, context.getColor(colorId));
+
+//            remoteViews.setOnClickPendingIntent(idDay, pendingIntent);
+//            remoteViews.setOnClickPendingIntent(idDate, pendingIntent);
+//            remoteViews.setOnClickPendingIntent(idEvent, pendingIntent);
 
             today.add(Calendar.DAY_OF_WEEK, 1);
         }
-
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
-    }
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
-    }
-
-    @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 }
 

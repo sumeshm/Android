@@ -2,9 +2,12 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialKeyguardLayout="@layout/widget"
     android:initialLayout="@layout/widget"
-    android:minWidth="40dp"
+    android:minWidth="368dp"
     android:minHeight="40dp"
-    android:previewImage="@drawable/example_appwidget_preview"
-    android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="86400000"
-    android:widgetCategory="home_screen|keyguard"></appwidget-provider>
+    android:previewImage="@drawable/ic_widget"
+    android:resizeMode="none"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen">
+</appwidget-provider>
+
+    <!-- size = (number of cells * 74) – 2 -->
