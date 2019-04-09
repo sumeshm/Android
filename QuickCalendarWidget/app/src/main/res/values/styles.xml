@@ -17,19 +17,30 @@
         <item name="android:background">#10000000</item>
     </style>
 
-    <style name="textView" parent="TextAppearance.AppCompat">
+    <style name="textViewDay" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">16dp</item>
+        <item name="android:textSize">9dp</item>
         <item name="android:alpha">30</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+
+    <style name="textViewDate" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">12dp</item>
+        <item name="android:alpha">30</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="textViewEvent" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">14dp</item>
+        <item name="android:textSize">12dp</item>
     </style>
 
 </resources>

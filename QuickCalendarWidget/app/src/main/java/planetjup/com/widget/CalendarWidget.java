@@ -6,13 +6,17 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.provider.CalendarContract;
 import android.text.SpannableString;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,6 +64,17 @@ public class CalendarWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+
+
+
+        Cursor cursor = context.getContentResolver()
+                .query(
+                        Uri.parse("content://com.android.calendar/events"),
+                        new String[] { "calendar_id", "title", "description",
+                                "dtstart", "dtend", "eventLocation" }, null,
+                        null, null);
+        int temp = cursor.getCount();
+        Log.v(TAG, "onEnabled()");
     }
 
     @Override
@@ -110,44 +125,58 @@ public class CalendarWidget extends AppWidgetProvider {
         idList.add(R.id.textEvent6);
         idList.add(R.id.textEvent7);
 
+        // make Monday first day of the week
         Calendar today = Calendar.getInstance();
         today.setFirstDayOfWeek(Calendar.MONDAY);
+
         int dayOfMonth = today.get(Calendar.DAY_OF_MONTH);
         int dayOfWeek = today.get(Calendar.DAY_OF_WEEK);
         int firstDay = today.getFirstDayOfWeek();
         int delta = firstDay - dayOfWeek;
+
+        // move date to starting of the week
         today.add(Calendar.DAY_OF_WEEK, delta);
 
-        Intent intent = new Intent(context, Calendar.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                0, intent, 0);
-
+        // add seven days of calendar data - Day, Date, Events
         for (int count = 0; count < dayList.size(); count++) {
             int idDay = idList.get(count);
             int idDate = idList.get(count + 7);
             int idEvent = idList.get(count + 14);
 
+            // data
             remoteViews.setTextViewText(idDay, dayList.get(count));
             remoteViews.setTextViewText(idDate, "" + today.get(Calendar.DAY_OF_MONTH));
             remoteViews.setTextViewText(idEvent, "e-" + today.get(Calendar.DAY_OF_MONTH));
 
-            // mark current day
-            int colorId = R.color.colorPrimaryDark;
-            int newDayOfMonth = today.get(Calendar.DAY_OF_MONTH);
-            if (newDayOfMonth == dayOfMonth) {
-                colorId = R.color.colorAccent;
+            // color
+            remoteViews.setTextColor(idEvent, Color.WHITE);
+
+            // highlight current day
+            if (today.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
+                remoteViews.setTextColor(idDay, Color.BLACK);
+                remoteViews.setTextColor(idDate, Color.BLUE);
+            } else {
+                remoteViews.setTextColor(idDay, Color.GRAY);
+                remoteViews.setTextColor(idDate, Color.DKGRAY);
             }
 
-            remoteViews.setTextColor(idDay, context.getColor(colorId));
-            remoteViews.setTextColor(idDate, context.getColor(colorId));
-            remoteViews.setTextColor(idEvent, context.getColor(colorId));
-
-//            remoteViews.setOnClickPendingIntent(idDay, pendingIntent);
-//            remoteViews.setOnClickPendingIntent(idDate, pendingIntent);
-//            remoteViews.setOnClickPendingIntent(idEvent, pendingIntent);
-
+            // increment date
             today.add(Calendar.DAY_OF_WEEK, 1);
         }
+
+
+//        Intent calendarIntent = new Intent();
+//        calendarIntent.setClassName("com.android.calendar","com.android.calendar.AgendaActivity");
+//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, calendarIntent, 0);
+//
+//        remoteViews.setOnClickPendingIntent(R.id.textDay1, pendingIntent);
+//        remoteViews.setOnClickPendingIntent(R.id.textDay2, pendingIntent);
+//        remoteViews.setOnClickPendingIntent(R.id.textDay3, pendingIntent);
+//        remoteViews.setOnClickPendingIntent(R.id.textDay4, pendingIntent);
+//        remoteViews.setOnClickPendingIntent(R.id.textDay5, pendingIntent);
+//        remoteViews.setOnClickPendingIntent(R.id.textDay6, pendingIntent);
+//        remoteViews.setOnClickPendingIntent(R.id.textDay7, pendingIntent);
+
     }
 }
 
