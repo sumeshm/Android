@@ -1,7 +1,11 @@
 package planetjup.com.widget;
 
+import android.Manifest;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -13,18 +17,47 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    private TableLayout customTableLayout;
+    private static final int ON_CALENDAR_PERMISSION_CALLBACK_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getContactsPermission();
+
 //        setContentView(R.layout.activity_main);
-//
-//        customTableLayout = findViewById(R.id.tableView);
-//        customTableLayout.removeAllViews();
 //        populateTableView();
+
         finish();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionsResult :: requestCode=" + requestCode);
+
+        if (requestCode == ON_CALENDAR_PERMISSION_CALLBACK_CODE) {
+            Log.v(TAG, "onActivityResult: ON_CONTACTS_PERMISSION_CALLBACK_CODE");
+
+            // todo: persist the permission result for widget - SUCCESS
+        }
+    }
+
+    private void getContactsPermission() {
+        Log.v(TAG, "getContactsPermission()");
+
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                Manifest.permission.READ_CALENDAR)) {
+            Log.v(TAG, "getContactsPermission : READ_CALENDAR=FALSE");
+            // todo: persist the permission result for widget - PENDING
+
+            String[] permissionList = {Manifest.permission.READ_CALENDAR};
+            requestPermissions(permissionList, ON_CALENDAR_PERMISSION_CALLBACK_CODE);
+
+        } else {
+            Log.v(TAG, "getContactsPermission : READ_CALENDAR=TRUE");
+            // todo: persist the permission result for widget - SUCCESS
+        }
     }
 
     private void populateTableView() {
@@ -81,6 +114,9 @@ public class MainActivity extends AppCompatActivity {
 
             today.add(Calendar.DAY_OF_WEEK, 1);
         }
+
+        TableLayout customTableLayout = findViewById(R.id.tableView);
+        customTableLayout.removeAllViews();
 
         customTableLayout.addView(rowDay);
         customTableLayout.addView(rowDate);
