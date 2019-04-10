@@ -23,7 +23,9 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">9dp</item>
         <item name="android:alpha">30</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:textAllCaps">true</item>
+        <item name="android:paddingTop">2dp</item>
     </style>
 
 
@@ -33,14 +35,19 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">12dp</item>
         <item name="android:alpha">30</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">2dp</item>
     </style>
 
     <style name="textViewEvent" parent="TextAppearance.AppCompat">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:textSize">12dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
     </style>
 
 </resources>

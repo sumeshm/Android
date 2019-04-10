@@ -4,7 +4,7 @@
     android:initialLayout="@layout/widget"
     android:minWidth="368dp"
     android:minHeight="40dp"
-    android:previewImage="@drawable/ic_widget"
+    android:previewImage="@drawable/widget_image"
     android:resizeMode="none"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen">

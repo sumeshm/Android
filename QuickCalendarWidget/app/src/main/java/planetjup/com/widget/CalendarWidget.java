@@ -26,6 +26,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Implementation of App Widget functionality.
@@ -33,6 +34,7 @@ import java.util.Date;
 public class CalendarWidget extends AppWidgetProvider {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String ACTION_SHOW_CALENDAR = "ACTION_SHOW_CALENDAR";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -51,13 +53,19 @@ public class CalendarWidget extends AppWidgetProvider {
         Log.v(TAG, "onReceive(): action=" + intent.getAction());
         super.onReceive(context, intent);
 
-        if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction()) || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())) {
+        if (ACTION_SHOW_CALENDAR.equals(intent.getAction())) {
+            ComponentName componentName = new ComponentName("com.google.android.calendar", "com.android.calendar.LaunchActivity");
+            Intent calIntent = new Intent();
+            calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            calIntent.setComponent(componentName);
+            context.startActivity(calIntent);
+
+        } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction()) || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             updateUI(context, remoteViews);
 
             // Instruct the widget manager to update the widget
             ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
-
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
         }
@@ -139,12 +147,23 @@ public class CalendarWidget extends AppWidgetProvider {
             int idDate = idList.get(count + 7);
             int idEvent = idList.get(count + 14);
 
-            String eventTitle = readCalendarEvents(context, today);
+            List<EventDetails> eventList = readCalendarEvents(context, today);
+            StringBuilder builder = new StringBuilder();
+            for (EventDetails eventDetails : eventList) {
+                int maxLen = 9;
+                String title = eventDetails.getTitle();
+                if (title.length() > maxLen) {
+                    title = title.substring(0, maxLen);
+                }
+
+                builder.append(title);
+                builder.append("\n");
+            }
 
             // data
             remoteViews.setTextViewText(idDay, dayList.get(count));
             remoteViews.setTextViewText(idDate, "" + today.get(Calendar.DAY_OF_MONTH));
-            remoteViews.setTextViewText(idEvent, eventTitle);
+            remoteViews.setTextViewText(idEvent, builder.toString());
 
             // color
             remoteViews.setTextColor(idEvent, Color.WHITE);
@@ -162,24 +181,38 @@ public class CalendarWidget extends AppWidgetProvider {
             today.add(Calendar.DAY_OF_WEEK, 1);
         }
 
-//        Intent calendarIntent = new Intent();
-//        calendarIntent.setClassName("com.android.calendar","com.android.calendar.AgendaActivity");
-//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, calendarIntent, 0);
-//
-//        remoteViews.setOnClickPendingIntent(R.id.textDay1, pendingIntent);
-//        remoteViews.setOnClickPendingIntent(R.id.textDay2, pendingIntent);
-//        remoteViews.setOnClickPendingIntent(R.id.textDay3, pendingIntent);
-//        remoteViews.setOnClickPendingIntent(R.id.textDay4, pendingIntent);
-//        remoteViews.setOnClickPendingIntent(R.id.textDay5, pendingIntent);
-//        remoteViews.setOnClickPendingIntent(R.id.textDay6, pendingIntent);
-//        remoteViews.setOnClickPendingIntent(R.id.textDay7, pendingIntent);
+        Intent intent = new Intent(context, CalendarWidget.class);
+        intent.setAction(ACTION_SHOW_CALENDAR);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
+        remoteViews.setOnClickPendingIntent(R.id.textDay1, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDay2, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDay3, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDay4, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDay5, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDay6, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDay7, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDate1, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDate2, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDate3, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDate4, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDate5, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDate6, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textDate7, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textEvent1, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textEvent2, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textEvent3, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textEvent4, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textEvent5, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textEvent6, pendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.textEvent7, pendingIntent);
     }
 
-    private static String readCalendarEvents(Context context, Calendar filterDay) {
-        String retVal = "";
+    private static List<EventDetails> readCalendarEvents(Context context, Calendar filterDay) {
+        List<EventDetails> eventList = new ArrayList<>();
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
-            return retVal;
+            return eventList;
         }
 
         Log.v(TAG, "readCalendarEvents(): Date=" + filterDay.get(Calendar.DAY_OF_MONTH));
@@ -208,12 +241,13 @@ public class CalendarWidget extends AppWidgetProvider {
             Log.v(TAG, "readCalendarEvents(): Start=" + new Date(cursor.getLong(1)));
             Log.v(TAG, "readCalendarEvents(): Color=" + cursor.getString(2));
 
-            retVal = cursor.getString(0);
+            EventDetails eventDetails = new EventDetails(cursor.getString(0), cursor.getString(2));
+            eventList.add(eventDetails);
             cursor.moveToNext();
         }
         cursor.close();
 
-        return retVal;
+        return eventList;
     }
 
     private static void readCalendarList(Context context, Calendar day) {
@@ -241,7 +275,7 @@ public class CalendarWidget extends AppWidgetProvider {
 
         Cursor cursor = contentResolver.query(uri, EVENT_PROJECTION, selection, selectionArgs, null);
         int temp = cursor.getCount();
-        Log.v(TAG, "readCalendarEvents(): cursor.getCount()=" + cursor.getCount());
+        Log.v(TAG, "readCalendarList(): cursor.getCount()=" + cursor.getCount());
 
         int PROJECTION_ID_INDEX = 0;
         int PROJECTION_ACCOUNT_NAME_INDEX = 1;
@@ -260,11 +294,38 @@ public class CalendarWidget extends AppWidgetProvider {
             accountName = cursor.getString(PROJECTION_ACCOUNT_NAME_INDEX);
             ownerName = cursor.getString(PROJECTION_OWNER_ACCOUNT_INDEX);
 
-            Log.v(TAG, "readCalendarEvents(): calID=" + calID);
-            Log.v(TAG, "readCalendarEvents(): displayName=" + displayName);
-            Log.v(TAG, "readCalendarEvents(): accountName=" + accountName);
-            Log.v(TAG, "readCalendarEvents(): ownerName=" + ownerName);
+            Log.v(TAG, "readCalendarList(): calID=" + calID);
+            Log.v(TAG, "readCalendarList(): displayName=" + displayName);
+            Log.v(TAG, "readCalendarList(): accountName=" + accountName);
+            Log.v(TAG, "readCalendarList(): ownerName=" + ownerName);
             // Do something with the values...
+        }
+    }
+
+
+    static class EventDetails {
+        private String title;
+        private String colorCode;
+
+        public EventDetails(String title, String colorCode) {
+            this.title = title;
+            this.colorCode = colorCode;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getColorCode() {
+            return colorCode;
+        }
+
+        public void setColorCode(String colorCode) {
+            this.colorCode = colorCode;
         }
     }
 }
