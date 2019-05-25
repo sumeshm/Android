@@ -26,6 +26,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:paddingTop">2dp</item>
+        <item name="android:text">@string/day_monday</item>
     </style>
 
 
@@ -38,6 +39,7 @@
         <item name="android:layout_weight">1</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingTop">2dp</item>
+        <item name="android:text">15</item>
     </style>
 
     <style name="textViewEvent" parent="TextAppearance.AppCompat">
@@ -46,8 +48,7 @@
         <item name="android:gravity">center</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textSize">12dp</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
+        <item name="android:text">Meeting</item>
     </style>
 
 </resources>

@@ -3,145 +3,98 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/widget_frame">
 
+    <!-- Monday -->
     <LinearLayout style="@style/linearLayout">
-
         <TextView
             android:id="@+id/textDay1"
-            style="@style/textViewDay"
-            android:text="@string/day_sunday" />
-
+            style="@style/textViewDay" />
         <TextView
             android:id="@+id/textDate1"
-            style="@style/textViewDate"
-            android:text="@string/day_sunday" />
-
+            style="@style/textViewDate" />
         <TextView
             android:id="@+id/textEvent1"
-            style="@style/textViewEvent"
-            android:text="@string/day_sunday" />
-
+            style="@style/textViewEvent" />
     </LinearLayout>
 
-
+    <!-- Tuesday -->
     <LinearLayout style="@style/linearLayout" >
-
         <TextView
             android:id="@+id/textDay2"
-            style="@style/textViewDay"
-            android:text="@string/day_monday" />
-
+            style="@style/textViewDay" />
         <TextView
             android:id="@+id/textDate2"
-            style="@style/textViewDate"
-            android:text="@string/day_monday" />
-
+            style="@style/textViewDate" />
         <TextView
             android:id="@+id/textEvent2"
-            style="@style/textViewEvent"
-            android:text="@string/day_monday" />
-
+            style="@style/textViewEvent" />
     </LinearLayout>
 
-
+    <!-- Wednesday -->
     <LinearLayout style="@style/linearLayout" >
-
         <TextView
             android:id="@+id/textDay3"
-            style="@style/textViewDay"
-            android:text="@string/day_tuesday" />
-
+            style="@style/textViewDay" />
         <TextView
             android:id="@+id/textDate3"
-            style="@style/textViewDate"
-            android:text="@string/day_tuesday" />
-
+            style="@style/textViewDate" />
         <TextView
             android:id="@+id/textEvent3"
-            style="@style/textViewEvent"
-            android:text="@string/day_tuesday" />
+            style="@style/textViewEvent" />
     </LinearLayout>
 
-
+    <!-- Thursday -->
     <LinearLayout style="@style/linearLayout" >
-
         <TextView
             android:id="@+id/textDay4"
-            style="@style/textViewDay"
-            android:text="@string/day_wednesday" />
-
+            style="@style/textViewDay" />
         <TextView
             android:id="@+id/textDate4"
-            style="@style/textViewDate"
-            android:text="@string/day_wednesday" />
-
+            style="@style/textViewDate" />
         <TextView
             android:id="@+id/textEvent4"
-            style="@style/textViewEvent"
-            android:text="@string/day_wednesday" />
-
+            style="@style/textViewEvent" />
     </LinearLayout>
 
-
+    <!-- Friday -->
     <LinearLayout style="@style/linearLayout" >
-
         <TextView
             android:id="@+id/textDay5"
-            style="@style/textViewDay"
-            android:text="@string/day_thursday" />
-
+            style="@style/textViewDay" />
         <TextView
             android:id="@+id/textDate5"
-            style="@style/textViewDate"
-            android:text="@string/day_thursday" />
-
+            style="@style/textViewDate" />
         <TextView
             android:id="@+id/textEvent5"
-            style="@style/textViewEvent"
-            android:text="@string/day_thursday" />
-
+            style="@style/textViewEvent" />
     </LinearLayout>
 
-
+    <!-- Saturday -->
     <LinearLayout style="@style/linearLayout" >
-
         <TextView
             android:id="@+id/textDay6"
-            style="@style/textViewDay"
-            android:text="@string/day_friday" />
-
+            style="@style/textViewDay" />
         <TextView
             android:id="@+id/textDate6"
-            style="@style/textViewDate"
-            android:text="@string/day_friday" />
-
+            style="@style/textViewDate" />
         <TextView
             android:id="@+id/textEvent6"
-            style="@style/textViewEvent"
-            android:text="@string/day_friday" />
-
+            style="@style/textViewEvent" />
     </LinearLayout>
 
-
+    <!-- Sumday -->
     <LinearLayout style="@style/linearLayout" >
-
         <TextView
             android:id="@+id/textDay7"
-            style="@style/textViewDay"
-            android:text="@string/day_saturday" />
-
+            style="@style/textViewDay" />
         <TextView
             android:id="@+id/textDate7"
-            style="@style/textViewDate"
-            android:text="@string/day_saturday" />
-
+            style="@style/textViewDate" />
         <TextView
             android:id="@+id/textEvent7"
-            style="@style/textViewEvent"
-            android:text="@string/day_saturday" />
-
+            style="@style/textViewEvent" />
     </LinearLayout>
-
 
 </LinearLayout>
