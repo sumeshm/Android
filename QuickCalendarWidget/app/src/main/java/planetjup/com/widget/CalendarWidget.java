@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -30,12 +31,12 @@ import java.util.Map;
  */
 public class CalendarWidget extends AppWidgetProvider {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String ACTION_SHOW_CALENDAR = "ACTION_SHOW_CALENDAR";
+    public static final String ACTION_SHOW_CALENDAR = "ACTION_SHOW_CALENDAR";
+    public static final String ACTION_UI_REFRESH = "ACTION_UI_REFRESH";
+    private static final String TAG = CalendarWidget.class.getSimpleName();
 
-
-    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                        int appWidgetId) {
+    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                       int appWidgetId) {
         Log.v(TAG, "updateAppWidget()");
 
         // initializing widget layout
@@ -243,7 +244,9 @@ public class CalendarWidget extends AppWidgetProvider {
             calIntent.setComponent(componentName);
             context.startActivity(calIntent);
 
-        } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction()) || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())) {
+        } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
+                || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
+                || ACTION_UI_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             updateUI(context, remoteViews);
 
@@ -254,11 +257,21 @@ public class CalendarWidget extends AppWidgetProvider {
         } else if (Intent.ACTION_PROVIDER_CHANGED.equals(intent.getAction())) {
             Log.v(TAG, "onReceive(): action=ACTION_PROVIDER_CHANGED");
         }
+
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+        updateUI(context, remoteViews);
+
+        // Instruct the widget manager to update the widget
+        ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
+
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.v(TAG, "onUpdate()");
+        Log.v(TAG, "onUpdate(): appWidgetIds.length" + appWidgetIds.length);
+
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             Log.v(TAG, "onUpdate(): appWidgetId=" + appWidgetId);
@@ -267,13 +280,32 @@ public class CalendarWidget extends AppWidgetProvider {
     }
 
     @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        super.onDeleted(context, appWidgetIds);
+        Log.v(TAG, "onDeleted(): appWidgetIds.length" + appWidgetIds.length);
+    }
+
+    @Override
+    public void onRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds) {
+        super.onRestored(context, oldWidgetIds, newWidgetIds);
+        Log.v(TAG, "onRestored(): newWidgetIds.length" + newWidgetIds.length);
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+        Log.v(TAG, "onAppWidgetOptionsChanged()");
+    }
+
+    @Override
     public void onEnabled(Context context) {
-        Log.v(TAG, "onEnabled()");
         // Enter relevant functionality for when the first widget is created
+        Log.v(TAG, "onEnabled()");
     }
 
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+        Log.v(TAG, "onDisabled()");
     }
 }
