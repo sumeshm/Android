@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -22,9 +24,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of App Widget functionality.
@@ -182,31 +188,30 @@ public class CalendarWidget extends AppWidgetProvider {
             return retMap;
         }
 
-        Log.v(TAG, "readCalendarEvents(): Date=" + filterDay.get(Calendar.DAY_OF_MONTH));
-
-        String[] EVENT_PROJECTION = new String[]{
-                CalendarContract.Events.TITLE,          // 0
-                CalendarContract.Events.DTSTART,        // 1
-                CalendarContract.Events.DTEND,          // 2
-                CalendarContract.Events.EVENT_COLOR     // 3
-        };
-
 
         DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 
         // search range - start of given day to start of next day
         Calendar startTime = Calendar.getInstance();
-        startTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH) - 1, 0, 0, 0);
+        startTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        Log.v(TAG, "readCalendarEvents(): startTime=" + startTime.getTime());
 
         Calendar endTime = Calendar.getInstance();
-        endTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH) + 8, 0, 0, 0);
+        endTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH) + 7, 0, 0, 0);
+        Log.v(TAG, "readCalendarEvents(): endTime=" + endTime.getTime());
 
         ContentResolver contentResolver = context.getContentResolver();
         Uri eventUri = CalendarContract.Events.CONTENT_URI;
         String selection = "(( " + CalendarContract.Events.DTSTART + " >= " + startTime.getTimeInMillis() + " ) AND ( " + CalendarContract.Events.DTSTART + " <= " + endTime.getTimeInMillis() + " ))";
 
-        Cursor cursor = contentResolver.query(eventUri, EVENT_PROJECTION, selection, null, null);
-        cursor.moveToFirst();
+        Log.v(TAG, "readCalendarEvents(): selection=" + selection);
+
+        String[] columnNames = new String[] { CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART};
+
+        Cursor cursor = contentResolver.query(eventUri, columnNames, selection, null, null);
+        boolean isMoved = cursor.moveToFirst();
+        Log.v(TAG, "readCalendarEvents(): isMoved=" + isMoved);
+
         for (int i = 0; i < cursor.getCount(); i++) {
             String eventTitle = cursor.getString(0);
             Calendar eventDate = Calendar.getInstance();
@@ -216,13 +221,12 @@ public class CalendarWidget extends AppWidgetProvider {
 
             Log.v(TAG, "readCalendarEvents(): title=" + eventTitle + ", " + eventDateString + ", " + eventDayOfYear);
 
-            if (retMap.get(eventDayOfYear) == null) {
-                List<String> titleList = new ArrayList<>();
-                titleList.add(eventTitle);
+            List<String> titleList = retMap.get(eventDayOfYear);
+            if (titleList == null) {
+                titleList = new ArrayList<>();
                 retMap.put(eventDayOfYear, titleList);
-            } else {
-                retMap.get(eventDayOfYear).add(eventTitle);
             }
+            titleList.add(eventTitle);
 
             cursor.moveToNext();
         }
@@ -246,9 +250,9 @@ public class CalendarWidget extends AppWidgetProvider {
 
         } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
+                || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
                 || ACTION_UI_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-            updateUI(context, remoteViews);
 
             // Instruct the widget manager to update the widget
             ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
