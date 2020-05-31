@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Quick DnD Tile</string>
+    <string name="app_name">Quick DnD Tiles</string>
     <string name="tile_name_dnd">QuickDnD</string>
     <string name="tile_name_mute_ringer">QuickMuteMedia</string>
     <string name="Welcome">Welcome to Dnd quick-settings tile app. Thank you for installing Dnd. Start using the app by adding following tile to the toolbar.</string>
