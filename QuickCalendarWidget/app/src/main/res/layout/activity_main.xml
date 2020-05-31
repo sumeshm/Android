@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true" />
+
+    <TableLayout
+        android:id="@+id/tableView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/calendarView"
+        android:stretchColumns="*">
+
+        <TableRow android:layout_margin="2dp">
+
+            <TextView
+                android:layout_gravity="center"
+                android:text="@string/temp_day" />
+        </TableRow>
+
+        <TableRow android:layout_margin="2dp">
+
+            <TextView
+                android:layout_gravity="center"
+                android:text="@string/temp_date" />
+        </TableRow>
+
+        <TableRow android:layout_margin="2dp">
+
+            <TextView
+                android:layout_gravity="center"
+                android:text="@string/temp_event" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
