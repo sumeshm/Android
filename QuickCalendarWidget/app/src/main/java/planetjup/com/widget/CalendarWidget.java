@@ -188,7 +188,6 @@ public class CalendarWidget extends AppWidgetProvider {
             return retMap;
         }
 
-
         DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 
         // search range - start of given day to start of next day
