@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -24,13 +22,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Implementation of App Widget functionality.
@@ -153,12 +147,10 @@ public class CalendarWidget extends AppWidgetProvider {
             remoteViews.setTextViewText(idDate, "" + today.get(Calendar.DAY_OF_MONTH));
             remoteViews.setTextViewText(idEvent, builder.toString());
 
-            // color
-            remoteViews.setTextColor(idEvent, Color.WHITE);
-
-            // highlight current day
+            // color settings
             if (today.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
-                remoteViews.setTextColor(idDay, Color.BLACK);
+                // highlight current day
+                remoteViews.setTextColor(idDay, Color.BLUE);
                 remoteViews.setTextColor(idDate, Color.BLUE);
                 remoteViews.setTextColor(idEvent, Color.RED);
             } else {
@@ -262,7 +254,7 @@ public class CalendarWidget extends AppWidgetProvider {
         }
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-        updateUI(context, remoteViews);
+//        updateUI(context, remoteViews);
 
         // Instruct the widget manager to update the widget
         ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);

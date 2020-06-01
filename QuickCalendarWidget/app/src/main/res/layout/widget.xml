@@ -7,7 +7,8 @@
     android:id="@+id/widget_frame">
 
     <!-- Monday -->
-    <LinearLayout style="@style/linearLayout">
+    <LinearLayout style="@style/linearLayout"
+        android:id="@+id/day1">
         <TextView
             android:id="@+id/textDay1"
             style="@style/textViewDay" />
@@ -20,7 +21,8 @@
     </LinearLayout>
 
     <!-- Tuesday -->
-    <LinearLayout style="@style/linearLayout" >
+    <LinearLayout style="@style/linearLayout"
+        android:id="@+id/day2">
         <TextView
             android:id="@+id/textDay2"
             style="@style/textViewDay" />
@@ -33,7 +35,8 @@
     </LinearLayout>
 
     <!-- Wednesday -->
-    <LinearLayout style="@style/linearLayout" >
+    <LinearLayout style="@style/linearLayout"
+        android:id="@+id/day3">
         <TextView
             android:id="@+id/textDay3"
             style="@style/textViewDay" />
@@ -46,7 +49,8 @@
     </LinearLayout>
 
     <!-- Thursday -->
-    <LinearLayout style="@style/linearLayout" >
+    <LinearLayout style="@style/linearLayout"
+        android:id="@+id/day4">
         <TextView
             android:id="@+id/textDay4"
             style="@style/textViewDay" />
@@ -59,7 +63,8 @@
     </LinearLayout>
 
     <!-- Friday -->
-    <LinearLayout style="@style/linearLayout" >
+    <LinearLayout style="@style/linearLayout"
+        android:id="@+id/day5">
         <TextView
             android:id="@+id/textDay5"
             style="@style/textViewDay" />
@@ -72,7 +77,8 @@
     </LinearLayout>
 
     <!-- Saturday -->
-    <LinearLayout style="@style/linearLayout" >
+    <LinearLayout style="@style/linearLayout"
+        android:id="@+id/day6">
         <TextView
             android:id="@+id/textDay6"
             style="@style/textViewDay" />
@@ -84,8 +90,9 @@
             style="@style/textViewEvent" />
     </LinearLayout>
 
-    <!-- Sumday -->
-    <LinearLayout style="@style/linearLayout" >
+    <!-- Sunday -->
+    <LinearLayout style="@style/linearLayout"
+        android:id="@+id/day7">
         <TextView
             android:id="@+id/textDay7"
             style="@style/textViewDay" />

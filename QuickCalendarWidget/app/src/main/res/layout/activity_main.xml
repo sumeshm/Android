@@ -1,42 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" />
+        android:layout_height="wrap_content" />
 
-    <TableLayout
-        android:id="@+id/tableView"
+    <TextView
+        android:id="@+id/textViewSeekTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/calendarView"
-        android:stretchColumns="*">
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="@string/seek_bar_title" />
 
-        <TableRow android:layout_margin="2dp">
+    <TextView
+        android:id="@+id/textViewSeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="0" />
 
-            <TextView
-                android:layout_gravity="center"
-                android:text="@string/temp_day" />
-        </TableRow>
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:progressDrawable="@drawable/seekbar"
+        android:thumb="@drawable/seekbar_thumb"
+        android:thumbOffset="1dp" />
 
-        <TableRow android:layout_margin="2dp">
-
-            <TextView
-                android:layout_gravity="center"
-                android:text="@string/temp_date" />
-        </TableRow>
-
-        <TableRow android:layout_margin="2dp">
-
-            <TextView
-                android:layout_gravity="center"
-                android:text="@string/temp_event" />
-        </TableRow>
-    </TableLayout>
-
-</RelativeLayout>
+</LinearLayout>

@@ -10,14 +10,20 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int ON_CALENDAR_PERMISSION_CALLBACK_CODE = 12345;
     private static final int ON_ALARM_CALLBACK_CODE = 12346;
+    private static final int ON_ALPHA_REFRESH_CODE = 12347;
+
+    private TextView textViewSeek;
+    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +31,15 @@ public class MainActivity extends AppCompatActivity {
 
         getContactsPermission();
         startAlarm();
-        finish();
+
+        setContentView(R.layout.activity_main);
+
+        textViewSeek = this.getWindow().findViewById(R.id.textViewSeek);
+        seekBar = this.getWindow().findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(this);
+        seekBar.setProgress(0);
+
+        //finish();
     }
 
     @Override
@@ -34,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == ON_CALENDAR_PERMISSION_CALLBACK_CODE) {
             Log.v(TAG, "onActivityResult: ON_CONTACTS_PERMISSION_CALLBACK_CODE");
-            openSystemCalendar();
         }
     }
 
@@ -49,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             Log.v(TAG, "getContactsPermission : READ_CALENDAR=TRUE");
-            openSystemCalendar();
         }
     }
 
@@ -74,7 +86,25 @@ public class MainActivity extends AppCompatActivity {
                 AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    private void openSystemCalendar() {
-        // todo: go to google calendar
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        String data = Integer.toString(progress * 10);
+        textViewSeek.setText(data);
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        String seekText = textViewSeek.getText().toString();
+        Log.v(TAG, "onStopTrackingTouch: text=" + seekText);
+
+        // notify widget
+        Intent intent = new Intent(this, CalendarWidget.class);
+        intent.setAction(CalendarWidget.ACTION_ALPHA_REFRESH);
+        intent.putExtra(CalendarWidget.KEY_ALPHA, Integer.valueOf(seekText));
+        sendBroadcast(intent);
     }
 }
