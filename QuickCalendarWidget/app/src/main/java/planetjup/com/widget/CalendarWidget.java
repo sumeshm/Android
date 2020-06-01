@@ -33,18 +33,92 @@ public class CalendarWidget extends AppWidgetProvider {
 
     public static final String ACTION_SHOW_CALENDAR = "ACTION_SHOW_CALENDAR";
     public static final String ACTION_UI_REFRESH = "ACTION_UI_REFRESH";
+    public static final String ACTION_ALPHA_REFRESH = "ACTION_ALPHA_REFRESH";
+    public static final String KEY_ALPHA = "alpha";
+
     private static final String TAG = CalendarWidget.class.getSimpleName();
 
-    public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                       int appWidgetId) {
-        Log.v(TAG, "updateAppWidget()");
 
-        // initializing widget layout
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-        updateUI(context, remoteViews);
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.v(TAG, "onReceive(): action=" + intent.getAction());
+        super.onReceive(context, intent);
 
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+        if (ACTION_SHOW_CALENDAR.equals(intent.getAction())) {
+            // bring up System Calendar
+            ComponentName componentName = new ComponentName("com.google.android.calendar", "com.android.calendar.LaunchActivity");
+            Intent calIntent = new Intent();
+            calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            calIntent.setComponent(componentName);
+            context.startActivity(calIntent);
+
+        } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
+                || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
+                || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
+                || ACTION_UI_REFRESH.equals(intent.getAction())) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+
+            // re-build UI
+            updateUI(context, remoteViews);
+
+            // Instruct the widget manager to update the widget
+            ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
+
+        } else if (ACTION_ALPHA_REFRESH.equals(intent.getAction())) {
+            int alpha = intent.getIntExtra(KEY_ALPHA, 100);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+
+            // update background transparency
+            updateBackground(remoteViews, alpha);
+
+
+            // Instruct the widget manager to update the widget
+            ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
+
+        } else if (Intent.ACTION_PROVIDER_CHANGED.equals(intent.getAction())) {
+            Log.v(TAG, "onReceive(): action=ACTION_PROVIDER_CHANGED");
+        }
+    }
+
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Log.v(TAG, "onUpdate(): appWidgetIds.length" + appWidgetIds.length);
+
+        // There may be multiple widgets active, so update all of them
+        for (int appWidgetId : appWidgetIds) {
+            Log.v(TAG, "onUpdate(): appWidgetId=" + appWidgetId);
+
+            // initializing widget layout
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+            updateUI(context, remoteViews);
+
+            // Instruct the widget manager to update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+        }
+    }
+
+    private static void updateBackground(RemoteViews remoteViews, int alpha) {
+        Log.v(TAG, "updateBackground(): alpha=" + alpha);
+
+        int effetiveAlpha = 0;
+        if (alpha != 0) {
+            effetiveAlpha = (255 * alpha) / 100;
+        }
+        Log.v(TAG, "updateBackground(): effetiveAlpha=" + effetiveAlpha);
+
+        int color = Color.argb(effetiveAlpha, 0, 0, 0);
+
+        remoteViews.setInt(R.id.day1, "setBackgroundColor", color);
+        remoteViews.setInt(R.id.day2, "setBackgroundColor", color);
+        remoteViews.setInt(R.id.day3, "setBackgroundColor", color);
+        remoteViews.setInt(R.id.day4, "setBackgroundColor", color);
+        remoteViews.setInt(R.id.day5, "setBackgroundColor", color);
+        remoteViews.setInt(R.id.day6, "setBackgroundColor", color);
+        remoteViews.setInt(R.id.day7, "setBackgroundColor", color);
     }
 
     private static void updateUI(Context context, RemoteViews remoteViews) {
@@ -170,7 +244,6 @@ public class CalendarWidget extends AppWidgetProvider {
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         remoteViews.setOnClickPendingIntent(R.id.widget_frame, pendingIntent);
-
     }
 
     private static Map<Integer, List<String>> readCalendarEvents(Context context, Calendar filterDay) {
@@ -225,82 +298,5 @@ public class CalendarWidget extends AppWidgetProvider {
 
         Log.v(TAG, "readCalendarEvents(): retMap=" + retMap);
         return retMap;
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.v(TAG, "onReceive(): action=" + intent.getAction());
-        super.onReceive(context, intent);
-
-        if (ACTION_SHOW_CALENDAR.equals(intent.getAction())) {
-            ComponentName componentName = new ComponentName("com.google.android.calendar", "com.android.calendar.LaunchActivity");
-            Intent calIntent = new Intent();
-            calIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            calIntent.setComponent(componentName);
-            context.startActivity(calIntent);
-
-        } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
-                || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
-                || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
-                || ACTION_UI_REFRESH.equals(intent.getAction())) {
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-
-            // Instruct the widget manager to update the widget
-            ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
-        } else if (Intent.ACTION_PROVIDER_CHANGED.equals(intent.getAction())) {
-            Log.v(TAG, "onReceive(): action=ACTION_PROVIDER_CHANGED");
-        }
-
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-//        updateUI(context, remoteViews);
-
-        // Instruct the widget manager to update the widget
-        ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
-
-    }
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.v(TAG, "onUpdate(): appWidgetIds.length" + appWidgetIds.length);
-
-        // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
-            Log.v(TAG, "onUpdate(): appWidgetId=" + appWidgetId);
-            updateAppWidget(context, appWidgetManager, appWidgetId);
-        }
-    }
-
-    @Override
-    public void onDeleted(Context context, int[] appWidgetIds) {
-        super.onDeleted(context, appWidgetIds);
-        Log.v(TAG, "onDeleted(): appWidgetIds.length" + appWidgetIds.length);
-    }
-
-    @Override
-    public void onRestored(Context context, int[] oldWidgetIds, int[] newWidgetIds) {
-        super.onRestored(context, oldWidgetIds, newWidgetIds);
-        Log.v(TAG, "onRestored(): newWidgetIds.length" + newWidgetIds.length);
-    }
-
-    @Override
-    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
-        Log.v(TAG, "onAppWidgetOptionsChanged()");
-    }
-
-    @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-        Log.v(TAG, "onEnabled()");
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
-        Log.v(TAG, "onDisabled()");
     }
 }
