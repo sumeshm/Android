@@ -11,4 +11,9 @@
     <string name="temp_date">11</string>
     <string name="temp_event">Birthday</string>
     <string name="seek_bar_title">Transparency (%)</string>
+    <string name="advice_backgroundColor">Background Color</string>
+    <string name="advice_dayColor">Day Color</string>
+    <string name="advice_dateColor">Date Color</string>
+    <string name="advice_eventColor">Event Color</string>
+    <string name="advice_todayColor">Today Highlight Color</string>
 </resources>
