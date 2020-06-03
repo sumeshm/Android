@@ -7,9 +7,9 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/seekBarTitle"
@@ -21,8 +21,8 @@
             android:id="@+id/textViewSeek"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_margin="10dp"
+            android:gravity="center"
             android:text="0" />
 
         <SeekBar
@@ -35,90 +35,69 @@
             android:thumbOffset="1dp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/bgColorTitle"
-            style="@style/radioTitle"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentStart="true"
-            android:text="@string/advice_backgroundColor" />
+    <TextView
+        android:id="@+id/bgColorTitle"
+        style="@style/radioTitle"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/advice_backgroundColor" />
 
-        <include
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/color_selector" />
-    </LinearLayout>
+    <include
+        android:id="@+id/bgRadioGroup"
+        layout="@layout/view_bg_color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/dayColorTitle"
-            style="@style/radioTitle"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentStart="true"
-            android:text="@string/advice_dayColor" />
+    <TextView
+        android:id="@+id/dayColorTitle"
+        style="@style/radioTitle"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/advice_dayColor" />
 
-        <include
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/color_selector" />
-    </LinearLayout>
+    <include
+        android:id="@+id/dayRadioGroup"
+        layout="@layout/view_day_color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/dateColorTitle"
-            style="@style/radioTitle"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentStart="true"
-            android:text="@string/advice_dateColor" />
+    <TextView
+        android:id="@+id/dateColorTitle"
+        style="@style/radioTitle"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/advice_dateColor" />
 
-        <include
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/color_selector" />
-    </LinearLayout>
+    <include
+        android:id="@+id/dateRadioGroup"
+        layout="@layout/view_date_color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
+    <TextView
+        android:id="@+id/eventColorTitle"
+        style="@style/radioTitle"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp"
+        android:text="@string/advice_eventColor" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/eventColorTitle"
-            style="@style/radioTitle"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentStart="true"
-            android:text="@string/advice_eventColor" />
+    <include
+        android:id="@+id/eventRadioGroup"
+        layout="@layout/view_event_color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
-        <include
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/color_selector" />
-    </LinearLayout>
+    <TextView
+        android:id="@+id/todayColorTitle"
+        style="@style/radioTitle"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/advice_todayColor" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/todayColorTitle"
-            style="@style/radioTitle"
-            android:layout_marginTop="20dp"
-            android:layout_alignParentStart="true"
-            android:text="@string/advice_todayColor" />
-
-        <include
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/color_selector" />
-    </LinearLayout>
+    <include
+        android:id="@+id/todayRadioGroup"
+        layout="@layout/view_today_color"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

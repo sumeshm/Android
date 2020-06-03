@@ -5,13 +5,21 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewParent;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.Calendar;
 
@@ -34,12 +42,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         setContentView(R.layout.activity_main);
 
-        textViewSeek = this.getWindow().findViewById(R.id.textViewSeek);
-        seekBar = this.getWindow().findViewById(R.id.seekBar);
+        textViewSeek = findViewById(R.id.textViewSeek);
+        seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setProgress(0);
-
-        //finish();
     }
 
     @Override
@@ -106,5 +112,62 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         intent.setAction(CalendarWidget.ACTION_ALPHA_REFRESH);
         intent.putExtra(CalendarWidget.KEY_ALPHA, Integer.valueOf(seekText));
         sendBroadcast(intent);
+    }
+
+    public void onRadioButtonClick(View view) {
+        Log.v(TAG, "onRadioButtonClick:" + view.toString());
+
+        if (view instanceof AppCompatRadioButton) {
+            AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
+            int color = getButtonColor(radioButton.getId());
+            Log.v(TAG, "onRadioButtonClick: button.id=" + radioButton.getId() + ", Color=" + color);
+
+            View grandParent = (View) view.getParent().getParent();
+            Log.v(TAG, "onRadioButtonClick: grandParent.id=" + grandParent.getId());
+
+            switch (grandParent.getId()) {
+                case R.id.bgRadioGroup:
+                    Log.v(TAG, "onRadioButtonClick: grandParent=BG");
+                    break;
+                case R.id.dayRadioGroup:
+                    Log.v(TAG, "onRadioButtonClick: grandParent=DAY");
+                    break;
+                case R.id.dateRadioGroup:
+                    Log.v(TAG, "onRadioButtonClick: grandParent=DATE");
+                    break;
+                case R.id.eventRadioGroup:
+                    Log.v(TAG, "onRadioButtonClick: grandParent=EVENT");
+                    break;
+                case R.id.todayRadioGroup:
+                    Log.v(TAG, "onRadioButtonClick: grandParent=TODAY");
+                    break;
+            }
+        }
+    }
+
+    private int getButtonColor(int viewId) {
+        switch (viewId) {
+            case R.id.bgRadioBlack:
+                Log.v(TAG, "getButtonColor: BLACK");
+                return Color.BLACK;
+            case R.id.bgRadioWhite:
+                Log.v(TAG, "getButtonColor: WHITE");
+                return Color.WHITE;
+            case R.id.bgRadioGrey:
+                Log.v(TAG, "getButtonColor: DKGRAY");
+                return Color.DKGRAY;
+            case R.id.bgRadioRed:
+                Log.v(TAG, "getButtonColor: RED");
+                return Color.RED;
+            case R.id.bgRadioGreen:
+                Log.v(TAG, "getButtonColor: GREEN");
+                return Color.GREEN;
+            case R.id.bgRadioBlue:
+                Log.v(TAG, "getButtonColor: BLUE");
+                return Color.BLUE;
+            default:
+                Log.v(TAG, "getButtonColor: Default-DKGRAY");
+                return Color.DKGRAY;
+        }
     }
 }
