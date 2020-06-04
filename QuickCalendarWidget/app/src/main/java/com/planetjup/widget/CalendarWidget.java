@@ -1,4 +1,4 @@
-package planetjup.com.widget;
+package com.planetjup.widget;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -32,13 +32,28 @@ public class CalendarWidget extends AppWidgetProvider {
 
     public static final String ACTION_SHOW_CALENDAR = "ACTION_SHOW_CALENDAR";
     public static final String ACTION_UI_REFRESH = "ACTION_UI_REFRESH";
-    public static final String ACTION_ALPHA_REFRESH = "ACTION_ALPHA_REFRESH";
-    public static final String KEY_ALPHA = "alpha";
+    public static final String ACTION_UI_REFRESH_HOURLY = "ACTION_UI_REFRESH_HOURLY";
+    public static final String ACTION_SETTINGS_REFRESH = "ACTION_SETTINGS_REFRESH";
+
+    public static final String KEY_ALPHA = "KEY_ALPHA";
+    public static final String KEY_BG_COLOR = "KEY_BG_COLOR";
+    public static final String KEY_DAY_COLOR = "KEY_DAY_COLOR";
+    public static final String KEY_DATE_COLOR = "KEY_DATE_COLOR";
+    public static final String KEY_EVENT_COLOR = "KEY_EVENT_COLOR";
+    public static final String KEY_TODAY_COLOR = "KEY_TODAY_COLOR";
 
     private static final String TAG = CalendarWidget.class.getSimpleName();
 
-    private static void updateBackground(RemoteViews remoteViews, int alpha) {
-        Log.v(TAG, "updateBackground(): alpha=" + alpha);
+    private static int alpha = 20;
+    private static int bgColor = Color.DKGRAY;
+    private static int dayColor = Color.BLACK;
+    private static int dateColor = Color.BLACK;
+    private static int eventColor = Color.YELLOW;
+    private static int todayColor = Color.BLUE;
+
+    private static void updateBackground(Context context, RemoteViews remoteViews) {
+        Log.v(TAG, "updateBackground(): alpha=" + alpha + ", bgColor=" + bgColor + ", dayColor=" + dayColor + ", dateColor=" + dateColor
+                + ", eventColor=" + eventColor + ", todayColor=" + todayColor);
 
         int effetiveAlpha = 0;
         if (alpha != 0) {
@@ -55,6 +70,8 @@ public class CalendarWidget extends AppWidgetProvider {
         remoteViews.setInt(R.id.day5, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day6, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day7, "setBackgroundColor", color);
+
+        updateUI(context, remoteViews);
     }
 
     private static void updateUI(Context context, RemoteViews remoteViews) {
@@ -160,13 +177,13 @@ public class CalendarWidget extends AppWidgetProvider {
             // color settings
             if (today.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
                 // highlight current day
-                remoteViews.setTextColor(idDay, Color.BLUE);
-                remoteViews.setTextColor(idDate, Color.BLUE);
-                remoteViews.setTextColor(idEvent, Color.RED);
+                remoteViews.setTextColor(idDay, todayColor);
+                remoteViews.setTextColor(idDate, todayColor);
+                remoteViews.setTextColor(idEvent, todayColor);
             } else {
-                remoteViews.setTextColor(idDay, Color.DKGRAY);
-                remoteViews.setTextColor(idDate, Color.BLACK);
-                remoteViews.setTextColor(idEvent, Color.parseColor("#FFCC80"));
+                remoteViews.setTextColor(idDay, dayColor);
+                remoteViews.setTextColor(idDate, dateColor);
+                remoteViews.setTextColor(idEvent, eventColor);
             }
 
             // increment date
@@ -263,12 +280,18 @@ public class CalendarWidget extends AppWidgetProvider {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
 
-        } else if (ACTION_ALPHA_REFRESH.equals(intent.getAction())) {
-            int alpha = intent.getIntExtra(KEY_ALPHA, 100);
+        } else if (ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
+            alpha = intent.getIntExtra(KEY_ALPHA, 20);
+            bgColor = intent.getIntExtra(KEY_BG_COLOR, Color.DKGRAY);
+            dayColor = intent.getIntExtra(KEY_DAY_COLOR, Color.BLACK);
+            dateColor = intent.getIntExtra(KEY_DATE_COLOR, Color.BLACK);
+            eventColor = intent.getIntExtra(KEY_EVENT_COLOR, Color.YELLOW);
+            todayColor = intent.getIntExtra(KEY_TODAY_COLOR, Color.BLUE);
+
             // update background transparency
-            updateBackground(remoteViews, alpha);
+            updateBackground(context, remoteViews);
 
 
             // Instruct the widget manager to update the widget

@@ -4,34 +4,40 @@
     android:layout_height="wrap_content">
 
     <RadioGroup
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_centerInParent="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:checkedButton="@+id/bgRadioBlack"
         android:gravity="center"
-        android:checkedButton="@+id/bgRadioBlack" >
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/bgRadioBlack"
             style="@style/radioButton"
             android:background="@android:color/black" />
+
         <RadioButton
             android:id="@+id/bgRadioWhite"
             style="@style/radioButton"
             android:background="@android:color/white" />
-        <RadioButton
-            android:id="@+id/bgRadioGrey"
-            style="@style/radioButton"
-            android:background="@android:color/darker_gray" />
+
         <RadioButton
             android:id="@+id/bgRadioBlue"
             style="@style/radioButton"
             android:background="@android:color/holo_blue_bright" />
+
+        <RadioButton
+            android:id="@+id/bgRadioGrey"
+            style="@style/radioButton"
+            android:background="@android:color/darker_gray" />
+
         <RadioButton
             android:id="@+id/bgRadioGreen"
             style="@style/radioButton"
             android:background="@android:color/holo_green_light" />
+
         <RadioButton
             android:id="@+id/bgRadioRed"
             style="@style/radioButton"

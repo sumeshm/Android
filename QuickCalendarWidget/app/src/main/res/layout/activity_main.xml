@@ -1,10 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context="com.planetjup.widget.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +15,6 @@
         <TextView
             android:id="@+id/seekBarTitle"
             style="@style/radioTitle"
-            android:layout_alignParentStart="true"
             android:text="@string/seek_bar_title" />
 
         <TextView
@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:gravity="center"
-            android:textSize="20dp"
-            android:text="0" />
+            android:text="0"
+            android:textSize="20dp" />
 
         <SeekBar
             android:id="@+id/seekBar"
@@ -36,69 +36,44 @@
             android:thumbOffset="1dp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/bgColorTitle"
-        style="@style/radioTitle"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/advice_backgroundColor" />
+    <com.planetjup.widget.CustomRadioGroup
+        android:id="@+id/bgColorSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        custom:radioGroupName="BackGround"
+        custom:radioGroupTitle="@string/advice_backgroundColor" />
 
-    <include
-        android:id="@+id/bgRadioGroup"
-        layout="@layout/view_color_options"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+    <com.planetjup.widget.CustomRadioGroup
+        android:id="@+id/dayColorSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        custom:radioGroupName="BackGround"
+        custom:radioGroupTitle="@string/advice_dayColor" />
 
-    <TextView
-        android:id="@+id/dayColorTitle"
-        style="@style/radioTitle"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/advice_dayColor" />
+    <com.planetjup.widget.CustomRadioGroup
+        android:id="@+id/dateColorSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        custom:radioGroupName="BackGround"
+        custom:radioGroupTitle="@string/advice_dateColor" />
 
-    <include
-        android:id="@+id/dayRadioGroup"
-        layout="@layout/view_color_options"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+    <com.planetjup.widget.CustomRadioGroup
+        android:id="@+id/eventColorSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        custom:radioGroupName="BackGround"
+        custom:radioGroupTitle="@string/advice_eventColor" />
 
-    <TextView
-        android:id="@+id/dateColorTitle"
-        style="@style/radioTitle"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/advice_dateColor" />
-
-    <include
-        android:id="@+id/dateRadioGroup"
-        layout="@layout/view_color_options"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/eventColorTitle"
-        style="@style/radioTitle"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/advice_eventColor" />
-
-    <include
-        android:id="@+id/eventRadioGroup"
-        layout="@layout/view_color_options"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/todayColorTitle"
-        style="@style/radioTitle"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/advice_todayColor" />
-
-    <include
-        android:id="@+id/todayRadioGroup"
-        layout="@layout/view_color_options"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+    <com.planetjup.widget.CustomRadioGroup
+        android:id="@+id/todayColorSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        custom:radioGroupName="BackGround"
+        custom:radioGroupTitle="@string/advice_todayColor" />
 
 </LinearLayout>
