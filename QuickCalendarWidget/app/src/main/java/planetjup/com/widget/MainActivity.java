@@ -120,10 +120,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         if (view instanceof AppCompatRadioButton) {
             AppCompatRadioButton radioButton = (AppCompatRadioButton) view;
             int color = getButtonColor(radioButton.getId());
-            Log.v(TAG, "onRadioButtonClick: button.id=" + radioButton.getId() + ", Color=" + color);
 
             View grandParent = (View) view.getParent().getParent();
-            Log.v(TAG, "onRadioButtonClick: grandParent.id=" + grandParent.getId());
 
             switch (grandParent.getId()) {
                 case R.id.bgRadioGroup:

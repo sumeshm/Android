@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:gravity="center"
+            android:textSize="20dp"
             android:text="0" />
 
         <SeekBar
@@ -39,12 +40,12 @@
         android:id="@+id/bgColorTitle"
         style="@style/radioTitle"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:text="@string/advice_backgroundColor" />
 
     <include
         android:id="@+id/bgRadioGroup"
-        layout="@layout/view_bg_color"
+        layout="@layout/view_color_options"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
@@ -52,12 +53,12 @@
         android:id="@+id/dayColorTitle"
         style="@style/radioTitle"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:text="@string/advice_dayColor" />
 
     <include
         android:id="@+id/dayRadioGroup"
-        layout="@layout/view_day_color"
+        layout="@layout/view_color_options"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
@@ -65,12 +66,12 @@
         android:id="@+id/dateColorTitle"
         style="@style/radioTitle"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:text="@string/advice_dateColor" />
 
     <include
         android:id="@+id/dateRadioGroup"
-        layout="@layout/view_date_color"
+        layout="@layout/view_color_options"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
@@ -78,12 +79,12 @@
         android:id="@+id/eventColorTitle"
         style="@style/radioTitle"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:text="@string/advice_eventColor" />
 
     <include
         android:id="@+id/eventRadioGroup"
-        layout="@layout/view_event_color"
+        layout="@layout/view_color_options"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
@@ -96,7 +97,7 @@
 
     <include
         android:id="@+id/todayRadioGroup"
-        layout="@layout/view_today_color"
+        layout="@layout/view_color_options"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
