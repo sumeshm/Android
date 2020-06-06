@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private static final int ON_ALARM_CALLBACK_CODE = 12346;
     private static final int ON_ALARM_CALLBACK_CODE2 = 12347;
 
-    String seekText = "0";
+    private String seekText = "0";
     private TextView textViewSeek;
     private SeekBar seekBar;
     private CustomRadioGroup bgColorSettings;
@@ -56,22 +57,22 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         // setup color pallet
         bgColorSettings = findViewById(R.id.bgColorSettings);
-        bgColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_BG_COLOR));
+        bgColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_BG_COLOR));
 
         dayColorSettings = findViewById(R.id.dayColorSettings);
-        dayColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_DAY_COLOR));
+        dayColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_DAY_COLOR));
 
         dateColorSettings = findViewById(R.id.dateColorSettings);
-        dateColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_DATE_COLOR));
+        dateColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_DATE_COLOR));
 
         eventColorSettings = findViewById(R.id.eventColorSettings);
-        eventColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_EVENT_COLOR));
+        eventColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_EVENT_COLOR));
 
         todayColorSettings = findViewById(R.id.todayColorSettings);
-        todayColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_TODAY_COLOR));
+        todayColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_TODAY_COLOR));
 
         // setup seekbar
-        int alpha = settingsMap.get(CalendarWidget.KEY_ALPHA);
+        int alpha = settingsMap.get(Constants.KEY_ALPHA);
         textViewSeek = findViewById(R.id.textViewSeek);
         textViewSeek.setText(Integer.toString(alpha * 10));
         seekBar = findViewById(R.id.seekBar);
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         String data = Integer.toString(progress * 10);
         textViewSeek.setText(data);
 
-        settingsMap.put(CalendarWidget.KEY_ALPHA, progress);
+        settingsMap.put(Constants.KEY_ALPHA, progress);
     }
 
     @Override
@@ -170,8 +171,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         calendar.set(Calendar.SECOND, 00);
 
         // designate alarm handler
-        Intent intent = new Intent(this, CalendarWidget.class);
-        intent.setAction(CalendarWidget.ACTION_UI_REFRESH);
+        Intent intent = new Intent(this, Constants.class);
+        intent.setAction(Constants.ACTION_UI_REFRESH);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this.getApplicationContext(), ON_ALARM_CALLBACK_CODE, intent, 0);
 
@@ -188,8 +189,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         // designate alarm handler
-        Intent intent = new Intent(this, CalendarWidget.class);
-        intent.setAction(CalendarWidget.ACTION_UI_REFRESH_HOURLY);
+        Intent intent = new Intent(this, Constants.class);
+        intent.setAction(Constants.ACTION_UI_REFRESH_HOURLY);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this.getApplicationContext(), ON_ALARM_CALLBACK_CODE2, intent, 0);
 
@@ -201,24 +202,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private void publishSettings() {
         Log.v(TAG, "publishSettings():");
 
-        settingsMap.put(CalendarWidget.KEY_BG_COLOR, bgColorSettings.getSelectedColor());
-        settingsMap.put(CalendarWidget.KEY_DAY_COLOR, dayColorSettings.getSelectedColor());
-        settingsMap.put(CalendarWidget.KEY_DATE_COLOR, dateColorSettings.getSelectedColor());
-        settingsMap.put(CalendarWidget.KEY_EVENT_COLOR, eventColorSettings.getSelectedColor());
-        settingsMap.put(CalendarWidget.KEY_TODAY_COLOR, todayColorSettings.getSelectedColor());
+        settingsMap.put(Constants.KEY_BG_COLOR, bgColorSettings.getSelectedColor());
+        settingsMap.put(Constants.KEY_DAY_COLOR, dayColorSettings.getSelectedColor());
+        settingsMap.put(Constants.KEY_DATE_COLOR, dateColorSettings.getSelectedColor());
+        settingsMap.put(Constants.KEY_EVENT_COLOR, eventColorSettings.getSelectedColor());
+        settingsMap.put(Constants.KEY_TODAY_COLOR, todayColorSettings.getSelectedColor());
         PersistenceManager.writeSettings(getApplicationContext(), settingsMap);
 
-        // todo: notify widget with settings data
-
+        // notify widget about change in settings
         Intent intent = new Intent(this, CalendarWidget.class);
-        intent.setAction(CalendarWidget.ACTION_SETTINGS_REFRESH);
-        intent.putExtra(CalendarWidget.KEY_ALPHA, Integer.valueOf(seekText));
-        intent.putExtra(CalendarWidget.KEY_BG_COLOR, bgColorSettings.getSelectedColor());
-        intent.putExtra(CalendarWidget.KEY_DAY_COLOR, dayColorSettings.getSelectedColor());
-        intent.putExtra(CalendarWidget.KEY_DATE_COLOR, dateColorSettings.getSelectedColor());
-        intent.putExtra(CalendarWidget.KEY_EVENT_COLOR, eventColorSettings.getSelectedColor());
-        intent.putExtra(CalendarWidget.KEY_TODAY_COLOR, todayColorSettings.getSelectedColor());
-
+        intent.setAction(Constants.ACTION_SETTINGS_REFRESH);
         sendBroadcast(intent);
     }
 

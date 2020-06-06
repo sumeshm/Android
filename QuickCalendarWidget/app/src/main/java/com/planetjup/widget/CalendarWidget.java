@@ -30,17 +30,6 @@ import java.util.Map;
  */
 public class CalendarWidget extends AppWidgetProvider {
 
-    public static final String ACTION_SHOW_CALENDAR = "ACTION_SHOW_CALENDAR";
-    public static final String ACTION_UI_REFRESH = "ACTION_UI_REFRESH";
-    public static final String ACTION_UI_REFRESH_HOURLY = "ACTION_UI_REFRESH_HOURLY";
-    public static final String ACTION_SETTINGS_REFRESH = "ACTION_SETTINGS_REFRESH";
-
-    public static final String KEY_ALPHA = "KEY_ALPHA";
-    public static final String KEY_BG_COLOR = "KEY_BG_COLOR";
-    public static final String KEY_DAY_COLOR = "KEY_DAY_COLOR";
-    public static final String KEY_DATE_COLOR = "KEY_DATE_COLOR";
-    public static final String KEY_EVENT_COLOR = "KEY_EVENT_COLOR";
-    public static final String KEY_TODAY_COLOR = "KEY_TODAY_COLOR";
 
     private static final String TAG = CalendarWidget.class.getSimpleName();
 
@@ -55,9 +44,11 @@ public class CalendarWidget extends AppWidgetProvider {
         Log.v(TAG, "updateBackground(): alpha=" + alpha + ", bgColor=" + bgColor + ", dayColor=" + dayColor + ", dateColor=" + dateColor
                 + ", eventColor=" + eventColor + ", todayColor=" + todayColor);
 
+        // alpha is a scale from 0 to 10, representing 0 to 100%
+        // translate that % onto color-alpha of 255 scale
         int effetiveAlpha = 0;
         if (alpha != 0) {
-            effetiveAlpha = (255 * alpha) / 100;
+            effetiveAlpha = (255 * alpha) / 10;
         }
         Log.v(TAG, "updateBackground(): effetiveAlpha=" + effetiveAlpha);
 
@@ -192,7 +183,7 @@ public class CalendarWidget extends AppWidgetProvider {
 
         // add click listener for the whole widget
         Intent intent = new Intent(context, CalendarWidget.class);
-        intent.setAction(ACTION_SHOW_CALENDAR);
+        intent.setAction(Constants.ACTION_SHOW_CALENDAR);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -258,7 +249,7 @@ public class CalendarWidget extends AppWidgetProvider {
         Log.v(TAG, "onReceive(): action=" + intent.getAction());
         super.onReceive(context, intent);
 
-        if (ACTION_SHOW_CALENDAR.equals(intent.getAction())) {
+        if (Constants.ACTION_SHOW_CALENDAR.equals(intent.getAction())) {
             // bring up System Calendar
             ComponentName componentName = new ComponentName("com.google.android.calendar", "com.android.calendar.LaunchActivity");
             Intent calIntent = new Intent();
@@ -269,16 +260,16 @@ public class CalendarWidget extends AppWidgetProvider {
         } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
-                || ACTION_UI_REFRESH.equals(intent.getAction())) {
+                || Constants.ACTION_UI_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
             Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
-            alpha = settingsMap.get(KEY_ALPHA);
-            bgColor = settingsMap.get(KEY_BG_COLOR);
-            dayColor = settingsMap.get(KEY_DAY_COLOR);
-            dateColor = settingsMap.get(KEY_DATE_COLOR);
-            eventColor = settingsMap.get(KEY_EVENT_COLOR);
-            todayColor = settingsMap.get(KEY_TODAY_COLOR);
+            alpha = settingsMap.get(Constants.KEY_ALPHA);
+            bgColor = settingsMap.get(Constants.KEY_BG_COLOR);
+            dayColor = settingsMap.get(Constants.KEY_DAY_COLOR);
+            dateColor = settingsMap.get(Constants.KEY_DATE_COLOR);
+            eventColor = settingsMap.get(Constants.KEY_EVENT_COLOR);
+            todayColor = settingsMap.get(Constants.KEY_TODAY_COLOR);
 
             // re-build UI
             updateUI(context, remoteViews);
@@ -288,15 +279,16 @@ public class CalendarWidget extends AppWidgetProvider {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
 
-        } else if (ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
+        } else if (Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
-            alpha = intent.getIntExtra(KEY_ALPHA, 20);
-            bgColor = intent.getIntExtra(KEY_BG_COLOR, Color.DKGRAY);
-            dayColor = intent.getIntExtra(KEY_DAY_COLOR, Color.BLACK);
-            dateColor = intent.getIntExtra(KEY_DATE_COLOR, Color.BLACK);
-            eventColor = intent.getIntExtra(KEY_EVENT_COLOR, Color.YELLOW);
-            todayColor = intent.getIntExtra(KEY_TODAY_COLOR, Color.BLUE);
+            Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
+            alpha = settingsMap.get(Constants.KEY_ALPHA);
+            bgColor = settingsMap.get(Constants.KEY_BG_COLOR);
+            dayColor = settingsMap.get(Constants.KEY_DAY_COLOR);
+            dateColor = settingsMap.get(Constants.KEY_DATE_COLOR);
+            eventColor = settingsMap.get(Constants.KEY_EVENT_COLOR);
+            todayColor = settingsMap.get(Constants.KEY_TODAY_COLOR);
 
             // update background transparency
             updateBackground(context, remoteViews);
@@ -307,8 +299,6 @@ public class CalendarWidget extends AppWidgetProvider {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
 
-        } else if (Intent.ACTION_PROVIDER_CHANGED.equals(intent.getAction())) {
-            Log.v(TAG, "onReceive(): action=ACTION_PROVIDER_CHANGED");
         }
     }
 

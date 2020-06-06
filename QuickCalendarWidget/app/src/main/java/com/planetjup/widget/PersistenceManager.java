@@ -2,6 +2,7 @@ package com.planetjup.widget;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -62,6 +63,14 @@ public class PersistenceManager {
         } else {
             retMap = new HashMap<>();
         }
+
+        // create default settings if needed
+        retMap.putIfAbsent(Constants.KEY_ALPHA, 2);
+        retMap.putIfAbsent(Constants.KEY_BG_COLOR, Color.DKGRAY);
+        retMap.putIfAbsent(Constants.KEY_DAY_COLOR, Color.BLACK);
+        retMap.putIfAbsent(Constants.KEY_DATE_COLOR, Color.BLACK);
+        retMap.putIfAbsent(Constants.KEY_EVENT_COLOR, Color.YELLOW);
+        retMap.putIfAbsent(Constants.KEY_TODAY_COLOR, Color.BLUE);
 
         return retMap;
     }
