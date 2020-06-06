@@ -20,10 +20,9 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
 
     private static final String TAG = CustomRadioGroup.class.getSimpleName();
 
-    private String radioGroupName;
     private String radioGroupTitle;
-    private String selectedColor;
     private int color = Color.DKGRAY;
+    private String selectedColor = "";
     private RadioGroup customRadioGroup;
     private TextView customTitle;
     Map<Integer, RadioButton> radioButtonMap = new HashMap<>();
@@ -35,10 +34,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrSet, R.styleable.CustomRadioGroup, 0, 0);
 
         try {
-            radioGroupName = typedArray.getString(R.styleable.CustomRadioGroup_radioGroupName);
             radioGroupTitle = typedArray.getString(R.styleable.CustomRadioGroup_radioGroupTitle);
-
-            Log.v(TAG, "CustomRadioGroup: radioGroupName=" + radioGroupName);
             Log.v(TAG, "CustomRadioGroup: radioGroupTitle=" + radioGroupTitle);
         } finally {
             typedArray.recycle();
@@ -64,50 +60,48 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        Log.v(TAG, "onCheckedChanged(): " + radioGroupTitle + ", isChecked=" + isChecked + ", buttonView=" + buttonView.toString());
         if (isChecked) {
             updateSelectedColor(buttonView.getId());
-            Log.v(TAG, "Selected Color=" + selectedColor);
         }
     }
 
     public int getSelectedColor() {
+        Log.v(TAG, "getSelectedColor(): " + radioGroupTitle + ", Color=" + selectedColor);
         return color;
     }
 
-    public void setSelectedColor(int color) {
-        switch (color) {
+    public void setSelectedColor(int newColor) {
+        Log.v(TAG, "setSelectedColor(): " + radioGroupTitle + ", newColor=" + newColor);
+
+        switch (newColor) {
             case Color.BLACK:
-                updateSelectedColor(R.id.bgRadioBlack);
-                radioButtonMap.get(R.id.bgRadioBlack).setChecked(true);
+                radioButtonMap.get(R.id.radioButtonBlack).setChecked(true);
                 break;
             case Color.WHITE:
-                updateSelectedColor(R.id.bgRadioBlack);
-                radioButtonMap.get(R.id.bgRadioBlack).setChecked(true);
+                radioButtonMap.get(R.id.radioButtonWhite).setChecked(true);
                 break;
             case Color.DKGRAY:
-                updateSelectedColor(R.id.bgRadioBlack);
-                radioButtonMap.get(R.id.bgRadioBlack).setChecked(true);
+                radioButtonMap.get(R.id.radioButtonGrey).setChecked(true);
                 break;
             case Color.RED:
-                updateSelectedColor(R.id.bgRadioBlack);
-                radioButtonMap.get(R.id.bgRadioBlack).setChecked(true);
+                radioButtonMap.get(R.id.radioButtonRed).setChecked(true);
                 break;
             case Color.GREEN:
-                updateSelectedColor(R.id.bgRadioBlack);
-                radioButtonMap.get(R.id.bgRadioBlack).setChecked(true);
+                radioButtonMap.get(R.id.radioButtonGreen).setChecked(true);
                 break;
             case Color.BLUE:
-                updateSelectedColor(R.id.bgRadioBlack);
-                radioButtonMap.get(R.id.bgRadioBlack).setChecked(true);
+                radioButtonMap.get(R.id.radioButtonBlue).setChecked(true);
                 break;
             case 0xFF800080:
-                updateSelectedColor(R.id.bgRadioBlack);
-                radioButtonMap.get(R.id.bgRadioBlack).setChecked(true);
+                radioButtonMap.get(R.id.radioButtonPurple).setChecked(true);
                 break;
         }
     }
 
     private void updateSelectedColor(int viewId) {
+        Log.v(TAG, "updateSelectedColor(): " + radioGroupTitle + ", viewId=" + viewId);
+
         switch (viewId) {
             case R.id.radioButtonBlack:
                 color = Color.BLACK;
@@ -139,7 +133,9 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
                 break;
             default:
                 color = Color.DKGRAY;
-                selectedColor = "DKGRAY";
+                selectedColor = "Default-DKGRAY";
         }
+
+        Log.v(TAG, "updateSelectedColor(): " + radioGroupTitle + ", Color=" + selectedColor);
     }
 }

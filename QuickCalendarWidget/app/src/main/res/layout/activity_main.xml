@@ -15,6 +15,7 @@
         <TextView
             android:id="@+id/seekBarTitle"
             style="@style/radioTitle"
+            android:layout_marginTop="5dp"
             android:text="@string/seek_bar_title" />
 
         <TextView
@@ -38,42 +39,37 @@
 
     <com.planetjup.widget.CustomRadioGroup
         android:id="@+id/bgColorSettings"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        custom:radioGroupName="BackGround"
+        android:paddingTop="12dp"
         custom:radioGroupTitle="@string/advice_backgroundColor" />
 
     <com.planetjup.widget.CustomRadioGroup
         android:id="@+id/dayColorSettings"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        custom:radioGroupName="BackGround"
+        android:paddingTop="10dp"
         custom:radioGroupTitle="@string/advice_dayColor" />
 
     <com.planetjup.widget.CustomRadioGroup
         android:id="@+id/dateColorSettings"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        custom:radioGroupName="BackGround"
+        android:paddingTop="12dp"
         custom:radioGroupTitle="@string/advice_dateColor" />
 
     <com.planetjup.widget.CustomRadioGroup
         android:id="@+id/eventColorSettings"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        custom:radioGroupName="BackGround"
+        android:paddingTop="12dp"
         custom:radioGroupTitle="@string/advice_eventColor" />
 
     <com.planetjup.widget.CustomRadioGroup
         android:id="@+id/todayColorSettings"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        custom:radioGroupName="BackGround"
+        android:paddingTop="12dp"
         custom:radioGroupTitle="@string/advice_todayColor" />
 
 </LinearLayout>

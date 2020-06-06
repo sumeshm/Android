@@ -50,31 +50,33 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         setContentView(R.layout.activity_main);
 
-        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        // fetch settings from Storage
+        settingsMap = PersistenceManager.readSettings(getApplicationContext());
+        Log.v(TAG, "onCreate: settingsMap=" + settingsMap.toString());
 
+        // setup color pallet
+        bgColorSettings = findViewById(R.id.bgColorSettings);
+        bgColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_BG_COLOR));
+
+        dayColorSettings = findViewById(R.id.dayColorSettings);
+        dayColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_DAY_COLOR));
+
+        dateColorSettings = findViewById(R.id.dateColorSettings);
+        dateColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_DATE_COLOR));
+
+        eventColorSettings = findViewById(R.id.eventColorSettings);
+        eventColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_EVENT_COLOR));
+
+        todayColorSettings = findViewById(R.id.todayColorSettings);
+        todayColorSettings.setSelectedColor(settingsMap.get(CalendarWidget.KEY_TODAY_COLOR));
+
+        // setup seekbar
+        int alpha = settingsMap.get(CalendarWidget.KEY_ALPHA);
         textViewSeek = findViewById(R.id.textViewSeek);
+        textViewSeek.setText(Integer.toString(alpha * 10));
         seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setProgress(0);
-
-        bgColorSettings = findViewById(R.id.bgColorSettings);
-        dayColorSettings = findViewById(R.id.dayColorSettings);
-        dateColorSettings = findViewById(R.id.dateColorSettings);
-        eventColorSettings = findViewById(R.id.eventColorSettings);
-        todayColorSettings = findViewById(R.id.todayColorSettings);
-        Log.v(TAG, "onCreate: bgColorSettings=" + bgColorSettings.toString());
-        Log.v(TAG, "onCreate: dayColorSettings=" + dayColorSettings.toString());
-        Log.v(TAG, "onCreate: dateColorSettings=" + dateColorSettings.toString());
-        Log.v(TAG, "onCreate: eventColorSettings=" + eventColorSettings.toString());
-        Log.v(TAG, "onCreate: todayColorSettings=" + todayColorSettings.toString());
-
-        Map<String, Integer> temp = PersistenceManager.readSettings(getApplicationContext());
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        Log.v(TAG, "onSaveInstanceState():");
+        seekBar.setProgress(alpha);
     }
 
     @Override
@@ -90,6 +92,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         String data = Integer.toString(progress * 10);
         textViewSeek.setText(data);
+
+        settingsMap.put(CalendarWidget.KEY_ALPHA, progress);
     }
 
     @Override
@@ -162,11 +166,11 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private void publishSettings() {
         Log.v(TAG, "publishSettings():");
 
-        settingsMap.put("bgColor", bgColorSettings.getSelectedColor());
-        settingsMap.put("dayColor", dayColorSettings.getSelectedColor());
-        settingsMap.put("dateColor", dateColorSettings.getSelectedColor());
-        settingsMap.put("eventColor", eventColorSettings.getSelectedColor());
-        settingsMap.put("todayColor", todayColorSettings.getSelectedColor());
+        settingsMap.put(CalendarWidget.KEY_BG_COLOR, bgColorSettings.getSelectedColor());
+        settingsMap.put(CalendarWidget.KEY_DAY_COLOR, dayColorSettings.getSelectedColor());
+        settingsMap.put(CalendarWidget.KEY_DATE_COLOR, dateColorSettings.getSelectedColor());
+        settingsMap.put(CalendarWidget.KEY_EVENT_COLOR, eventColorSettings.getSelectedColor());
+        settingsMap.put(CalendarWidget.KEY_TODAY_COLOR, todayColorSettings.getSelectedColor());
         PersistenceManager.writeSettings(getApplicationContext(), settingsMap);
 
         // todo: notify widget with settings data

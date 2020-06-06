@@ -272,6 +272,14 @@ public class CalendarWidget extends AppWidgetProvider {
                 || ACTION_UI_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
+            Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
+            alpha = settingsMap.get(KEY_ALPHA);
+            bgColor = settingsMap.get(KEY_BG_COLOR);
+            dayColor = settingsMap.get(KEY_DAY_COLOR);
+            dateColor = settingsMap.get(KEY_DATE_COLOR);
+            eventColor = settingsMap.get(KEY_EVENT_COLOR);
+            todayColor = settingsMap.get(KEY_TODAY_COLOR);
+
             // re-build UI
             updateUI(context, remoteViews);
 

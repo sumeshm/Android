@@ -1,6 +1,5 @@
 <resources>
     <declare-styleable name="CustomRadioGroup">
-        <attr name="radioGroupName" format="string" />
         <attr name="radioGroupTitle" format="string" />
     </declare-styleable>
 </resources>

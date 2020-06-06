@@ -6,6 +6,9 @@ import android.preference.PreferenceManager;
 import android.util.JsonWriter;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +36,8 @@ public class PersistenceManager {
 
     private static final String PERSISTENCE_KEY = "com_planetjup_widget_CalendarWidget";
 
+    private static Gson gson = new Gson();
+
     public static void writeSettings(Context context, Map<String, Integer> settingsMap) {
         Log.v(TAG, "writeSettings()");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -47,7 +53,7 @@ public class PersistenceManager {
     public static Map<String, Integer> readSettings(Context context) {
         Log.v(TAG, "readSettings()");
 
-        Map<String, Integer> retMap = new HashMap<>();
+        Map<String, Integer> retMap = null;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         String json = prefs.getString(PERSISTENCE_KEY, null);
@@ -55,10 +61,14 @@ public class PersistenceManager {
 
         if (json != null && !json.isEmpty()) {
             try {
+                Type type = new TypeToken< Map<String, Integer> >(){}.getType();
                 JSONObject jsonObject = new JSONObject(json);
+                retMap = gson.fromJson(jsonObject.toString(), type);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        } else {
+            retMap = new HashMap<>();
         }
 
         return retMap;
