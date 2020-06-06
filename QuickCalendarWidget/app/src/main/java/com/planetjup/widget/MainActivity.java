@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed():");
-//        super.onBackPressed();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Save Settings?")
