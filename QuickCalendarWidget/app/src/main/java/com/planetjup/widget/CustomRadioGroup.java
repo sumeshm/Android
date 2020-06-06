@@ -19,13 +19,12 @@ import java.util.Map;
 public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnCheckedChangeListener {
 
     private static final String TAG = CustomRadioGroup.class.getSimpleName();
-
+    Map<Integer, RadioButton> radioButtonMap = new HashMap<>();
     private String radioGroupTitle;
     private int color = Color.DKGRAY;
     private String selectedColor = "";
     private RadioGroup customRadioGroup;
     private TextView customTitle;
-    Map<Integer, RadioButton> radioButtonMap = new HashMap<>();
 
     public CustomRadioGroup(Context context, AttributeSet attrSet) {
         super(context, attrSet);

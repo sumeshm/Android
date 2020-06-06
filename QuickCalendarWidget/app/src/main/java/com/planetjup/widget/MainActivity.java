@@ -2,19 +2,18 @@ package com.planetjup.widget;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.OnLifecycleEvent;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -23,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int ON_CALENDAR_PERMISSION_CALLBACK_CODE = 12345;
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private CustomRadioGroup dateColorSettings;
     private CustomRadioGroup eventColorSettings;
     private CustomRadioGroup todayColorSettings;
+    private Button buttonSubmit;
     private Map<String, Integer> settingsMap = new HashMap<>();
 
     @Override
@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setProgress(alpha);
+
+        buttonSubmit = findViewById(R.id.buttonSubmit);
+        buttonSubmit.setOnClickListener(this);
     }
 
     @Override
@@ -104,9 +107,43 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void onStopTrackingTouch(SeekBar seekBar) {
         seekText = textViewSeek.getText().toString();
         Log.v(TAG, "onStopTrackingTouch: text=" + seekText);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Log.v(TAG, "onBackPressed():");
+//        super.onBackPressed();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Save Settings?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // save settings, notify widget and exit
+                        publishSettings();
+                        MainActivity.this.finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // exit without saving settings
+                        MainActivity.this.finish();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        Log.v(TAG, "onClick():");
 
         // notify widget and persist settings
         publishSettings();
+
+        // exit acitivity
+        finish();
     }
 
     private void getContactsPermission() {
@@ -162,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 AlarmManager.INTERVAL_HOUR, pendingIntent);
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private void publishSettings() {
         Log.v(TAG, "publishSettings():");
 
@@ -186,4 +222,5 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         sendBroadcast(intent);
     }
+
 }
