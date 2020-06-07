@@ -54,7 +54,12 @@
             <RadioButton
                 android:id="@+id/radioButtonPurple"
                 style="@style/radioButton"
-                android:background="@android:color/holo_purple" />
+                android:background="@color/colorMagenta" />
+
+            <RadioButton
+                android:id="@+id/radioButtonYellow"
+                style="@style/radioButton"
+                android:background="@color/colorYellow" />
         </RadioGroup>
     </LinearLayout>
 </merge>

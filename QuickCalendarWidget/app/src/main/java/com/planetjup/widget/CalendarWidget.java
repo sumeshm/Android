@@ -13,9 +13,13 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.support.annotation.ColorInt;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+
+import com.planetjup.widget.util.Constants;
+import com.planetjup.widget.util.PersistenceManager;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,11 +38,11 @@ public class CalendarWidget extends AppWidgetProvider {
     private static final String TAG = CalendarWidget.class.getSimpleName();
 
     private static int alpha = 20;
-    private static int bgColor = Color.DKGRAY;
-    private static int dayColor = Color.BLACK;
-    private static int dateColor = Color.BLACK;
-    private static int eventColor = Color.YELLOW;
-    private static int todayColor = Color.BLUE;
+    private static @ColorInt int bgColor = Color.DKGRAY;
+    private static @ColorInt int dayColor = Color.BLACK;
+    private static @ColorInt int dateColor = Color.BLACK;
+    private static @ColorInt int eventColor = Color.YELLOW;
+    private static @ColorInt int todayColor = Color.BLUE;
 
     private static void updateBackground(Context context, RemoteViews remoteViews) {
         Log.v(TAG, "updateBackground(): alpha=" + alpha + ", bgColor=" + bgColor + ", dayColor=" + dayColor + ", dateColor=" + dateColor
@@ -52,7 +56,7 @@ public class CalendarWidget extends AppWidgetProvider {
         }
         Log.v(TAG, "updateBackground(): effetiveAlpha=" + effetiveAlpha);
 
-        int color = Color.argb(effetiveAlpha, 0, 0, 0);
+        int color = Color.argb(effetiveAlpha, Color.red(bgColor), Color.green(bgColor), Color.blue(bgColor));
 
         remoteViews.setInt(R.id.day1, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day2, "setBackgroundColor", color);

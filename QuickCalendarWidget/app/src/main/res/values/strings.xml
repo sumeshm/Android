@@ -18,4 +18,7 @@
     <string name="advice_todayColor">Today Highlight Color</string>
     <string name="advice_submit">SAVE</string>
     <string name="advice_seekDefault">0</string>
+    <string name="dialog_yes">YES</string>
+    <string name="dialog_no">NO</string>
+    <string name="advice_preview">preview</string>
 </resources>

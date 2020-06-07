@@ -1,4 +1,4 @@
-package com.planetjup.widget;
+package com.planetjup.widget.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

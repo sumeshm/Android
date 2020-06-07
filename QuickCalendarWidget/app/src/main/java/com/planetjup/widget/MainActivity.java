@@ -7,9 +7,14 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +22,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.planetjup.widget.util.Constants;
+import com.planetjup.widget.util.PersistenceManager;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -39,7 +47,9 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private CustomRadioGroup eventColorSettings;
     private CustomRadioGroup todayColorSettings;
     private Button buttonSubmit;
+    private View previewBox;
     private Map<String, Integer> settingsMap = new HashMap<>();
+    private GradientDrawable shape = new GradientDrawable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +91,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         buttonSubmit = findViewById(R.id.buttonSubmit);
         buttonSubmit.setOnClickListener(this);
+
+        shape.setShape(GradientDrawable.RECTANGLE);
+        shape.setCornerRadius(15f);
+        shape.setColor(bgColorSettings.getSelectedColor());
+        shape.setStroke(1, Color.BLACK);
+
+        previewBox = findViewById(R.id.preview);
+        previewBox.setClickable(false);
+        previewBox.setBackground(shape);
     }
 
     @Override
@@ -98,6 +117,16 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         textViewSeek.setText(data);
 
         settingsMap.put(Constants.KEY_ALPHA, progress);
+
+        // todo: temp code
+        int effetiveAlpha = 0;
+        if (progress != 0) {
+            effetiveAlpha = (255 * progress) / 10;
+        }
+
+        // update preview
+        shape.setAlpha(effetiveAlpha);
+        shape.setColor(bgColorSettings.getSelectedColor());
     }
 
     @Override
