@@ -3,12 +3,15 @@ package com.planetjup.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorInt;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -30,6 +33,8 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     private String selectedColor = "";
     private RadioGroup customRadioGroup;
     private TextView customTitle;
+    private OnButtonClickedListener listener;
+    private String listenerId;
 
     public CustomRadioGroup(Context context, AttributeSet attrSet) {
         super(context, attrSet);
@@ -53,18 +58,19 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         customTitle = findViewById(R.id.customTitle);
         customTitle.setText(radioGroupTitle);
 
-        GradientDrawable roundShape = new GradientDrawable();
-        roundShape.setShape(GradientDrawable.OVAL);
         roundShape.setStroke(1, Color.BLACK);
-        roundShape.setAlpha(100);
-        roundShape.setTint(Color.GREEN);
 
         customRadioGroup = findViewById(R.id.customRadioGroup);
         for (int i = 0; i < customRadioGroup.getChildCount(); i++) {
-            RadioButton radioButton = (RadioButton) customRadioGroup.getChildAt(i);
-            //radioButton.setBackground(roundShape);
-            //setButtonColor(radioButton);
+            roundShape = new GradientDrawable();
+            roundShape.setShape(GradientDrawable.OVAL);
+            roundShape.setStroke(1, Color.BLACK);
+
+            AppCompatRadioButton radioButton = (AppCompatRadioButton) customRadioGroup.getChildAt(i);
+            radioButton.setBackground(roundShape);
             radioButton.setOnCheckedChangeListener(this);
+
+            setButtonColor(roundShape, radioButton.getId());
 
             radioButtonMap.put(radioButton.getId(), radioButton);
         }
@@ -75,6 +81,10 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         Log.v(TAG, "onCheckedChanged(): " + radioGroupTitle + ", isChecked=" + isChecked + ", buttonView=" + buttonView.toString());
         if (isChecked) {
             updateSelectedColor(buttonView.getId());
+
+            if (listener != null) {
+                listener.radioButtonClicked(listenerId, color);
+            }
         }
     }
 
@@ -159,35 +169,52 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     }
 
 
-    public void setButtonColor(RadioButton button) {
-        Log.v(TAG, "setButtonColor(): button=" + button);
+    private void setButtonColor(GradientDrawable roundShape, @ColorInt int buttonId) {
+        Log.v(TAG, "setButtonColor(): id=" + buttonId);
 
-        button.getBackground().setTint(Color.BLACK);
-        switch (button.getId()) {
+        switch (buttonId) {
             case R.id.radioButtonBlack:
-                button.getBackground().setTint(Color.BLACK);
+                Log.v(TAG, "setButtonColor(): BLACK");
+                roundShape.setColor(Color.BLACK);
                 break;
             case R.id.radioButtonWhite:
-                button.getBackground().setTint(Color.WHITE);
+                Log.v(TAG, "setButtonColor(): WHITE");
+                roundShape.setColor(Color.WHITE);
                 break;
             case R.id.radioButtonGrey:
-                button.getBackground().setTint(Color.DKGRAY);
+                Log.v(TAG, "setButtonColor(): DKGRAY");
+                roundShape.setColor(Color.DKGRAY);
                 break;
             case R.id.radioButtonRed:
-                button.getBackground().setTint(Color.RED);
+                Log.v(TAG, "setButtonColor(): RED");
+                roundShape.setColor(Color.RED);
                 break;
             case R.id.radioButtonGreen:
-                button.getBackground().setTint(Color.GREEN);
+                Log.v(TAG, "setButtonColor(): GREEN");
+                roundShape.setColor(Color.GREEN);
                 break;
             case R.id.radioButtonBlue:
-                button.getBackground().setTint(Color.BLUE);
+                Log.v(TAG, "setButtonColor(): GREEN");
+                roundShape.setColor(Color.BLUE);
                 break;
             case R.id.radioButtonPurple:
-                button.getBackground().setTint(Color.MAGENTA);
+                Log.v(TAG, "setButtonColor(): MAGENTA");
+                roundShape.setColor(Color.MAGENTA);
                 break;
             case R.id.radioButtonYellow:
-                button.getBackground().setTint(Color.YELLOW);
+                Log.v(TAG, "setButtonColor(): YELLOW");
+                roundShape.setColor(Color.YELLOW);
                 break;
         }
+    }
+
+    public interface OnButtonClickedListener {
+
+        public void radioButtonClicked(String listenerId, @ColorInt int color);
+    }
+
+    public void setOnButtonClickedListener(OnButtonClickedListener listener, String listenerId) {
+        this.listener = listener;
+        this.listenerId = listenerId;
     }
 }

@@ -13,12 +13,14 @@ import android.graphics.ColorFilter;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -31,25 +33,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, CustomRadioGroup.OnButtonClickedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int ON_CALENDAR_PERMISSION_CALLBACK_CODE = 12345;
     private static final int ON_ALARM_CALLBACK_CODE = 12346;
     private static final int ON_ALARM_CALLBACK_CODE2 = 12347;
 
+    private Map<String, Integer> settingsMap = new HashMap<>();
+
+    // seek bar members
     private String seekText = "0";
     private TextView textViewSeek;
     private SeekBar seekBar;
+
+    // radio group members
     private CustomRadioGroup bgColorSettings;
     private CustomRadioGroup dayColorSettings;
     private CustomRadioGroup dateColorSettings;
     private CustomRadioGroup eventColorSettings;
     private CustomRadioGroup todayColorSettings;
+
     private Button buttonSubmit;
-    private View previewBox;
-    private Map<String, Integer> settingsMap = new HashMap<>();
+
+    // preview box members
     private GradientDrawable shape = new GradientDrawable();
+    private View previewBox;
+    private TextView previewTextDay;
+    private TextView previewTextDate;
+    private TextView previewTextEvent;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,18 +82,23 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         // setup color pallet
         bgColorSettings = findViewById(R.id.bgColorSettings);
         bgColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_BG_COLOR));
+        bgColorSettings.setOnButtonClickedListener(this, Constants.KEY_BG_COLOR);
 
         dayColorSettings = findViewById(R.id.dayColorSettings);
         dayColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_DAY_COLOR));
+        dayColorSettings.setOnButtonClickedListener(this, Constants.KEY_DAY_COLOR);
 
         dateColorSettings = findViewById(R.id.dateColorSettings);
         dateColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_DATE_COLOR));
+        dateColorSettings.setOnButtonClickedListener(this, Constants.KEY_DATE_COLOR);
 
         eventColorSettings = findViewById(R.id.eventColorSettings);
         eventColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_EVENT_COLOR));
+        eventColorSettings.setOnButtonClickedListener(this, Constants.KEY_EVENT_COLOR);
 
         todayColorSettings = findViewById(R.id.todayColorSettings);
         todayColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_TODAY_COLOR));
+        todayColorSettings.setOnButtonClickedListener(this, Constants.KEY_TODAY_COLOR);
 
         // setup seekbar
         int alpha = settingsMap.get(Constants.KEY_ALPHA);
@@ -97,9 +116,21 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         shape.setColor(bgColorSettings.getSelectedColor());
         shape.setStroke(1, Color.BLACK);
 
+        // update preview box
         previewBox = findViewById(R.id.preview);
         previewBox.setClickable(false);
         previewBox.setBackground(shape);
+        previewTextDay = findViewById(R.id.previewTextDay);
+        previewTextDate = findViewById(R.id.previewTextDate);
+        previewTextEvent = findViewById(R.id.previewTextEvent);
+        updatePreviewBox(Constants.KEY_BG_COLOR, settingsMap.get(Constants.KEY_BG_COLOR));
+        updatePreviewBox(Constants.KEY_DAY_COLOR, settingsMap.get(Constants.KEY_DAY_COLOR));
+        updatePreviewBox(Constants.KEY_DATE_COLOR, settingsMap.get(Constants.KEY_DATE_COLOR));
+        updatePreviewBox(Constants.KEY_EVENT_COLOR, settingsMap.get(Constants.KEY_EVENT_COLOR));
+
+        // todo: use color array to make above process dynamic
+        // val colors = resources.getIntArray(R.array.colors)
+        // <array name="colors"><item>#F44336</item></array>
     }
 
     @Override
@@ -146,14 +177,14 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Save Settings?")
                 .setCancelable(true)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.dialog_yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // save settings, notify widget and exit
                         publishSettings();
                         MainActivity.this.finish();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // exit without saving settings
                         MainActivity.this.finish();
@@ -173,6 +204,14 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         // exit acitivity
         finish();
+    }
+
+    @Override
+    public void radioButtonClicked(String listenerId, int color) {
+        Log.v(TAG, "onClick():");
+
+        // update preview box
+        updatePreviewBox(listenerId, color);
     }
 
     private void getContactsPermission() {
@@ -244,4 +283,21 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         sendBroadcast(intent);
     }
 
+    private void updatePreviewBox(String listenerId, @ColorInt int color) {
+        // update preview box
+        switch (listenerId) {
+            case Constants.KEY_BG_COLOR:
+                shape.setColor(color);
+                break;
+            case Constants.KEY_DAY_COLOR:
+                previewTextDay.setTextColor(color);
+                break;
+            case Constants.KEY_DATE_COLOR:
+                previewTextDate.setTextColor(color);
+                break;
+            case Constants.KEY_EVENT_COLOR:
+                previewTextEvent.setTextColor(color);
+                break;
+        }
+    }
 }

@@ -14,32 +14,31 @@
 
         <LinearLayout
             android:id="@+id/preview"
-            android:layout_margin="20dp"
+            android:layout_margin="15dp"
             android:layout_columnWeight="1"
             style="@style/linearLayout">
 
             <TextView
-                android:id="@+id/textDay1"
+                android:id="@+id/previewTextDay"
                 style="@style/textViewDay" />
 
             <TextView
-                android:id="@+id/textDate1"
+                android:id="@+id/previewTextDate"
                 style="@style/textViewDate" />
 
             <TextView
-                android:id="@+id/textEvent1"
+                android:id="@+id/previewTextEvent"
                 style="@style/textViewEvent" />
         </LinearLayout>
 
         <Button
             android:id="@+id/buttonSubmit"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:layout_margin="20dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:alpha="10"
             android:layout_columnWeight="1"
-            android:text="@string/advice_submit" />
+            android:background="@drawable/gradient_title"
+            android:text="@string/advice_save" />
     </GridLayout>
 
     <TextView
