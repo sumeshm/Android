@@ -54,7 +54,6 @@ public class DialogPalette extends DialogFragment {
 //        }
 
 
-
         return builder.create();
     }
 
@@ -73,5 +72,5 @@ public class DialogPalette extends DialogFragment {
         super.onDestroy();
     }
 
-    
+
 }

@@ -3,7 +3,6 @@ package com.planetjup.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorInt;
 import android.support.v7.widget.AppCompatRadioButton;
@@ -11,14 +10,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-
-import com.planetjup.widget.util.Constants;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +25,8 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     private Map<Integer, RadioButton> radioButtonMap = new HashMap<>();
     private GradientDrawable roundShape = new GradientDrawable();
     private String radioGroupTitle;
-    private @ColorInt int color = Color.DKGRAY;
+    @ColorInt
+    private int color = Color.DKGRAY;
     private String selectedColor = "";
     private RadioGroup customRadioGroup;
     private TextView customTitle;
@@ -88,7 +85,8 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         }
     }
 
-    public @ColorInt int getSelectedColor() {
+    public @ColorInt
+    int getSelectedColor() {
         Log.v(TAG, "getSelectedColor(): " + radioGroupTitle + ", Color=" + selectedColor);
         return color;
     }
@@ -208,13 +206,12 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         }
     }
 
-    public interface OnButtonClickedListener {
-
-        public void radioButtonClicked(String listenerId, @ColorInt int color);
-    }
-
     public void setOnButtonClickedListener(OnButtonClickedListener listener, String listenerId) {
         this.listener = listener;
         this.listenerId = listenerId;
+    }
+
+    public interface OnButtonClickedListener {
+        public void radioButtonClicked(String listenerId, @ColorInt int color);
     }
 }

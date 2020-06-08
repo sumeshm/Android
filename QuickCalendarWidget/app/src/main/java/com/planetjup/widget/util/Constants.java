@@ -1,10 +1,5 @@
 package com.planetjup.widget.util;
 
-import android.graphics.Color;
-import android.support.annotation.ColorInt;
-
-import com.planetjup.widget.R;
-
 public class Constants {
     public static final String ACTION_SHOW_CALENDAR = "ACTION_SHOW_CALENDAR";
     public static final String ACTION_UI_REFRESH = "ACTION_UI_REFRESH";

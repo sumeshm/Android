@@ -38,16 +38,22 @@ public class CalendarWidget extends AppWidgetProvider {
     private static final String TAG = CalendarWidget.class.getSimpleName();
 
     private static int alpha = 20;
-    private static @ColorInt int bgColor = Color.DKGRAY;
-    private static @ColorInt int dayColor = Color.BLACK;
-    private static @ColorInt int dateColor = Color.BLACK;
-    private static @ColorInt int eventColor = Color.YELLOW;
-    private static @ColorInt int todayColor = Color.BLUE;
+    @ColorInt
+    private static int bgColor = Color.DKGRAY;
+    @ColorInt
+    private static int dayColor = Color.BLACK;
+    @ColorInt
+    private static int dateColor = Color.BLACK;
+    @ColorInt
+    private static int eventColor = Color.YELLOW;
+    @ColorInt
+    private static int todayColor = Color.BLUE;
 
-    private static void updateBackground(Context context, RemoteViews remoteViews) {
-        Log.v(TAG, "updateBackground(): alpha=" + alpha + ", bgColor=" + bgColor + ", dayColor=" + dayColor + ", dateColor=" + dateColor
-                + ", eventColor=" + eventColor + ", todayColor=" + todayColor);
 
+    private static void updateUI(Context context, RemoteViews remoteViews) {
+        Log.v(TAG, "updateUI()");
+
+        // Update alpha
         // alpha is a scale from 0 to 10, representing 0 to 100%
         // translate that % onto color-alpha of 255 scale
         int effetiveAlpha = 0;
@@ -66,12 +72,7 @@ public class CalendarWidget extends AppWidgetProvider {
         remoteViews.setInt(R.id.day6, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day7, "setBackgroundColor", color);
 
-        updateUI(context, remoteViews);
-    }
-
-    private static void updateUI(Context context, RemoteViews remoteViews) {
-        Log.v(TAG, "updateUI()");
-
+        // Update text color and events
         ArrayList<String> dayList = new ArrayList<>();
         dayList.add(context.getString(R.string.day_monday));
         dayList.add(context.getString(R.string.day_tuesday));
@@ -212,6 +213,7 @@ public class CalendarWidget extends AppWidgetProvider {
         endTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH) + 7, 0, 0, 0);
         Log.v(TAG, "readCalendarEvents(): endTime=" + endTime.getTime());
 
+        // 1. Events
         ContentResolver contentResolver = context.getContentResolver();
         Uri eventUri = CalendarContract.Events.CONTENT_URI;
         String selection = "(( " + CalendarContract.Events.DTSTART + " >= " + startTime.getTimeInMillis() + " ) AND ( " + CalendarContract.Events.DTSTART + " <= " + endTime.getTimeInMillis() + " ))";
@@ -220,9 +222,10 @@ public class CalendarWidget extends AppWidgetProvider {
 
         String[] columnNames = new String[]{CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART};
 
-        Cursor cursor = contentResolver.query(eventUri, columnNames, selection, null, null);
+        //Cursor cursor = contentResolver.query(eventUri, columnNames, selection, null, null);
+        Cursor cursor = contentResolver.query(eventUri, columnNames, null, null, null);
         boolean isMoved = cursor.moveToFirst();
-        Log.v(TAG, "readCalendarEvents(): isMoved=" + isMoved);
+        Log.v(TAG, "readCalendarEvents(): Events.isMoved=" + isMoved);
 
         for (int i = 0; i < cursor.getCount(); i++) {
             String eventTitle = cursor.getString(0);
@@ -231,7 +234,7 @@ public class CalendarWidget extends AppWidgetProvider {
             Integer eventDayOfYear = eventDate.get(Calendar.DAY_OF_YEAR);
             String eventDateString = formatter.format(eventDate.getTime());
 
-            Log.v(TAG, "readCalendarEvents(): title=" + eventTitle + ", " + eventDateString + ", " + eventDayOfYear);
+            Log.v(TAG, "readCalendarEvents(): Event.title=" + eventTitle + ", " + eventDateString + ", " + eventDayOfYear);
 
             List<String> titleList = retMap.get(eventDayOfYear);
             if (titleList == null) {
@@ -243,6 +246,7 @@ public class CalendarWidget extends AppWidgetProvider {
             cursor.moveToNext();
         }
         cursor.close();
+
 
         Log.v(TAG, "readCalendarEvents(): retMap=" + retMap);
         return retMap;
@@ -264,7 +268,8 @@ public class CalendarWidget extends AppWidgetProvider {
         } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
-                || Constants.ACTION_UI_REFRESH.equals(intent.getAction())) {
+                || Constants.ACTION_UI_REFRESH.equals(intent.getAction())
+                || Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction()) ) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
             Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
@@ -282,27 +287,6 @@ public class CalendarWidget extends AppWidgetProvider {
             ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
-
-        } else if (Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-
-            Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
-            alpha = settingsMap.get(Constants.KEY_ALPHA);
-            bgColor = settingsMap.get(Constants.KEY_BG_COLOR);
-            dayColor = settingsMap.get(Constants.KEY_DAY_COLOR);
-            dateColor = settingsMap.get(Constants.KEY_DATE_COLOR);
-            eventColor = settingsMap.get(Constants.KEY_EVENT_COLOR);
-            todayColor = settingsMap.get(Constants.KEY_TODAY_COLOR);
-
-            // update background transparency
-            updateBackground(context, remoteViews);
-
-
-            // Instruct the widget manager to update the widget
-            ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
-
         }
     }
 

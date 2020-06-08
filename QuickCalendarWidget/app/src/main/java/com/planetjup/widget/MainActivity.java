@@ -7,20 +7,15 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebChromeClient;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -33,7 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, CustomRadioGroup.OnButtonClickedListener {
+public class MainActivity extends AppCompatActivity
+        implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, CustomRadioGroup.OnButtonClickedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int ON_CALENDAR_PERMISSION_CALLBACK_CODE = 12345;
@@ -62,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private TextView previewTextDay;
     private TextView previewTextDate;
     private TextView previewTextEvent;
-
 
 
     @Override
@@ -111,18 +106,18 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         buttonSubmit = findViewById(R.id.buttonSubmit);
         buttonSubmit.setOnClickListener(this);
 
+        // update preview box
         shape.setShape(GradientDrawable.RECTANGLE);
         shape.setCornerRadius(15f);
         shape.setColor(bgColorSettings.getSelectedColor());
         shape.setStroke(1, Color.BLACK);
-
-        // update preview box
         previewBox = findViewById(R.id.preview);
         previewBox.setClickable(false);
         previewBox.setBackground(shape);
         previewTextDay = findViewById(R.id.previewTextDay);
         previewTextDate = findViewById(R.id.previewTextDate);
         previewTextEvent = findViewById(R.id.previewTextEvent);
+        updatePreviewBox(Constants.KEY_ALPHA, 0);
         updatePreviewBox(Constants.KEY_BG_COLOR, settingsMap.get(Constants.KEY_BG_COLOR));
         updatePreviewBox(Constants.KEY_DAY_COLOR, settingsMap.get(Constants.KEY_DAY_COLOR));
         updatePreviewBox(Constants.KEY_DATE_COLOR, settingsMap.get(Constants.KEY_DATE_COLOR));
@@ -149,15 +144,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         settingsMap.put(Constants.KEY_ALPHA, progress);
 
-        // todo: temp code
-        int effetiveAlpha = 0;
-        if (progress != 0) {
-            effetiveAlpha = (255 * progress) / 10;
-        }
-
         // update preview
-        shape.setAlpha(effetiveAlpha);
-        shape.setColor(bgColorSettings.getSelectedColor());
+        updatePreviewBox(Constants.KEY_ALPHA, 0);
     }
 
     @Override
@@ -286,6 +274,15 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private void updatePreviewBox(String listenerId, @ColorInt int color) {
         // update preview box
         switch (listenerId) {
+            case Constants.KEY_ALPHA:
+                int effetiveAlpha = 0;
+                int progress = seekBar.getProgress();
+                if (progress != 0) {
+                    effetiveAlpha = (255 * progress) / 10;
+                }
+
+                shape.setAlpha(effetiveAlpha);
+                break;
             case Constants.KEY_BG_COLOR:
                 shape.setColor(color);
                 break;
