@@ -37,30 +37,18 @@ public class MainActivity extends AppCompatActivity
     private static final int ON_ALARM_CALLBACK_CODE = 12346;
     private static final int ON_ALARM_CALLBACK_CODE2 = 12347;
 
-    private int[] colorsList;
-    private String[] colorsNameList;
 
     private Map<String, Integer> settingsMap = new HashMap<>();
-    private Map<String, Integer> colorsMap = new HashMap<>();
+    private final Map<String, Integer> colorsMap = new HashMap<>();
 
     // seek bar members
-    private String seekText = "0";
     private TextView textViewSeek;
     private SeekBar seekBar;
 
-    // radio group members
-    private CustomRadioGroup bgRadioGroup;
-    private CustomRadioGroup dayRadioGroup;
-    private CustomRadioGroup dateRadioGroup;
-    private CustomRadioGroup eventRadioGroup;
-    private CustomRadioGroup todayRadioGroup;
-
-    private Button buttonSave;
     private LinearLayout radioGroupPlaceHolder;
 
     // preview box members
-    private GradientDrawable shape = new GradientDrawable();
-    private View previewBox;
+    private final GradientDrawable shape = new GradientDrawable();
     private TextView previewTextDay;
     private TextView previewTextDate;
     private TextView previewTextEvent;
@@ -88,15 +76,16 @@ public class MainActivity extends AppCompatActivity
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setProgress(alpha);
 
-        buttonSave = findViewById(R.id.buttonSubmit);
+        Button buttonSave = findViewById(R.id.buttonSubmit);
         buttonSave.setOnClickListener(this);
 
         // setup preview box
         shape.setShape(GradientDrawable.RECTANGLE);
-        shape.setCornerRadius(15f);
+        shape.setCornerRadius(20f);
         shape.setColor(settingsMap.get(Constants.KEY_BG_COLOR));
         shape.setStroke(1, Color.BLACK);
-        previewBox = findViewById(R.id.preview);
+
+        View previewBox = findViewById(R.id.preview);
         previewBox.setClickable(false);
         previewBox.setBackground(shape);
         previewTextDay = findViewById(R.id.previewTextDay);
@@ -110,30 +99,29 @@ public class MainActivity extends AppCompatActivity
 
 
         // setup radio-groups
-        colorsList = getResources().getIntArray(R.array.colorList);
-        colorsNameList = getResources().getStringArray(R.array.colorsNameList);
+        int[] colorsList = getResources().getIntArray(R.array.colorList);
+        String[] colorsNameList = getResources().getStringArray(R.array.colorsNameList);
         for (int i = 0; i < colorsList.length; i++) {
             colorsMap.put(colorsNameList[i], colorsList[i]);
         }
         Log.v(TAG, "onCreate: colorsMap=" + colorsMap.toString());
 
         radioGroupPlaceHolder = findViewById(R.id.radioGroupPlaceHolder);
-        bgRadioGroup = createRadioGroup(getString(R.string.advice_backgroundColor), Constants.KEY_BG_COLOR, colorsMap);
-        dayRadioGroup = createRadioGroup(getString(R.string.advice_dayColor), Constants.KEY_DAY_COLOR, colorsMap);
-        dateRadioGroup = createRadioGroup(getString(R.string.advice_dateColor), Constants.KEY_DATE_COLOR, colorsMap);
-        eventRadioGroup = createRadioGroup(getString(R.string.advice_eventColor), Constants.KEY_EVENT_COLOR, colorsMap);
-        todayRadioGroup = createRadioGroup(getString(R.string.advice_todayColor), Constants.KEY_TODAY_COLOR, colorsMap);
+        createRadioGroup(getString(R.string.advice_backgroundColor), Constants.KEY_BG_COLOR, colorsMap);
+        createRadioGroup(getString(R.string.advice_dayColor), Constants.KEY_DAY_COLOR, colorsMap);
+        createRadioGroup(getString(R.string.advice_dateColor), Constants.KEY_DATE_COLOR, colorsMap);
+        createRadioGroup(getString(R.string.advice_eventColor), Constants.KEY_EVENT_COLOR, colorsMap);
+        createRadioGroup(getString(R.string.advice_todayColor), Constants.KEY_TODAY_COLOR, colorsMap);
 
     }
 
-    private CustomRadioGroup createRadioGroup(String titleText, String listenerId, Map<String, Integer> colorsMap) {
+    private void createRadioGroup(String titleText, String listenerId, Map<String, Integer> colorsMap) {
         int selectedColor = settingsMap.get(listenerId);
 
         CustomRadioGroup radioGroup = new CustomRadioGroup(getApplicationContext(), titleText, colorsMap);
         radioGroup.setUp(titleText, listenerId, this, selectedColor);
 
         radioGroupPlaceHolder.addView(radioGroup);
-        return radioGroup;
     }
 
     @Override
@@ -162,7 +150,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        seekText = textViewSeek.getText().toString();
+        String seekText = textViewSeek.getText().toString();
         Log.v(TAG, "onStopTrackingTouch: text=" + seekText);
     }
 
@@ -230,9 +218,9 @@ public class MainActivity extends AppCompatActivity
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 00);
-        calendar.set(Calendar.MINUTE, 01);
-        calendar.set(Calendar.SECOND, 00);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 1);
+        calendar.set(Calendar.SECOND, 0);
 
         // designate alarm handler
         Intent intent = new Intent(this, Constants.class);

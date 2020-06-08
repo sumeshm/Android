@@ -28,7 +28,7 @@ public class PersistenceManager {
 
     private static final String PERSISTENCE_KEY = "com_planetjup_widget_CalendarWidget";
 
-    private static Gson gson = new Gson();
+    private static final Gson gson = new Gson();
 
     public static void writeSettings(Context context, Map<String, Integer> settingsMap) {
         Log.v(TAG, "writeSettings()");

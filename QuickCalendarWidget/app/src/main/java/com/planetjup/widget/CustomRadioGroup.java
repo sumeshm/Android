@@ -24,13 +24,12 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     private static final String TAG = CustomRadioGroup.class.getSimpleName();
 
     // View elements
-    private RadioGroup radioGroup;
+    private final RadioGroup radioGroup;
     private TextView textViewTitle;
 
     // metadata
-    private int selectedButtonId;
-    private Map<Integer, Integer> radioButtonMap = new HashMap<>();
-    private Map<Integer, RadioButton> colorMap = new HashMap<Integer, RadioButton>();
+    private final Map<Integer, Integer> radioButtonMap = new HashMap<>();
+    private final Map<Integer, RadioButton> colorMap = new HashMap<>();
     private OnButtonClickedListener listener;
     private String listenerId;
 
@@ -39,9 +38,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         Log.v(TAG, "CustomRadioGroup(): titleText=" + titleText);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.custom_radio_group, this, true);
-
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        inflater.inflate(R.layout.custom_radio_group, this, true);
 
         // fetch child View objects
         textViewTitle = findViewById(R.id.customTitle);
@@ -66,23 +63,24 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         Log.v(TAG, "onCheckedChanged(): " + listenerId + ", isChecked=" + isChecked + ", buttonView=" + buttonView.toString());
 
+        int buttonId = buttonView.getId();
+
         GradientDrawable shape = new GradientDrawable();
         shape.setStroke(1, Color.BLACK);
 
         if (isChecked) {
-            selectedButtonId = buttonView.getId();
-            Log.v(TAG, "onCheckedChanged(): selectedButtonId=" + selectedButtonId + ", color=" + radioButtonMap.get(selectedButtonId));
+            Log.v(TAG, "onCheckedChanged(): selectedButtonId=" + buttonId + ", color=" + radioButtonMap.get(buttonId));
 
             shape.setShape(GradientDrawable.RECTANGLE);
             shape.setColor(radioButtonMap.get(buttonView.getId()));
             buttonView.setBackground(shape);
 
             if (listener != null) {
-                listener.radioButtonClicked(listenerId, radioButtonMap.get(selectedButtonId));
+                listener.radioButtonClicked(listenerId, radioButtonMap.get(buttonId));
             }
         } else {
             shape.setShape(GradientDrawable.OVAL);
-            shape.setColor(radioButtonMap.get(buttonView.getId()));
+            shape.setColor(radioButtonMap.get(buttonId));
             buttonView.setBackground(shape);
         }
     }
@@ -101,11 +99,10 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
                 new int[] { Color.parseColor("#2e7d32"), Color.TRANSPARENT}
         );
 
-        GradientDrawable roundShape = null;
         for (String colorName : colorsMap.keySet()) {
             int color = colorsMap.get(colorName);
 
-            roundShape = new GradientDrawable();
+            GradientDrawable roundShape = new GradientDrawable();
             roundShape.setShape(GradientDrawable.OVAL);
             roundShape.setStroke(1, Color.BLACK);
             roundShape.setColor(color);
@@ -126,7 +123,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     }
 
     public interface OnButtonClickedListener {
-        public void radioButtonClicked(String listenerId, @ColorInt int color);
+        void radioButtonClicked(String listenerId, @ColorInt int color);
     }
 
 }

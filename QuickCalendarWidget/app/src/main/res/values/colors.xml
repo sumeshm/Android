@@ -6,12 +6,6 @@
 
     <color name="colorOrange">#FF8800</color>
     <color name="colorOrangeLight">#ffb944</color>
-    <color name="colorOrangeLighter">#ffcc80</color>
     <color name="colorOrangeLightest">#FFE0B2</color>
 
-    <color name="colorTextActive">#E65100</color>
-    <color name="colorTextInactive">#78909C</color>
-
-    <color name="colorMagenta">#ff00ff</color>
-    <color name="colorYellow">#FFFF00</color>
 </resources>

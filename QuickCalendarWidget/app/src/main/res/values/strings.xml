@@ -7,9 +7,6 @@
     <string name="day_friday">Fri</string>
     <string name="day_saturday">Sat</string>
     <string name="day_sunday">Sun</string>
-    <string name="temp_day">MONDAY</string>
-    <string name="temp_date">11</string>
-    <string name="temp_event">Birthday</string>
     <string name="seek_bar_title">Transparency (%)</string>
     <string name="advice_backgroundColor">Background Color</string>
     <string name="advice_dayColor">Day Color</string>
@@ -20,5 +17,4 @@
     <string name="advice_seekDefault">0</string>
     <string name="dialog_yes">YES</string>
     <string name="dialog_no">NO</string>
-    <string name="advice_preview">preview</string>
 </resources>
