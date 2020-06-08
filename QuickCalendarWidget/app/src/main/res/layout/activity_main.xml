@@ -60,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="10"
-            android:progressDrawable="@drawable/seekbar"
+            android:progressDrawable="@drawable/seekbar_progress"
             android:thumb="@drawable/seekbar_thumb"
             android:thumbOffset="1dp" />
 
