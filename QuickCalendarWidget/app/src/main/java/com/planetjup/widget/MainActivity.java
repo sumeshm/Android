@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -36,7 +37,11 @@ public class MainActivity extends AppCompatActivity
     private static final int ON_ALARM_CALLBACK_CODE = 12346;
     private static final int ON_ALARM_CALLBACK_CODE2 = 12347;
 
+    private int[] colorsList;
+    private String[] colorsNameList;
+
     private Map<String, Integer> settingsMap = new HashMap<>();
+    private Map<String, Integer> colorsMap = new HashMap<>();
 
     // seek bar members
     private String seekText = "0";
@@ -44,13 +49,14 @@ public class MainActivity extends AppCompatActivity
     private SeekBar seekBar;
 
     // radio group members
-    private CustomRadioGroup bgColorSettings;
-    private CustomRadioGroup dayColorSettings;
-    private CustomRadioGroup dateColorSettings;
-    private CustomRadioGroup eventColorSettings;
-    private CustomRadioGroup todayColorSettings;
+    private CustomRadioGroup bgRadioGroup;
+    private CustomRadioGroup dayRadioGroup;
+    private CustomRadioGroup dateRadioGroup;
+    private CustomRadioGroup eventRadioGroup;
+    private CustomRadioGroup todayRadioGroup;
 
-    private Button buttonSubmit;
+    private Button buttonSave;
+    private LinearLayout radioGroupPlaceHolder;
 
     // preview box members
     private GradientDrawable shape = new GradientDrawable();
@@ -74,28 +80,7 @@ public class MainActivity extends AppCompatActivity
         settingsMap = PersistenceManager.readSettings(getApplicationContext());
         Log.v(TAG, "onCreate: settingsMap=" + settingsMap.toString());
 
-        // setup color pallet
-        bgColorSettings = findViewById(R.id.bgColorSettings);
-        bgColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_BG_COLOR));
-        bgColorSettings.setOnButtonClickedListener(this, Constants.KEY_BG_COLOR);
-
-        dayColorSettings = findViewById(R.id.dayColorSettings);
-        dayColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_DAY_COLOR));
-        dayColorSettings.setOnButtonClickedListener(this, Constants.KEY_DAY_COLOR);
-
-        dateColorSettings = findViewById(R.id.dateColorSettings);
-        dateColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_DATE_COLOR));
-        dateColorSettings.setOnButtonClickedListener(this, Constants.KEY_DATE_COLOR);
-
-        eventColorSettings = findViewById(R.id.eventColorSettings);
-        eventColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_EVENT_COLOR));
-        eventColorSettings.setOnButtonClickedListener(this, Constants.KEY_EVENT_COLOR);
-
-        todayColorSettings = findViewById(R.id.todayColorSettings);
-        todayColorSettings.setSelectedColor(settingsMap.get(Constants.KEY_TODAY_COLOR));
-        todayColorSettings.setOnButtonClickedListener(this, Constants.KEY_TODAY_COLOR);
-
-        // setup seekbar
+        // setup seekbar and save button
         int alpha = settingsMap.get(Constants.KEY_ALPHA);
         textViewSeek = findViewById(R.id.textViewSeek);
         textViewSeek.setText(Integer.toString(alpha * 10));
@@ -103,13 +88,13 @@ public class MainActivity extends AppCompatActivity
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setProgress(alpha);
 
-        buttonSubmit = findViewById(R.id.buttonSubmit);
-        buttonSubmit.setOnClickListener(this);
+        buttonSave = findViewById(R.id.buttonSubmit);
+        buttonSave.setOnClickListener(this);
 
-        // update preview box
+        // setup preview box
         shape.setShape(GradientDrawable.RECTANGLE);
         shape.setCornerRadius(15f);
-        shape.setColor(bgColorSettings.getSelectedColor());
+        shape.setColor(settingsMap.get(Constants.KEY_BG_COLOR));
         shape.setStroke(1, Color.BLACK);
         previewBox = findViewById(R.id.preview);
         previewBox.setClickable(false);
@@ -123,9 +108,32 @@ public class MainActivity extends AppCompatActivity
         updatePreviewBox(Constants.KEY_DATE_COLOR, settingsMap.get(Constants.KEY_DATE_COLOR));
         updatePreviewBox(Constants.KEY_EVENT_COLOR, settingsMap.get(Constants.KEY_EVENT_COLOR));
 
-        // todo: use color array to make above process dynamic
-        // val colors = resources.getIntArray(R.array.colors)
-        // <array name="colors"><item>#F44336</item></array>
+
+        // setup radio-groups
+        colorsList = getResources().getIntArray(R.array.colorList);
+        colorsNameList = getResources().getStringArray(R.array.colorsNameList);
+        for (int i = 0; i < colorsList.length; i++) {
+            colorsMap.put(colorsNameList[i], colorsList[i]);
+        }
+        Log.v(TAG, "onCreate: colorsMap=" + colorsMap.toString());
+
+        radioGroupPlaceHolder = findViewById(R.id.radioGroupPlaceHolder);
+        bgRadioGroup = createRadioGroup(getString(R.string.advice_backgroundColor), Constants.KEY_BG_COLOR, colorsMap);
+        dayRadioGroup = createRadioGroup(getString(R.string.advice_dayColor), Constants.KEY_DAY_COLOR, colorsMap);
+        dateRadioGroup = createRadioGroup(getString(R.string.advice_dateColor), Constants.KEY_DATE_COLOR, colorsMap);
+        eventRadioGroup = createRadioGroup(getString(R.string.advice_eventColor), Constants.KEY_EVENT_COLOR, colorsMap);
+        todayRadioGroup = createRadioGroup(getString(R.string.advice_todayColor), Constants.KEY_TODAY_COLOR, colorsMap);
+
+    }
+
+    private CustomRadioGroup createRadioGroup(String titleText, String listenerId, Map<String, Integer> colorsMap) {
+        int selectedColor = settingsMap.get(listenerId);
+
+        CustomRadioGroup radioGroup = new CustomRadioGroup(getApplicationContext(), titleText, colorsMap);
+        radioGroup.setUp(titleText, listenerId, this, selectedColor);
+
+        radioGroupPlaceHolder.addView(radioGroup);
+        return radioGroup;
     }
 
     @Override
@@ -196,7 +204,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void radioButtonClicked(String listenerId, int color) {
-        Log.v(TAG, "onClick():");
+        Log.v(TAG, "radioButtonClicked(): listenerId=" + listenerId + ", color=" + color);
 
         // update preview box
         updatePreviewBox(listenerId, color);
@@ -258,11 +266,6 @@ public class MainActivity extends AppCompatActivity
     private void publishSettings() {
         Log.v(TAG, "publishSettings():");
 
-        settingsMap.put(Constants.KEY_BG_COLOR, bgColorSettings.getSelectedColor());
-        settingsMap.put(Constants.KEY_DAY_COLOR, dayColorSettings.getSelectedColor());
-        settingsMap.put(Constants.KEY_DATE_COLOR, dateColorSettings.getSelectedColor());
-        settingsMap.put(Constants.KEY_EVENT_COLOR, eventColorSettings.getSelectedColor());
-        settingsMap.put(Constants.KEY_TODAY_COLOR, todayColorSettings.getSelectedColor());
         PersistenceManager.writeSettings(getApplicationContext(), settingsMap);
 
         // notify widget about change in settings
@@ -285,15 +288,22 @@ public class MainActivity extends AppCompatActivity
                 break;
             case Constants.KEY_BG_COLOR:
                 shape.setColor(color);
+                settingsMap.put(Constants.KEY_BG_COLOR, color);
                 break;
             case Constants.KEY_DAY_COLOR:
                 previewTextDay.setTextColor(color);
+                settingsMap.put(Constants.KEY_DAY_COLOR, color);
                 break;
             case Constants.KEY_DATE_COLOR:
                 previewTextDate.setTextColor(color);
+                settingsMap.put(Constants.KEY_DATE_COLOR, color);
                 break;
             case Constants.KEY_EVENT_COLOR:
                 previewTextEvent.setTextColor(color);
+                settingsMap.put(Constants.KEY_EVENT_COLOR, color);
+                break;
+            case Constants.KEY_TODAY_COLOR:
+                settingsMap.put(Constants.KEY_TODAY_COLOR, color);
                 break;
         }
     }

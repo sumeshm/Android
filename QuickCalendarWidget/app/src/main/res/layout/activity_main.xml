@@ -8,96 +8,67 @@
     tools:context="com.planetjup.widget.MainActivity">
 
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/preview"
+                android:layout_margin="15dp"
+                android:layout_columnWeight="1"
+                style="@style/linearLayout">
+
+                <TextView
+                    android:id="@+id/previewTextDay"
+                    style="@style/textViewDay" />
+
+                <TextView
+                    android:id="@+id/previewTextDate"
+                    style="@style/textViewDate" />
+
+                <TextView
+                    android:id="@+id/previewTextEvent"
+                    style="@style/textViewEvent" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/buttonSubmit"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_columnWeight="1"
+                android:background="@drawable/gradient_title"
+                android:text="@string/advice_save" />
+        </GridLayout>
+
+        <TextView
+            android:id="@+id/seekBarTitle"
+            style="@style/radioTitle"
+            android:layout_marginTop="15dp"
+            android:text="@string/seek_bar_title" />
+
+        <TextView
+            android:id="@+id/textViewSeek"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="@string/advice_seekDefault"
+            android:textSize="20sp" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="10"
+            android:progressDrawable="@drawable/seekbar"
+            android:thumb="@drawable/seekbar_thumb"
+            android:thumbOffset="1dp" />
 
         <LinearLayout
-            android:id="@+id/preview"
-            android:layout_margin="15dp"
-            android:layout_columnWeight="1"
-            style="@style/linearLayout">
-
-            <TextView
-                android:id="@+id/previewTextDay"
-                style="@style/textViewDay" />
-
-            <TextView
-                android:id="@+id/previewTextDate"
-                style="@style/textViewDate" />
-
-            <TextView
-                android:id="@+id/previewTextEvent"
-                style="@style/textViewEvent" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/buttonSubmit"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_columnWeight="1"
-            android:background="@drawable/gradient_title"
-            android:text="@string/advice_save" />
-    </GridLayout>
-
-    <TextView
-        android:id="@+id/seekBarTitle"
-        style="@style/radioTitle"
-        android:layout_marginTop="15dp"
-        android:text="@string/seek_bar_title" />
-
-    <TextView
-        android:id="@+id/textViewSeek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="center"
-        android:text="@string/advice_seekDefault"
-        android:textSize="20sp" />
-
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:max="10"
-        android:progressDrawable="@drawable/seekbar"
-        android:thumb="@drawable/seekbar_thumb"
-        android:thumbOffset="1dp" />
-
-    <com.planetjup.widget.CustomRadioGroup
-        android:id="@+id/bgColorSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="12dp"
-        custom:radioGroupTitle="@string/advice_backgroundColor" />
-
-    <com.planetjup.widget.CustomRadioGroup
-        android:id="@+id/dayColorSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        custom:radioGroupTitle="@string/advice_dayColor" />
-
-    <com.planetjup.widget.CustomRadioGroup
-        android:id="@+id/dateColorSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="12dp"
-        custom:radioGroupTitle="@string/advice_dateColor" />
-
-    <com.planetjup.widget.CustomRadioGroup
-        android:id="@+id/eventColorSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="12dp"
-        custom:radioGroupTitle="@string/advice_eventColor" />
-
-    <com.planetjup.widget.CustomRadioGroup
-        android:id="@+id/todayColorSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="12dp"
-        custom:radioGroupTitle="@string/advice_todayColor" />
+            android:id="@+id/radioGroupPlaceHolder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"/>
 
 </LinearLayout>
