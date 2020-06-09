@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <array name="colorList">
+        <item>#ffb944</item>
         <item>#000000</item>
         <item>#888888</item>
         <item>#FFFFFF</item>
@@ -11,16 +11,4 @@
         <item>#FFFF00</item>
         <item>#FF00FF</item>
     </array>
-
-    <array name="colorsNameList">
-        <item>BLACK</item>
-        <item>GRAY</item>
-        <item>RED</item>
-        <item>GREEN</item>
-        <item>BLUE</item>
-        <item>YELLOW</item>
-        <item>CYAN</item>
-        <item>MAGENTA</item>
-    </array>
-
 </resources>

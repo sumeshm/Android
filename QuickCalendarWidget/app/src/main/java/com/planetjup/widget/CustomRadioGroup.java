@@ -8,8 +8,6 @@ import android.support.annotation.ColorInt;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -28,12 +26,12 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     private TextView textViewTitle;
 
     // metadata
-    private final Map<Integer, Integer> radioButtonMap = new HashMap<>();
-    private final Map<Integer, RadioButton> colorMap = new HashMap<>();
+    private final Map<Integer, Integer> radioButtonByIdMap = new HashMap<>();
+    private final Map<Integer, RadioButton> radioButtonByColorMap = new HashMap<>();
     private OnButtonClickedListener listener;
-    private String listenerId;
+    private String radioGroupId;
 
-    public CustomRadioGroup(Context context, String titleText, Map<String, Integer> colorsMap) {
+    public CustomRadioGroup(Context context, String titleText, int[] colorsList) {
         super(context);
         Log.v(TAG, "CustomRadioGroup(): titleText=" + titleText);
 
@@ -42,50 +40,54 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
 
         // fetch child View objects
         textViewTitle = findViewById(R.id.customTitle);
-        radioGroup = findViewById(R.id.customRadioGroupNew);
-        Log.v(TAG, "CustomRadioGroup(): radioGroup=" + radioGroup.getChildCount());
-        Log.v(TAG, "CustomRadioGroup(): radioGroup=" + radioGroup.getChildAt(0));
+        radioGroup = findViewById(R.id.customRadioGroup);
 
-
-        createRadioButtons(context, colorsMap);
+        createRadioButtons(context, colorsList);
+        Log.v(TAG, "CustomRadioGroup(): radioGroup.ChildCount=" + radioGroup.getChildCount());
     }
 
-    public void setUp(String customTitle, String listenerId, OnButtonClickedListener listener, int selectedColor) {
-        Log.v(TAG, "setCustomTitle(): customTitle=" + customTitle + ", listenerId=" + listenerId + ", selectedColor=" + selectedColor);
+    public void setUp(String customTitle, String radioGroupId, OnButtonClickedListener listener, int selectedColor) {
+        Log.v(TAG, "setCustomTitle(): customTitle=" + customTitle + ", radioGroupId=" + radioGroupId + ", selectedColor=" + selectedColor);
         textViewTitle = findViewById(R.id.customTitle);
         textViewTitle.setText(customTitle);
         this.listener = listener;
-        this.listenerId = listenerId;
-        colorMap.get(selectedColor).setChecked(true);
+        this.radioGroupId = radioGroupId;
+
+        if (radioButtonByColorMap.get(selectedColor) != null) {
+            radioButtonByColorMap.get(selectedColor).setChecked(true);
+        } else {
+            radioButtonByColorMap.get(Color.GRAY).setChecked(true);
+        }
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.v(TAG, "onCheckedChanged(): " + listenerId + ", isChecked=" + isChecked + ", buttonView=" + buttonView.toString());
+        Log.v(TAG, "onCheckedChanged(): radioGroupId=" + radioGroupId + ", isChecked=" + isChecked + ", buttonView=" + buttonView.toString());
 
         int buttonId = buttonView.getId();
 
-        GradientDrawable shape = new GradientDrawable();
-        shape.setStroke(1, Color.BLACK);
+        GradientDrawable roundShape = new GradientDrawable();
+        roundShape.setShape(GradientDrawable.OVAL);
 
         if (isChecked) {
-            Log.v(TAG, "onCheckedChanged(): selectedButtonId=" + buttonId + ", color=" + radioButtonMap.get(buttonId));
+            Log.v(TAG, "onCheckedChanged(): selectedButtonId=" + buttonId + ", color=" + radioButtonByIdMap.get(buttonId));
 
-            shape.setShape(GradientDrawable.RECTANGLE);
-            shape.setColor(radioButtonMap.get(buttonView.getId()));
-            buttonView.setBackground(shape);
+            roundShape.setColor(radioButtonByIdMap.get(buttonView.getId()));
+            roundShape.setStroke(10, Color.BLACK);
+            roundShape.setSize(150, 150);
+            buttonView.setBackground(roundShape);
 
             if (listener != null) {
-                listener.radioButtonClicked(listenerId, radioButtonMap.get(buttonId));
+                listener.radioButtonClicked(radioGroupId, radioButtonByIdMap.get(buttonId));
             }
         } else {
-            shape.setShape(GradientDrawable.OVAL);
-            shape.setColor(radioButtonMap.get(buttonId));
-            buttonView.setBackground(shape);
+            roundShape.setColor(radioButtonByIdMap.get(buttonId));
+            roundShape.setStroke(1, Color.BLACK);
+            buttonView.setBackground(roundShape);
         }
     }
 
-    private void createRadioButtons(Context context, Map<String, Integer> colorsMap) {
+    private void createRadioButtons(Context context, int[] colorsList) {
         LinearLayout.LayoutParams layoutParams = new
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -96,34 +98,31 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
                 new int[][] {
                         new int[] {android.R.attr.state_checked}, new int[] {-android.R.attr.state_checked}
                 },
-                new int[] { Color.parseColor("#2e7d32"), Color.TRANSPARENT}
+                new int[] { Color.TRANSPARENT, Color.TRANSPARENT}
         );
 
-        for (String colorName : colorsMap.keySet()) {
-            int color = colorsMap.get(colorName);
+        for (int i = 0; i < colorsList.length; i++) {
+            int color = colorsList[i];
+            Log.v(TAG, "createRadioButtons(): color=" + color);
 
             GradientDrawable roundShape = new GradientDrawable();
             roundShape.setShape(GradientDrawable.OVAL);
-            roundShape.setStroke(1, Color.BLACK);
+            roundShape.setStroke(2, Color.BLACK);
             roundShape.setColor(color);
 
             RadioButton radioButton = new RadioButton(context);
             radioButton.setBackground(roundShape);
-            radioButton.setLayoutParams(new LayoutParams(100, 100));
-            radioButton.setGravity(Gravity.CENTER);
             radioButton.setButtonTintList(colorStateList);
             radioButton.setOnCheckedChangeListener(this);
 
             radioGroup.addView(radioButton, layoutParams);
-            radioButtonMap.put(radioButton.getId(), color);
-            colorMap.put(color, radioButton);
+            radioButtonByIdMap.put(radioButton.getId(), color);
+            radioButtonByColorMap.put(color, radioButton);
         }
-
-        // todo: set selected
     }
 
     public interface OnButtonClickedListener {
-        void radioButtonClicked(String listenerId, @ColorInt int color);
+        void radioButtonClicked(String radioGroupId, @ColorInt int color);
     }
 
 }

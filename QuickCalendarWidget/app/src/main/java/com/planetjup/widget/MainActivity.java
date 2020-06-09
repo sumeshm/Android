@@ -37,9 +37,7 @@ public class MainActivity extends AppCompatActivity
     private static final int ON_ALARM_CALLBACK_CODE = 12346;
     private static final int ON_ALARM_CALLBACK_CODE2 = 12347;
 
-
     private Map<String, Integer> settingsMap = new HashMap<>();
-    private final Map<String, Integer> colorsMap = new HashMap<>();
 
     // seek bar members
     private TextView textViewSeek;
@@ -100,25 +98,21 @@ public class MainActivity extends AppCompatActivity
 
         // setup radio-groups
         int[] colorsList = getResources().getIntArray(R.array.colorList);
-        String[] colorsNameList = getResources().getStringArray(R.array.colorsNameList);
-        for (int i = 0; i < colorsList.length; i++) {
-            colorsMap.put(colorsNameList[i], colorsList[i]);
-        }
-        Log.v(TAG, "onCreate: colorsMap=" + colorsMap.toString());
+        Log.v(TAG, "onCreate: colorsList.length=" + colorsList.length);
 
         radioGroupPlaceHolder = findViewById(R.id.radioGroupPlaceHolder);
-        createRadioGroup(getString(R.string.advice_backgroundColor), Constants.KEY_BG_COLOR, colorsMap);
-        createRadioGroup(getString(R.string.advice_dayColor), Constants.KEY_DAY_COLOR, colorsMap);
-        createRadioGroup(getString(R.string.advice_dateColor), Constants.KEY_DATE_COLOR, colorsMap);
-        createRadioGroup(getString(R.string.advice_eventColor), Constants.KEY_EVENT_COLOR, colorsMap);
-        createRadioGroup(getString(R.string.advice_todayColor), Constants.KEY_TODAY_COLOR, colorsMap);
+        createRadioGroup(getString(R.string.advice_backgroundColor), Constants.KEY_BG_COLOR, colorsList);
+        createRadioGroup(getString(R.string.advice_dayColor), Constants.KEY_DAY_COLOR, colorsList);
+        createRadioGroup(getString(R.string.advice_dateColor), Constants.KEY_DATE_COLOR, colorsList);
+        createRadioGroup(getString(R.string.advice_eventColor), Constants.KEY_EVENT_COLOR, colorsList);
+        createRadioGroup(getString(R.string.advice_todayColor), Constants.KEY_TODAY_COLOR, colorsList);
 
     }
 
-    private void createRadioGroup(String titleText, String listenerId, Map<String, Integer> colorsMap) {
+    private void createRadioGroup(String titleText, String listenerId, int[] colorsList) {
         int selectedColor = settingsMap.get(listenerId);
 
-        CustomRadioGroup radioGroup = new CustomRadioGroup(getApplicationContext(), titleText, colorsMap);
+        CustomRadioGroup radioGroup = new CustomRadioGroup(getApplicationContext(), titleText, colorsList);
         radioGroup.setUp(titleText, listenerId, this, selectedColor);
 
         radioGroupPlaceHolder.addView(radioGroup);
