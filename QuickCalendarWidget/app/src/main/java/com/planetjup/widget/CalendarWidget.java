@@ -13,7 +13,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.CalendarContract;
-import android.support.annotation.ColorInt;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -34,21 +33,15 @@ import java.util.Map;
  */
 public class CalendarWidget extends AppWidgetProvider {
 
-
     private static final String TAG = CalendarWidget.class.getSimpleName();
 
+    // default values
     private static int alpha = 20;
-    @ColorInt
-    private static int bgColor = Color.DKGRAY;
-    @ColorInt
+    private static int bgColor = Color.LTGRAY;
     private static int dayColor = Color.BLACK;
-    @ColorInt
     private static int dateColor = Color.BLACK;
-    @ColorInt
     private static int eventColor = Color.YELLOW;
-    @ColorInt
     private static int todayColor = Color.BLUE;
-
 
     private static void updateUI(Context context, RemoteViews remoteViews) {
         Log.v(TAG, "updateUI()");
@@ -187,6 +180,7 @@ public class CalendarWidget extends AppWidgetProvider {
         }
 
         // add click listener for the whole widget
+        // will get notified at 'onReceive'
         Intent intent = new Intent(context, CalendarWidget.class);
         intent.setAction(Constants.ACTION_SHOW_CALENDAR);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
@@ -253,9 +247,26 @@ public class CalendarWidget extends AppWidgetProvider {
     }
 
     @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        Log.v(TAG, "onUpdate(): appWidgetIds.length=" + appWidgetIds.length);
+
+        // There may be multiple widgets active, so update all of them
+        for (int appWidgetId : appWidgetIds) {
+            Log.v(TAG, "onUpdate(): appWidgetId=" + appWidgetId);
+
+            // initializing widget layout
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+            updateUI(context, remoteViews);
+
+            // Notify widget manager to update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+        }
+    }
+
+    @Override
     public void onReceive(Context context, Intent intent) {
-        Log.v(TAG, "onReceive(): action=" + intent.getAction());
         super.onReceive(context, intent);
+        Log.v(TAG, "onReceive(): action=" + intent.getAction());
 
         if (Constants.ACTION_SHOW_CALENDAR.equals(intent.getAction())) {
             // bring up System Calendar
@@ -269,7 +280,7 @@ public class CalendarWidget extends AppWidgetProvider {
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
                 || Constants.ACTION_UI_REFRESH.equals(intent.getAction())
-                || Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction()) ) {
+                || Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
             Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
@@ -287,23 +298,6 @@ public class CalendarWidget extends AppWidgetProvider {
             ComponentName calendarWidget = new ComponentName(context, CalendarWidget.class);
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
-        }
-    }
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.v(TAG, "onUpdate(): appWidgetIds.length" + appWidgetIds.length);
-
-        // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
-            Log.v(TAG, "onUpdate(): appWidgetId=" + appWidgetId);
-
-            // initializing widget layout
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-            updateUI(context, remoteViews);
-
-            // Instruct the widget manager to update the widget
-            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
     }
 }

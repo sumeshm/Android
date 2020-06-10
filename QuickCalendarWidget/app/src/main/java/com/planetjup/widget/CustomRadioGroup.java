@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.ColorInt;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -23,46 +22,49 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
 
     // View elements
     private final RadioGroup radioGroup;
-    private TextView textViewTitle;
+    private final TextView textViewTitle;
 
     // metadata
+    private final String uniqueId;
     private final Map<Integer, Integer> radioButtonByIdMap = new HashMap<>();
     private final Map<Integer, RadioButton> radioButtonByColorMap = new HashMap<>();
-    private OnButtonClickedListener listener;
-    private String radioGroupId;
 
-    public CustomRadioGroup(Context context, String titleText, int[] colorsList) {
+    private OnButtonClickedListener listener;
+
+    public CustomRadioGroup(Context context, String uniqueId, String title, int[] colorsList, int selectedColor) {
         super(context);
-        Log.v(TAG, "CustomRadioGroup(): titleText=" + titleText);
+        Log.v(TAG, "CustomRadioGroup(): uniqueId=" + uniqueId + " title=" + title + ", selectedColor=" + selectedColor);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.custom_radio_group, this, true);
 
         // fetch child View objects
         textViewTitle = findViewById(R.id.customTitle);
+        textViewTitle.setText(title);
+
         radioGroup = findViewById(R.id.customRadioGroup);
 
+        this.uniqueId = uniqueId;
+
+        // create the radio buttons and check selected color
         createRadioButtons(context, colorsList);
-        Log.v(TAG, "CustomRadioGroup(): radioGroup.ChildCount=" + radioGroup.getChildCount());
-    }
-
-    public void setUp(String customTitle, String radioGroupId, OnButtonClickedListener listener, int selectedColor) {
-        Log.v(TAG, "setCustomTitle(): customTitle=" + customTitle + ", radioGroupId=" + radioGroupId + ", selectedColor=" + selectedColor);
-        textViewTitle = findViewById(R.id.customTitle);
-        textViewTitle.setText(customTitle);
-        this.listener = listener;
-        this.radioGroupId = radioGroupId;
-
         if (radioButtonByColorMap.get(selectedColor) != null) {
             radioButtonByColorMap.get(selectedColor).setChecked(true);
         } else {
             radioButtonByColorMap.get(Color.GRAY).setChecked(true);
         }
+
+        Log.v(TAG, "CustomRadioGroup(): radioGroup.ChildCount=" + radioGroup.getChildCount());
+    }
+
+    public void setUp(OnButtonClickedListener listener) {
+        Log.v(TAG, "setCustomTitle():");
+        this.listener = listener;
     }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        Log.v(TAG, "onCheckedChanged(): radioGroupId=" + radioGroupId + ", isChecked=" + isChecked + ", buttonView=" + buttonView.toString());
+        Log.v(TAG, "onCheckedChanged(): radioGroupId=" + uniqueId + ", isChecked=" + isChecked + ", buttonView=" + buttonView.toString());
 
         int buttonId = buttonView.getId();
 
@@ -78,7 +80,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
             buttonView.setBackground(roundShape);
 
             if (listener != null) {
-                listener.radioButtonClicked(radioGroupId, radioButtonByIdMap.get(buttonId));
+                listener.radioButtonClicked(uniqueId, radioButtonByIdMap.get(buttonId));
             }
         } else {
             roundShape.setColor(radioButtonByIdMap.get(buttonId));
@@ -95,10 +97,10 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
 
         // checked, un-checked
         ColorStateList colorStateList = new ColorStateList(
-                new int[][] {
-                        new int[] {android.R.attr.state_checked}, new int[] {-android.R.attr.state_checked}
+                new int[][]{
+                        new int[]{android.R.attr.state_checked}, new int[]{-android.R.attr.state_checked}
                 },
-                new int[] { Color.TRANSPARENT, Color.TRANSPARENT}
+                new int[]{Color.TRANSPARENT, Color.TRANSPARENT}
         );
 
         for (int i = 0; i < colorsList.length; i++) {

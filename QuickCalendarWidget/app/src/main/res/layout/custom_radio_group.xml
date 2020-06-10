@@ -1,23 +1,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingTop="15dp" >
 
-        <TextView
-            android:id="@+id/customTitle"
-            style="@style/radioTitle"
-            android:layout_marginTop="0dp"
-            android:text="Custom Title" />
+    <TextView
+        android:id="@+id/customTitle"
+        style="@style/radioTitle"
+        android:layout_marginTop="0dp"
+        android:text="Custom Title" />
 
-        <RadioGroup
-            android:id="@+id/customRadioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
-
-        </RadioGroup>
-    </LinearLayout>
+    <RadioGroup
+        android:id="@+id/customRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal" />
+</LinearLayout>

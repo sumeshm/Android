@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">Quick Calendar Widget</string>
-    <string name="day_monday">Mon</string>
-    <string name="day_tuesday">Tue</string>
-    <string name="day_wednesday">Wed</string>
-    <string name="day_thursday">Thu</string>
-    <string name="day_friday">Fri</string>
-    <string name="day_saturday">Sat</string>
-    <string name="day_sunday">Sun</string>
-    <string name="seek_bar_title">Transparency (%)</string>
+    <string name="day_monday">MON</string>
+    <string name="day_tuesday">TUE</string>
+    <string name="day_wednesday">WED</string>
+    <string name="day_thursday">THI</string>
+    <string name="day_friday">FRI</string>
+    <string name="day_saturday">SAT</string>
+    <string name="day_sunday">SUN</string>
+    <string name="seek_bar_title">Transparency - PROGRESS %</string>
     <string name="advice_backgroundColor">Background Color</string>
     <string name="advice_dayColor">Day Color</string>
     <string name="advice_dateColor">Date Color</string>
@@ -15,6 +15,7 @@
     <string name="advice_todayColor">Today Highlight Color</string>
     <string name="advice_save">SAVE</string>
     <string name="advice_seekDefault">0</string>
+    <string name="dialog_title">Save Settings?</string>
     <string name="dialog_yes">YES</string>
     <string name="dialog_no">NO</string>
 </resources>
