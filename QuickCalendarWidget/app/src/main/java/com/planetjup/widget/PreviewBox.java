@@ -48,12 +48,12 @@ public class PreviewBox extends LinearLayout {
 
     // update alpha
     public void updateBackground(int alpha, int bgColor, int dayColor, int dateColor, int eventColor) {
-        int effetiveAlpha = 0;
+        int effectiveAlpha = 0;
         if (alpha != 0) {
-            effetiveAlpha = (255 * alpha) / 10;
+            effectiveAlpha = (255 * alpha) / 10;
         }
 
-        shape.setAlpha(effetiveAlpha);
+        shape.setAlpha(effectiveAlpha);
         shape.setColor(bgColor);
 
         previewDay.setTextColor(dayColor);

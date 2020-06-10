@@ -49,13 +49,13 @@ public class CalendarWidget extends AppWidgetProvider {
         // Update alpha
         // alpha is a scale from 0 to 10, representing 0 to 100%
         // translate that % onto color-alpha of 255 scale
-        int effetiveAlpha = 0;
+        int effectiveAlpha = 0;
         if (alpha != 0) {
-            effetiveAlpha = (255 * alpha) / 10;
+            effectiveAlpha = (255 * alpha) / 10;
         }
-        Log.v(TAG, "updateBackground(): effetiveAlpha=" + effetiveAlpha);
+        Log.v(TAG, "updateBackground(): effectiveAlpha=" + effectiveAlpha);
 
-        int color = Color.argb(effetiveAlpha, Color.red(bgColor), Color.green(bgColor), Color.blue(bgColor));
+        int color = Color.argb(effectiveAlpha, Color.red(bgColor), Color.green(bgColor), Color.blue(bgColor));
 
         remoteViews.setInt(R.id.day1, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day2, "setBackgroundColor", color);

@@ -76,7 +76,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
 
             roundShape.setColor(radioButtonByIdMap.get(buttonView.getId()));
             roundShape.setStroke(10, Color.BLACK);
-            roundShape.setSize(150, 150);
+            roundShape.setSize(120, 120);
             buttonView.setBackground(roundShape);
 
             if (listener != null) {
@@ -93,7 +93,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         LinearLayout.LayoutParams layoutParams = new
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(15, 5, 15, 5);
+        layoutParams.setMargins(15, 2, 15, 2);
 
         // checked, un-checked
         ColorStateList colorStateList = new ColorStateList(
@@ -103,8 +103,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
                 new int[]{Color.TRANSPARENT, Color.TRANSPARENT}
         );
 
-        for (int i = 0; i < colorsList.length; i++) {
-            int color = colorsList[i];
+        for (int color : colorsList) {
             Log.v(TAG, "createRadioButtons(): color=" + color);
 
             GradientDrawable roundShape = new GradientDrawable();

@@ -64,10 +64,6 @@ public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChan
         }
     }
 
-    public int getCurrProgress() {
-        return currProgress;
-    }
-
     public interface OnProgressChangedListener {
         void progressChanged(int progress);
     }
