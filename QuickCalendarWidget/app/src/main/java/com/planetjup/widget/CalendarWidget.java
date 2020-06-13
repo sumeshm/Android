@@ -23,6 +23,7 @@ import com.planetjup.widget.util.PersistenceManager;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,14 @@ import java.util.Map;
 public class CalendarWidget extends AppWidgetProvider {
 
     private static final String TAG = CalendarWidget.class.getSimpleName();
+
+    // View ids
+    private static final List<Integer> dayIdList = Arrays.asList(R.id.textDay1, R.id.textDay2,
+            R.id.textDay3, R.id.textDay4, R.id.textDay5, R.id.textDay6, R.id.textDay7);
+    private static final List<Integer> dateIdList = Arrays.asList(R.id.textDate1, R.id.textDate2,
+            R.id.textDate3, R.id.textDate4, R.id.textDate5, R.id.textDate6, R.id.textDate7);
+    private static final List<Integer> eventIdList = Arrays.asList(R.id.textEvent1, R.id.textEvent2,
+            R.id.textEvent3, R.id.textEvent4, R.id.textEvent5, R.id.textEvent6, R.id.textEvent7);
 
     // default values
     private static int alpha = 20;
@@ -57,6 +66,7 @@ public class CalendarWidget extends AppWidgetProvider {
 
         int color = Color.argb(effectiveAlpha, Color.red(bgColor), Color.green(bgColor), Color.blue(bgColor));
 
+        // update background color for each day-box
         remoteViews.setInt(R.id.day1, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day2, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day3, "setBackgroundColor", color);
@@ -65,8 +75,8 @@ public class CalendarWidget extends AppWidgetProvider {
         remoteViews.setInt(R.id.day6, "setBackgroundColor", color);
         remoteViews.setInt(R.id.day7, "setBackgroundColor", color);
 
-        // Update text color and events
-        ArrayList<String> dayList = new ArrayList<>();
+        // update day-box with name of the day
+        List<String> dayList = new ArrayList<>();
         dayList.add(context.getString(R.string.day_monday));
         dayList.add(context.getString(R.string.day_tuesday));
         dayList.add(context.getString(R.string.day_wednesday));
@@ -74,31 +84,6 @@ public class CalendarWidget extends AppWidgetProvider {
         dayList.add(context.getString(R.string.day_friday));
         dayList.add(context.getString(R.string.day_saturday));
         dayList.add(context.getString(R.string.day_sunday));
-
-        ArrayList<Integer> idList = new ArrayList<>();
-        idList.add(R.id.textDay1);
-        idList.add(R.id.textDay2);
-        idList.add(R.id.textDay3);
-        idList.add(R.id.textDay4);
-        idList.add(R.id.textDay5);
-        idList.add(R.id.textDay6);
-        idList.add(R.id.textDay7);
-
-        idList.add(R.id.textDate1);
-        idList.add(R.id.textDate2);
-        idList.add(R.id.textDate3);
-        idList.add(R.id.textDate4);
-        idList.add(R.id.textDate5);
-        idList.add(R.id.textDate6);
-        idList.add(R.id.textDate7);
-
-        idList.add(R.id.textEvent1);
-        idList.add(R.id.textEvent2);
-        idList.add(R.id.textEvent3);
-        idList.add(R.id.textEvent4);
-        idList.add(R.id.textEvent5);
-        idList.add(R.id.textEvent6);
-        idList.add(R.id.textEvent7);
 
         // make Monday first day of the week
         Calendar today = Calendar.getInstance();
@@ -122,10 +107,10 @@ public class CalendarWidget extends AppWidgetProvider {
         Map<Integer, List<String>> eventMap = readCalendarEvents(context, today);
 
         // add seven days of calendar data - Day, Date, Events
-        for (int count = 0; count < dayList.size(); count++) {
-            int idDay = idList.get(count);
-            int idDate = idList.get(count + 7);
-            int idEvent = idList.get(count + 14);
+        for (int count = 0; count < 7; count++) {
+            int idDay = dayIdList.get(count);
+            int idDate = dateIdList.get(count);
+            int idEvent = eventIdList.get(count);
 
             StringBuilder builder = new StringBuilder();
             List<String> eventList = eventMap.get(today.get(Calendar.DAY_OF_YEAR));
@@ -240,7 +225,6 @@ public class CalendarWidget extends AppWidgetProvider {
             cursor.moveToNext();
         }
         cursor.close();
-
 
         Log.v(TAG, "readCalendarEvents(): retMap=" + retMap);
         return retMap;

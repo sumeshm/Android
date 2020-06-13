@@ -21,7 +21,7 @@ public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChan
     private int currProgress;
     private OnProgressChangedListener listener;
 
-    public CustomSeekBar(Context context, int progress) {
+    public CustomSeekBar(Context context, int progress, OnProgressChangedListener listener) {
         super(context);
         Log.v(TAG, "CustomSeekBar(): progress=" + progress);
 
@@ -30,6 +30,7 @@ public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChan
 
         titleTextTemplate = context.getResources().getString(R.string.seek_bar_title);
         this.currProgress = progress;
+        this.listener = listener;
 
         // fetch child View objects
         textViewTitle = findViewById(R.id.seekBarTitle);
@@ -41,10 +42,6 @@ public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChan
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setProgress(progress);
         seekBar.setMax(Constants.KEY_SEEK_BAR_MAX);
-    }
-
-    public void setOnProgressChangedListener(OnProgressChangedListener listener) {
-        this.listener = listener;
     }
 
     @Override

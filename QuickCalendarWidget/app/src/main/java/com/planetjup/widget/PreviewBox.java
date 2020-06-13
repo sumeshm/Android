@@ -22,7 +22,7 @@ public class PreviewBox extends LinearLayout {
     private final LinearLayout previewBox;
     private final GradientDrawable shape = new GradientDrawable();
 
-    public PreviewBox(Context context) {
+    public PreviewBox(Context context, OnClickListener listener) {
         super(context);
         Log.v(TAG, "PreviewBox():");
 
@@ -33,7 +33,9 @@ public class PreviewBox extends LinearLayout {
         previewDay = findViewById(R.id.previewDay);
         previewDate = findViewById(R.id.previewDate);
         previewEvent = findViewById(R.id.previewEvent);
+
         previewSaveButton = findViewById(R.id.previewSaveButton);
+        previewSaveButton.setOnClickListener(listener);
 
         shape.setShape(GradientDrawable.RECTANGLE);
         shape.setCornerRadius(20f);
@@ -42,10 +44,6 @@ public class PreviewBox extends LinearLayout {
 
         previewBox = findViewById(R.id.previewBox);
         previewBox.setBackground(shape);
-    }
-
-    public void setOnClickListener(OnClickListener listener) {
-        previewSaveButton.setOnClickListener(listener);
     }
 
     // update alpha

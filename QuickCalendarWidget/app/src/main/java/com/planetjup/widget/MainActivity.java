@@ -157,8 +157,7 @@ public class MainActivity extends AppCompatActivity
     private void createPreviewBox() {
         Log.v(TAG, "createPreviewBox:");
 
-        previewBox = new PreviewBox(getApplicationContext());
-        previewBox.setOnClickListener(this);
+        previewBox = new PreviewBox(getApplicationContext(), this);
         previewBox.updateBackground(
                 settingsMap.get(Constants.KEY_ALPHA),
                 settingsMap.get(Constants.KEY_BG_COLOR),
@@ -171,10 +170,7 @@ public class MainActivity extends AppCompatActivity
 
     private void createSeekBar() {
         Log.v(TAG, "createPreviewBox:");
-
-        CustomSeekBar seekBar = new CustomSeekBar(getApplicationContext(), settingsMap.get(Constants.KEY_ALPHA));
-        seekBar.setOnProgressChangedListener(this);
-
+        CustomSeekBar seekBar = new CustomSeekBar(getApplicationContext(), settingsMap.get(Constants.KEY_ALPHA), this);
         placeHolder.addView(seekBar, 1);
     }
 
