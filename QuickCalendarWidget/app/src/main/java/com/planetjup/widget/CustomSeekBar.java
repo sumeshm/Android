@@ -7,6 +7,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.planetjup.widget.util.Constants;
+
 public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = CustomSeekBar.class.getSimpleName();
@@ -31,13 +33,14 @@ public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChan
 
         // fetch child View objects
         textViewTitle = findViewById(R.id.seekBarTitle);
-        String titleText = titleTextTemplate.replace(KEY_SEEK_BAR_PROGRESS, Integer.toString(progress * 10));
+        String titleText = titleTextTemplate.replace(KEY_SEEK_BAR_PROGRESS, Integer.toString(progress * Constants.KEY_SEEK_BAR_MAX));
         textViewTitle.setText(titleText);
 
         // update seek-bar
         seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setProgress(progress);
+        seekBar.setMax(Constants.KEY_SEEK_BAR_MAX);
     }
 
     public void setOnProgressChangedListener(OnProgressChangedListener listener) {
@@ -46,8 +49,16 @@ public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChan
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        String titleText = titleTextTemplate.replace(KEY_SEEK_BAR_PROGRESS, Integer.toString(progress * 10));
+        this.currProgress = seekBar.getProgress();
+        Log.v(TAG, "onProgressChanged(): currProgress=" + currProgress);
+
+        int factor = 100 / Constants.KEY_SEEK_BAR_MAX;
+        String titleText = titleTextTemplate.replace(KEY_SEEK_BAR_PROGRESS, Integer.toString(currProgress * factor));
         textViewTitle.setText(titleText);
+
+        if (listener != null) {
+            listener.progressChanged(currProgress);
+        }
     }
 
     @Override
@@ -56,12 +67,6 @@ public class CustomSeekBar extends LinearLayout implements SeekBar.OnSeekBarChan
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        this.currProgress = seekBar.getProgress();
-        Log.v(TAG, "onStartTrackingTouch(): currProgress=" + currProgress);
-
-        if (listener != null) {
-            listener.progressChanged(currProgress);
-        }
     }
 
     public interface OnProgressChangedListener {

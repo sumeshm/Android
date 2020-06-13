@@ -47,11 +47,11 @@ public class CalendarWidget extends AppWidgetProvider {
         Log.v(TAG, "updateUI()");
 
         // Update alpha
-        // alpha is a scale from 0 to 10, representing 0 to 100%
+        // alpha is a scale from 0 to 10 (KEY_SEEK_BAR_MAX), representing 0 to 100%
         // translate that % onto color-alpha of 255 scale
         int effectiveAlpha = 0;
         if (alpha != 0) {
-            effectiveAlpha = (255 * alpha) / 10;
+            effectiveAlpha = (255 * alpha) / Constants.KEY_SEEK_BAR_MAX;
         }
         Log.v(TAG, "updateBackground(): effectiveAlpha=" + effectiveAlpha);
 
@@ -280,6 +280,7 @@ public class CalendarWidget extends AppWidgetProvider {
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
                 || Constants.ACTION_UI_REFRESH.equals(intent.getAction())
+                || Constants.ACTION_UI_REFRESH_HOURLY.equals(intent.getAction())
                 || Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 

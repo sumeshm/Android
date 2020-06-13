@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.planetjup.widget.util.Constants;
+
 public class PreviewBox extends LinearLayout {
 
     private static final String TAG = PreviewBox.class.getSimpleName();
@@ -50,7 +52,7 @@ public class PreviewBox extends LinearLayout {
     public void updateBackground(int alpha, int bgColor, int dayColor, int dateColor, int eventColor) {
         int effectiveAlpha = 0;
         if (alpha != 0) {
-            effectiveAlpha = (255 * alpha) / 10;
+            effectiveAlpha = (255 * alpha) / Constants.KEY_SEEK_BAR_MAX;
         }
 
         shape.setAlpha(effectiveAlpha);

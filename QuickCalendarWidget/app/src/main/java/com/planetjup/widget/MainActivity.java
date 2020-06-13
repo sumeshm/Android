@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity
 
     // set alarm for 12:00 am
     private void startDailyAlarm() {
-        Log.v(TAG, "startAlarm()");
+        Log.v(TAG, "startDailyAlarm()");
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -249,13 +249,21 @@ public class MainActivity extends AppCompatActivity
         Log.v(TAG, "startHourlyAlarm()");
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        Log.v(TAG, "startHourlyAlarm(): day=" + calendar.get(Calendar.DAY_OF_MONTH));
+        Log.v(TAG, "startHourlyAlarm(): hour=" + calendar.get(Calendar.HOUR_OF_DAY));
+        Log.v(TAG, "startHourlyAlarm(): minute=" + calendar.get(Calendar.MINUTE));
+
+        calendar.add(Calendar.MINUTE, 0);
+        calendar.add(Calendar.HOUR_OF_DAY, 1);
+        Log.v(TAG, "startHourlyAlarm(): day2=" + calendar.get(Calendar.DAY_OF_MONTH));
+        Log.v(TAG, "startHourlyAlarm(): hour2=" + calendar.get(Calendar.HOUR_OF_DAY));
+        Log.v(TAG, "startHourlyAlarm(): minute=2" + calendar.get(Calendar.MINUTE));
 
         // designate alarm handler
-        Intent intent = new Intent(this, Constants.class);
+        Intent intent = new Intent(this, CalendarWidget.class);
         intent.setAction(Constants.ACTION_UI_REFRESH_HOURLY);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this.getApplicationContext(), ON_ALARM_CALLBACK_CODE2, intent, 0);
+                this.getApplicationContext(), ON_ALARM_CALLBACK_CODE2, intent, PendingIntent.FLAG_ONE_SHOT);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
