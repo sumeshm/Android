@@ -3,9 +3,9 @@
     android:initialKeyguardLayout="@layout/widget"
     android:initialLayout="@layout/widget"
     android:minWidth="368dp"
-    android:minHeight="40dp"
+    android:minHeight="32dp"
     android:previewImage="@drawable/widget_image"
-    android:resizeMode="none"
+    android:resizeMode="vertical"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen" />
 

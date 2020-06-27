@@ -4,6 +4,10 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,10 +16,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import com.planetjup.widget.util.Constants;
+import com.planetjup.widget.util.IUserActionListener;
 import com.planetjup.widget.util.PersistenceManager;
 
 import java.util.Calendar;
@@ -24,7 +28,7 @@ import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity
-        implements View.OnClickListener, CustomRadioGroup.OnButtonClickedListener, CustomSeekBar.OnProgressChangedListener {
+        implements IUserActionListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -35,7 +39,10 @@ public class MainActivity extends AppCompatActivity
     private Map<String, Integer> settingsMap = new HashMap<>();
 
     private LinearLayout placeHolder;
+    private LinearLayout placeHolderPreview;
     private PreviewBox previewBox;
+
+    private BroadcastReceiver chargerReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +50,7 @@ public class MainActivity extends AppCompatActivity
 
         getContactsPermission();
         startDailyAlarm();
-        startHourlyAlarm();
+        startHourlyDataSync();
 
         setContentView(R.layout.activity_main);
 
@@ -53,6 +60,7 @@ public class MainActivity extends AppCompatActivity
 
         // Build UI
         placeHolder = findViewById(R.id.placeHolder);
+        placeHolderPreview = findViewById(R.id.placeHolderPreview);
 
         // setup preview-box
         createPreviewBox();
@@ -95,12 +103,44 @@ public class MainActivity extends AppCompatActivity
                 });
         AlertDialog alert = builder.create();
         alert.show();
-
     }
 
     @Override
-    public void onClick(View view) {
-        Log.v(TAG, "onClick():");
+    public void radioButtonClicked(String listenerId, int color) {
+        Log.v(TAG, "radioButtonClicked(): listenerId=" + listenerId + ", color=" + color);
+
+        // update settings map
+        settingsMap.put(listenerId, color);
+
+        // update preview
+        previewBox.updatePreview(settingsMap);
+    }
+
+    @Override
+    public void checkBoxClicked(String checkBoxId, boolean isChecked) {
+        Log.v(TAG, "checkBoxClicked(): isChecked=" + isChecked);
+
+        // update settings map
+        settingsMap.put(Constants.KEY_CLOCK_CHECKED, isChecked ? 1 : 0);
+
+        // update preview
+        previewBox.updatePreview(settingsMap);
+    }
+
+    @Override
+    public void progressBarChanged(String checkBoxId, int progress) {
+        Log.v(TAG, "progressBarChanged(): progress=" + progress);
+
+        // update settings map
+        settingsMap.put(Constants.KEY_ALPHA, progress);
+
+        // update preview
+        previewBox.updatePreview(settingsMap);
+    }
+
+    @Override
+    public void saveButtonClicked() {
+        Log.v(TAG, "saveButtonClicked():");
 
         // notify widget and persist settings
         publishSettings();
@@ -109,69 +149,22 @@ public class MainActivity extends AppCompatActivity
         finish();
     }
 
-    @Override
-    public void progressChanged(int progress) {
-        Log.v(TAG, "progressChanged(): progress=" + progress);
-        settingsMap.put(Constants.KEY_ALPHA, progress);
-
-        previewBox.updateBackground(
-                progress,
-                settingsMap.get(Constants.KEY_BG_COLOR),
-                settingsMap.get(Constants.KEY_DAY_COLOR),
-                settingsMap.get(Constants.KEY_DATE_COLOR),
-                settingsMap.get(Constants.KEY_EVENT_COLOR));
-    }
-
-    @Override
-    public void radioButtonClicked(String listenerId, int color) {
-        Log.v(TAG, "radioButtonClicked(): listenerId=" + listenerId + ", color=" + color);
-
-        // update settings map
-        switch (listenerId) {
-            case Constants.KEY_BG_COLOR:
-                settingsMap.put(Constants.KEY_BG_COLOR, color);
-                break;
-            case Constants.KEY_DAY_COLOR:
-                settingsMap.put(Constants.KEY_DAY_COLOR, color);
-                break;
-            case Constants.KEY_DATE_COLOR:
-                settingsMap.put(Constants.KEY_DATE_COLOR, color);
-                break;
-            case Constants.KEY_EVENT_COLOR:
-                settingsMap.put(Constants.KEY_EVENT_COLOR, color);
-                break;
-            case Constants.KEY_TODAY_COLOR:
-                settingsMap.put(Constants.KEY_TODAY_COLOR, color);
-                break;
-        }
-
-        // update preview
-        previewBox.updateBackground(
-                settingsMap.get(Constants.KEY_ALPHA),
-                settingsMap.get(Constants.KEY_BG_COLOR),
-                settingsMap.get(Constants.KEY_DAY_COLOR),
-                settingsMap.get(Constants.KEY_DATE_COLOR),
-                settingsMap.get(Constants.KEY_EVENT_COLOR));
-    }
-
     private void createPreviewBox() {
         Log.v(TAG, "createPreviewBox:");
 
         previewBox = new PreviewBox(getApplicationContext(), this);
-        previewBox.updateBackground(
-                settingsMap.get(Constants.KEY_ALPHA),
-                settingsMap.get(Constants.KEY_BG_COLOR),
-                settingsMap.get(Constants.KEY_DAY_COLOR),
-                settingsMap.get(Constants.KEY_DATE_COLOR),
-                settingsMap.get(Constants.KEY_EVENT_COLOR));
+        previewBox.updatePreview(settingsMap);
 
-        placeHolder.addView(previewBox, 0);
+        placeHolderPreview.addView(previewBox);
     }
 
     private void createSeekBar() {
-        Log.v(TAG, "createPreviewBox:");
-        CustomSeekBar seekBar = new CustomSeekBar(getApplicationContext(), settingsMap.get(Constants.KEY_ALPHA), this);
-        placeHolder.addView(seekBar, 1);
+        Log.v(TAG, "createSeekBar:");
+
+        CustomSeekBar seekBar = new CustomSeekBar(getApplicationContext(), settingsMap.get(Constants.KEY_ALPHA));
+        seekBar.setUserActionListener(this);
+
+        placeHolder.addView(seekBar);
     }
 
     private void createRadioGroup() {
@@ -181,6 +174,10 @@ public class MainActivity extends AppCompatActivity
         CustomRadioGroup bgRadioGroup = new CustomRadioGroup(getApplicationContext(),
                 Constants.KEY_BG_COLOR, getString(R.string.advice_backgroundColor), colorsList, settingsMap.get(Constants.KEY_BG_COLOR));
         bgRadioGroup.setUp(this);
+
+        CustomRadioGroup clockRadioGroup = new CustomRadioGroup(getApplicationContext(),
+                Constants.KEY_CLOCK_COLOR, getString(R.string.advice_clockColor), colorsList, settingsMap.get(Constants.KEY_CLOCK_COLOR));
+        clockRadioGroup.setUp(this);
 
         CustomRadioGroup dayRadioGroup = new CustomRadioGroup(getApplicationContext(),
                 Constants.KEY_DAY_COLOR, getString(R.string.advice_dayColor), colorsList, settingsMap.get(Constants.KEY_DAY_COLOR));
@@ -199,6 +196,7 @@ public class MainActivity extends AppCompatActivity
         todayRadioGroup.setUp(this);
 
         placeHolder.addView(bgRadioGroup);
+        placeHolder.addView(clockRadioGroup);
         placeHolder.addView(dayRadioGroup);
         placeHolder.addView(dateRadioGroup);
         placeHolder.addView(eventRadioGroup);
@@ -240,30 +238,16 @@ public class MainActivity extends AppCompatActivity
                 AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
-    // set alarm for every one hour
-    private void startHourlyAlarm() {
-        Log.v(TAG, "startHourlyAlarm()");
+    // Use JobScheduler to help sync calendar data every hour in the background
+    private void startHourlyDataSync() {
+        Log.v(TAG, "startHourlyDataSync()");
 
-        Calendar calendar = Calendar.getInstance();
-        Log.v(TAG, "startHourlyAlarm(): day=" + calendar.get(Calendar.DAY_OF_MONTH));
-        Log.v(TAG, "startHourlyAlarm(): hour=" + calendar.get(Calendar.HOUR_OF_DAY));
-        Log.v(TAG, "startHourlyAlarm(): minute=" + calendar.get(Calendar.MINUTE));
+        ComponentName serviceComponent = new ComponentName(getApplicationContext(), SyncService.class);
+        JobInfo.Builder jobInfoBuilder = new JobInfo.Builder(0, serviceComponent);
+        jobInfoBuilder.setPeriodic(60 * 60 * 1000);
+        jobInfoBuilder.setRequiresBatteryNotLow(true);
 
-        calendar.add(Calendar.MINUTE, 0);
-        calendar.add(Calendar.HOUR_OF_DAY, 1);
-        Log.v(TAG, "startHourlyAlarm(): day2=" + calendar.get(Calendar.DAY_OF_MONTH));
-        Log.v(TAG, "startHourlyAlarm(): hour2=" + calendar.get(Calendar.HOUR_OF_DAY));
-        Log.v(TAG, "startHourlyAlarm(): minute=2" + calendar.get(Calendar.MINUTE));
-
-        // designate alarm handler
-        Intent intent = new Intent(this, CalendarWidget.class);
-        intent.setAction(Constants.ACTION_UI_REFRESH_HOURLY);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this.getApplicationContext(), ON_ALARM_CALLBACK_CODE2, intent, PendingIntent.FLAG_ONE_SHOT);
-
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_HOUR, pendingIntent);
+        getApplicationContext().getSystemService(JobScheduler.class).schedule(jobInfoBuilder.build());
     }
 
     private void publishSettings() {

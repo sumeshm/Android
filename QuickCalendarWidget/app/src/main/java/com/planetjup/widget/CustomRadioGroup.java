@@ -13,6 +13,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.planetjup.widget.util.IUserActionListener;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
     private final Map<Integer, Integer> radioButtonByIdMap = new HashMap<>();
     private final Map<Integer, RadioButton> radioButtonByColorMap = new HashMap<>();
 
-    private OnButtonClickedListener listener;
+    private IUserActionListener listener;
 
     public CustomRadioGroup(Context context, String uniqueId, String title, int[] colorsList, int selectedColor) {
         super(context);
@@ -57,7 +59,7 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
         Log.v(TAG, "CustomRadioGroup(): radioGroup.ChildCount=" + radioGroup.getChildCount());
     }
 
-    public void setUp(OnButtonClickedListener listener) {
+    public void setUp(IUserActionListener listener) {
         Log.v(TAG, "setCustomTitle():");
         this.listener = listener;
     }
@@ -121,9 +123,4 @@ public class CustomRadioGroup extends LinearLayout implements CompoundButton.OnC
             radioButtonByColorMap.put(color, radioButton);
         }
     }
-
-    public interface OnButtonClickedListener {
-        void radioButtonClicked(String radioGroupId, @ColorInt int color);
-    }
-
 }

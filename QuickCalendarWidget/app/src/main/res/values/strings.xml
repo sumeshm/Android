@@ -8,11 +8,12 @@
     <string name="day_saturday">SAT</string>
     <string name="day_sunday">SUN</string>
     <string name="seek_bar_title">Transparency - PROGRESS %</string>
-    <string name="advice_backgroundColor">Background Color</string>
-    <string name="advice_dayColor">Day Color</string>
-    <string name="advice_dateColor">Date Color</string>
-    <string name="advice_eventColor">Event Color</string>
-    <string name="advice_todayColor">Today Highlight Color</string>
+    <string name="advice_backgroundColor">Background</string>
+    <string name="advice_dayColor">Day</string>
+    <string name="advice_dateColor">Date</string>
+    <string name="advice_eventColor">Event</string>
+    <string name="advice_todayColor">Today Highlight</string>
+    <string name="advice_clockColor">Clock</string>
     <string name="advice_save">SAVE</string>
     <string name="advice_seekDefault">0</string>
     <string name="dialog_title">Save Settings?</string>

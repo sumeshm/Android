@@ -7,13 +7,30 @@
     android:layout_marginTop="5dp">
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            style="@style/textViewDay"
+            android:text="@string/advice_clockColor" />
+        <CheckBox
+            android:id="@+id/previewCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/previewBox"
-        android:layout_width="200dp"
-        android:layout_height="60dp"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:orientation="vertical"
         android:gravity="center">
 
+        <TextView
+            android:id="@+id/previewClock"
+            style="@style/textViewClock" />
         <TextView
             android:id="@+id/previewDay"
             style="@style/textViewDay" />

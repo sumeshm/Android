@@ -71,6 +71,8 @@ public class PersistenceManager {
         retMap.putIfAbsent(Constants.KEY_DATE_COLOR, Color.BLACK);
         retMap.putIfAbsent(Constants.KEY_EVENT_COLOR, Color.YELLOW);
         retMap.putIfAbsent(Constants.KEY_TODAY_COLOR, Color.BLUE);
+        retMap.putIfAbsent(Constants.KEY_CLOCK_COLOR, Color.BLUE);
+        retMap.putIfAbsent(Constants.KEY_CLOCK_CHECKED, 1);
 
         return retMap;
     }

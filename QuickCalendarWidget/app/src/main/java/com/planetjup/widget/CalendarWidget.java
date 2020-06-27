@@ -8,13 +8,16 @@ import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.provider.CalendarContract;
+import android.support.transition.Visibility;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.planetjup.widget.util.Constants;
@@ -46,7 +49,9 @@ public class CalendarWidget extends AppWidgetProvider {
 
     // default values
     private static int alpha = 20;
+    private static boolean isClockVisible = false;
     private static int bgColor = Color.LTGRAY;
+    private static int clockColor = Color.BLUE;
     private static int dayColor = Color.BLACK;
     private static int dateColor = Color.BLACK;
     private static int eventColor = Color.YELLOW;
@@ -62,18 +67,10 @@ public class CalendarWidget extends AppWidgetProvider {
         if (alpha != 0) {
             effectiveAlpha = (255 * alpha) / Constants.KEY_SEEK_BAR_MAX;
         }
-        Log.v(TAG, "updateBackground(): effectiveAlpha=" + effectiveAlpha);
-
         int color = Color.argb(effectiveAlpha, Color.red(bgColor), Color.green(bgColor), Color.blue(bgColor));
+        Log.v(TAG, "updateBackground(): effectiveAlpha=" + effectiveAlpha + ", color=" + color);
 
-        // update background color for each day-box
-        remoteViews.setInt(R.id.day1, "setBackgroundColor", color);
-        remoteViews.setInt(R.id.day2, "setBackgroundColor", color);
-        remoteViews.setInt(R.id.day3, "setBackgroundColor", color);
-        remoteViews.setInt(R.id.day4, "setBackgroundColor", color);
-        remoteViews.setInt(R.id.day5, "setBackgroundColor", color);
-        remoteViews.setInt(R.id.day6, "setBackgroundColor", color);
-        remoteViews.setInt(R.id.day7, "setBackgroundColor", color);
+        remoteViews.setInt(R.id.widget_frame, "setBackgroundColor", color);
 
         // update day-box with name of the day
         List<String> dayList = new ArrayList<>();
@@ -143,12 +140,12 @@ public class CalendarWidget extends AppWidgetProvider {
                 builder.append("\n");
             }
 
-            // add data to UI
+            // add data to text-view fields
             remoteViews.setTextViewText(idDay, dayList.get(count));
             remoteViews.setTextViewText(idDate, "" + today.get(Calendar.DAY_OF_MONTH));
             remoteViews.setTextViewText(idEvent, builder.toString());
 
-            // color settings
+            // add color to text-view fields
             if (today.get(Calendar.DAY_OF_MONTH) == dayOfMonth) {
                 // highlight current day
                 remoteViews.setTextColor(idDay, todayColor);
@@ -159,6 +156,10 @@ public class CalendarWidget extends AppWidgetProvider {
                 remoteViews.setTextColor(idDate, dateColor);
                 remoteViews.setTextColor(idEvent, eventColor);
             }
+
+            // update Clock color
+            remoteViews.setTextColor(R.id.clock, clockColor);
+            remoteViews.setInt(R.id.clock, "setVisibility", isClockVisible ? View.VISIBLE : View.INVISIBLE);
 
             // increment date
             today.add(Calendar.DAY_OF_WEEK, 1);
@@ -270,7 +271,9 @@ public class CalendarWidget extends AppWidgetProvider {
 
             Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
             alpha = settingsMap.get(Constants.KEY_ALPHA);
+            isClockVisible = settingsMap.get(Constants.KEY_CLOCK_CHECKED) > 0 ? true : false;
             bgColor = settingsMap.get(Constants.KEY_BG_COLOR);
+            clockColor = settingsMap.get(Constants.KEY_CLOCK_COLOR);
             dayColor = settingsMap.get(Constants.KEY_DAY_COLOR);
             dateColor = settingsMap.get(Constants.KEY_DATE_COLOR);
             eventColor = settingsMap.get(Constants.KEY_EVENT_COLOR);

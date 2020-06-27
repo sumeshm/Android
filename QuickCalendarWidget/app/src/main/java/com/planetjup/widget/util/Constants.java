@@ -12,6 +12,8 @@ public class Constants {
     public static final String KEY_DATE_COLOR = "KEY_DATE_COLOR";
     public static final String KEY_EVENT_COLOR = "KEY_EVENT_COLOR";
     public static final String KEY_TODAY_COLOR = "KEY_TODAY_COLOR";
+    public static final String KEY_CLOCK_COLOR = "KEY_CLOCK_COLOR";
+    public static final String KEY_CLOCK_CHECKED = "KEY_CLOCK_CHECKED";
 
     public static final Integer KEY_SEEK_BAR_MAX = 20;
 }
