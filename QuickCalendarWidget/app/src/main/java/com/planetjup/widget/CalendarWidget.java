@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -28,9 +29,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 /**
  * Implementation of App Widget functionality.
@@ -112,20 +117,20 @@ public class CalendarWidget extends AppWidgetProvider {
             StringBuilder builder = new StringBuilder();
             List<String> eventList = eventMap.get(today.get(Calendar.DAY_OF_YEAR));
             if (eventList != null) {
-                for (int i = 0; i < eventList.size(); i++) {
+                for (int eventCount = 0; eventCount < eventList.size(); eventCount++) {
                     int maxLen = 9;
-                    String eventTitle = eventList.get(i);
+                    String eventTitle = eventList.get(eventCount);
                     if (eventTitle.length() > maxLen) {
                         eventTitle = eventTitle.substring(0, maxLen);
                     }
 
                     // limit display to two events per day
-                    if (i > 2) {
+                    if (eventCount > 3) {
                         break;
                     }
 
                     // add line break if multiple events found for same day
-                    if (i > 0) {
+                    if (eventCount > 0) {
                         builder.append("\n");
                     }
                     builder.append(eventTitle);
@@ -182,50 +187,55 @@ public class CalendarWidget extends AppWidgetProvider {
             return retMap;
         }
 
-        DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
-
-        // search range - start of given day to start of next day
-        Calendar startTime = Calendar.getInstance();
-        startTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
-        Log.v(TAG, "readCalendarEvents(): startTime=" + startTime.getTime());
-
-        Calendar endTime = Calendar.getInstance();
-        endTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH) + 7, 0, 0, 0);
-        Log.v(TAG, "readCalendarEvents(): endTime=" + endTime.getTime());
-
-        // 1. Events
+        Map<String, String> eventNameMap = new HashMap<>();
         ContentResolver contentResolver = context.getContentResolver();
         Uri eventUri = CalendarContract.Events.CONTENT_URI;
-        String selection = "(( " + CalendarContract.Events.DTSTART + " >= " + startTime.getTimeInMillis() + " ) AND ( " + CalendarContract.Events.DTSTART + " <= " + endTime.getTimeInMillis() + " ))";
+        Calendar startTime = Calendar.getInstance();
+        Calendar endTime = Calendar.getInstance();
+        String[] instColumns = { CalendarContract.Instances.EVENT_ID };
+        String[] columnNames = new String[] { CalendarContract.Events.TITLE };
+        String selection = CalendarContract.Events._ID + " = ? ";
 
-        Log.v(TAG, "readCalendarEvents(): selection=" + selection);
+        Log.v(TAG, "readCalendarEvents(): filterDay=" + filterDay.get(Calendar.DAY_OF_YEAR));
+        for (int delta = 0; delta < 7; delta++) {
+            startTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH) + delta, 0, 0, 0);
+            endTime.set(startTime.get(Calendar.YEAR), startTime.get(Calendar.MONTH), startTime.get(Calendar.DAY_OF_MONTH) + 1, 0, 0, 0);
+            int instanceDay = startTime.get(Calendar.DAY_OF_YEAR);
 
-        String[] columnNames = new String[]{CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART};
+            // fetch Instances for one day
+            Uri.Builder intentUriBuilder = CalendarContract.Instances.CONTENT_URI.buildUpon();
+            ContentUris.appendId(intentUriBuilder, startTime.getTimeInMillis());
+            ContentUris.appendId(intentUriBuilder, endTime.getTimeInMillis());
 
-        //Cursor cursor = contentResolver.query(eventUri, columnNames, selection, null, null);
-        Cursor cursor = contentResolver.query(eventUri, columnNames, null, null, null);
-        boolean isMoved = cursor.moveToFirst();
-        Log.v(TAG, "readCalendarEvents(): Events.isMoved=" + isMoved);
+            Cursor instCursor = contentResolver.query(intentUriBuilder.build(), instColumns, null, null, null);
+            Log.v(TAG, "readCalendarEvents(): instanceDay=" + instanceDay + ", instanceCount=" + instCursor.getCount());
 
-        for (int i = 0; i < cursor.getCount(); i++) {
-            String eventTitle = cursor.getString(0);
-            Calendar eventDate = Calendar.getInstance();
-            eventDate.setTimeInMillis(cursor.getLong(1));
-            Integer eventDayOfYear = eventDate.get(Calendar.DAY_OF_YEAR);
-            String eventDateString = formatter.format(eventDate.getTime());
+            while (instCursor.moveToNext()) {
+                String eventId = instCursor.getString(instCursor.getColumnIndex(CalendarContract.Instances.EVENT_ID));
+                String[] selectionArgs = new String[]{eventId};
 
-            Log.v(TAG, "readCalendarEvents(): Event.title=" + eventTitle + ", " + eventDateString + ", " + eventDayOfYear);
+                // fetch event name and memoize it
+                if (eventNameMap.get(eventId) == null) {
+                    Cursor eventCursor = contentResolver.query(eventUri, columnNames, selection, selectionArgs, null);
+                    int count = eventCursor.getCount();
+                    if (eventCursor.moveToFirst()) {
+                        String eventTitle = eventCursor.getString( eventCursor.getColumnIndex(CalendarContract.Reminders.TITLE) );
+                        eventNameMap.put(eventId, eventTitle);
+                    }
+                    eventCursor.close();
+                }
+                Log.v(TAG, "readCalendarEvents(): ------- eventId=" + eventId + ", eventTitle=" +  eventNameMap.get(eventId));
 
-            List<String> titleList = retMap.get(eventDayOfYear);
-            if (titleList == null) {
-                titleList = new ArrayList<>();
-                retMap.put(eventDayOfYear, titleList);
+                List<String> titleList = retMap.get(instanceDay);
+                if (titleList == null) {
+                    titleList = new Vector<>();
+                    retMap.put(instanceDay, titleList);
+                }
+                titleList.add(eventNameMap.get(eventId));
+
             }
-            titleList.add(eventTitle);
-
-            cursor.moveToNext();
+            instCursor.close();
         }
-        cursor.close();
 
         Log.v(TAG, "readCalendarEvents(): retMap=" + retMap);
         return retMap;
