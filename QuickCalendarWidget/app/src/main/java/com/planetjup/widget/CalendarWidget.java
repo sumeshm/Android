@@ -106,7 +106,7 @@ public class CalendarWidget extends AppWidgetProvider {
         today.add(Calendar.DAY_OF_WEEK, delta);
 
         // get all events for this week
-        Map<Integer, List<String>> eventMap = readCalendarEvents(context, today);
+        Map<Integer, Set<String>> eventMap = readCalendarEvents(context, today);
 
         // add seven days of calendar data - Day, Date, Events
         for (int count = 0; count < 7; count++) {
@@ -115,11 +115,11 @@ public class CalendarWidget extends AppWidgetProvider {
             int idEvent = eventIdList.get(count);
 
             StringBuilder builder = new StringBuilder();
-            List<String> eventList = eventMap.get(today.get(Calendar.DAY_OF_YEAR));
+            Set<String> eventList = eventMap.get(today.get(Calendar.DAY_OF_YEAR));
             if (eventList != null) {
-                for (int eventCount = 0; eventCount < eventList.size(); eventCount++) {
+                int eventCount = 0;
+                for (String eventTitle : eventList) {
                     int maxLen = 9;
-                    String eventTitle = eventList.get(eventCount);
                     if (eventTitle.length() > maxLen) {
                         eventTitle = eventTitle.substring(0, maxLen);
                     }
@@ -134,6 +134,8 @@ public class CalendarWidget extends AppWidgetProvider {
                         builder.append("\n");
                     }
                     builder.append(eventTitle);
+
+                    eventCount++;
                 }
 
                 // add place holders for missing events
@@ -180,8 +182,8 @@ public class CalendarWidget extends AppWidgetProvider {
         remoteViews.setOnClickPendingIntent(R.id.widget_frame, pendingIntent);
     }
 
-    private static Map<Integer, List<String>> readCalendarEvents(Context context, Calendar filterDay) {
-        Map<Integer, List<String>> retMap = new HashMap<>();
+    private static Map<Integer, Set<String>> readCalendarEvents(Context context, Calendar filterDay) {
+        Map<Integer, Set<String>> retMap = new HashMap<>();
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
             return retMap;
@@ -226,9 +228,9 @@ public class CalendarWidget extends AppWidgetProvider {
                 }
                 Log.v(TAG, "readCalendarEvents(): ------- eventId=" + eventId + ", eventTitle=" +  eventNameMap.get(eventId));
 
-                List<String> titleList = retMap.get(instanceDay);
+                Set<String> titleList = retMap.get(instanceDay);
                 if (titleList == null) {
-                    titleList = new Vector<>();
+                    titleList = new HashSet<>();
                     retMap.put(instanceDay, titleList);
                 }
                 titleList.add(eventNameMap.get(eventId));
@@ -244,6 +246,8 @@ public class CalendarWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.v(TAG, "onUpdate(): appWidgetIds.length=" + appWidgetIds.length);
+
+        readSettings(context);
 
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
@@ -279,15 +283,7 @@ public class CalendarWidget extends AppWidgetProvider {
                 || Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
 
-            Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
-            alpha = settingsMap.get(Constants.KEY_ALPHA);
-            isClockVisible = settingsMap.get(Constants.KEY_CLOCK_CHECKED) > 0 ? true : false;
-            bgColor = settingsMap.get(Constants.KEY_BG_COLOR);
-            clockColor = settingsMap.get(Constants.KEY_CLOCK_COLOR);
-            dayColor = settingsMap.get(Constants.KEY_DAY_COLOR);
-            dateColor = settingsMap.get(Constants.KEY_DATE_COLOR);
-            eventColor = settingsMap.get(Constants.KEY_EVENT_COLOR);
-            todayColor = settingsMap.get(Constants.KEY_TODAY_COLOR);
+            readSettings(context);
 
             // re-build UI
             updateUI(context, remoteViews);
@@ -297,5 +293,18 @@ public class CalendarWidget extends AppWidgetProvider {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             appWidgetManager.updateAppWidget(calendarWidget, remoteViews);
         }
+    }
+
+    private void readSettings(Context context) {
+
+        Map<String, Integer> settingsMap = PersistenceManager.readSettings(context);
+        alpha = settingsMap.get(Constants.KEY_ALPHA);
+        isClockVisible = settingsMap.get(Constants.KEY_CLOCK_CHECKED) > 0 ? true : false;
+        bgColor = settingsMap.get(Constants.KEY_BG_COLOR);
+        clockColor = settingsMap.get(Constants.KEY_CLOCK_COLOR);
+        dayColor = settingsMap.get(Constants.KEY_DAY_COLOR);
+        dateColor = settingsMap.get(Constants.KEY_DATE_COLOR);
+        eventColor = settingsMap.get(Constants.KEY_EVENT_COLOR);
+        todayColor = settingsMap.get(Constants.KEY_TODAY_COLOR);
     }
 }

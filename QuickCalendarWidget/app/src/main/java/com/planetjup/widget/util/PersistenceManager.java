@@ -39,7 +39,7 @@ public class PersistenceManager {
         Log.v(TAG, "writeSettings(): jsonObject=" + jsonObject);
 
         editor.putString(PERSISTENCE_KEY, jsonObject.toString());
-        editor.apply();
+        editor.commit();
     }
 
     public static Map<String, Integer> readSettings(Context context) {
