@@ -3,7 +3,6 @@ package com.planetjup.widget;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.opengl.Visibility;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 
 import com.planetjup.widget.util.Constants;
 import com.planetjup.widget.util.IUserActionListener;
-import com.planetjup.widget.util.PersistenceManager;
 
 import java.util.Map;
 

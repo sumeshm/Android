@@ -1,6 +1,5 @@
 package com.planetjup.widget;
 
-import android.app.Service;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Intent;
