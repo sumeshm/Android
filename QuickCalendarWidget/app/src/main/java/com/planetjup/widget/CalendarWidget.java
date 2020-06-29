@@ -195,10 +195,10 @@ public class CalendarWidget extends AppWidgetProvider {
         Log.v(TAG, "readCalendarEvents(): filterDay=" + filterDay.get(Calendar.DAY_OF_YEAR));
         for (int delta = 0; delta < 7; delta++) {
             startTime.set(filterDay.get(Calendar.YEAR), filterDay.get(Calendar.MONTH), filterDay.get(Calendar.DAY_OF_MONTH) + delta, 0, 0, 0);
-            endTime.set(startTime.get(Calendar.YEAR), startTime.get(Calendar.MONTH), startTime.get(Calendar.DAY_OF_MONTH) + 1, 0, 0, 0);
+            endTime.set(startTime.get(Calendar.YEAR), startTime.get(Calendar.MONTH), startTime.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
             int instanceDay = startTime.get(Calendar.DAY_OF_YEAR);
 
-            // fetch Instances for one day
+            // fetch Instances form table for one day
             Uri.Builder intentUriBuilder = CalendarContract.Instances.CONTENT_URI.buildUpon();
             ContentUris.appendId(intentUriBuilder, startTime.getTimeInMillis());
             ContentUris.appendId(intentUriBuilder, endTime.getTimeInMillis());
@@ -210,7 +210,7 @@ public class CalendarWidget extends AppWidgetProvider {
                 String eventId = instCursor.getString(instCursor.getColumnIndex(CalendarContract.Instances.EVENT_ID));
                 String[] selectionArgs = new String[]{eventId};
 
-                // fetch event name and memoize it
+                // fetch event name from table and memoize it
                 if (eventNameMap.get(eventId) == null) {
                     Cursor eventCursor = contentResolver.query(eventUri, columnNames, selection, selectionArgs, null);
                     int count = eventCursor.getCount();
@@ -271,8 +271,6 @@ public class CalendarWidget extends AppWidgetProvider {
 
         } else if (Intent.ACTION_DATE_CHANGED.equals(intent.getAction())
                 || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
-                || Intent.ACTION_TIME_CHANGED.equals(intent.getAction())
-                || Constants.ACTION_UI_REFRESH.equals(intent.getAction())
                 || Constants.ACTION_UI_REFRESH_HOURLY.equals(intent.getAction())
                 || Constants.ACTION_SETTINGS_REFRESH.equals(intent.getAction())) {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
