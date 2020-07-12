@@ -21,4 +21,6 @@
     <string name="toastImport">App settings have been Imported</string>
     <string name="toastExport">App settings have been Exported</string>
     <string name="toastReminder">Reminder time was updated</string>
+    <string name="tabMonthly">Monthly</string>
+    <string name="tabYearly">Yearly</string>
 </resources>

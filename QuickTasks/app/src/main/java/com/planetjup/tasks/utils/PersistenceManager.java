@@ -29,6 +29,10 @@ public class PersistenceManager {
     private static final String PREFERENCES_KEY_TASKS = "com_planetjup_tasks_TasksList";
     private static final String PREFERENCES_KEY_REMINDER = "com_planetjup_tasks_ReminderList";
 
+    private static final String PREFERENCES_KEY_REMINDER_MONTHLY = "com_planetjup_tasks_ReminderListMonthly";
+    private static final String PREFERENCES_KEY_REMINDER_YEARLY = "com_planetjup_tasks_ReminderListYearly";
+    private static final String PREFERENCES_KEY_REMINDER_OTHER = "com_planetjup_tasks_ReminderListOther";
+
     private static final String JSON_KEY_TASK_NAME = "name";
     private static final String JSON_KEY_TASK_STATE = "checked";
     private static final String JSON_KEY_REMINDER_TYPE = "reminderType";
@@ -38,12 +42,12 @@ public class PersistenceManager {
 
     private static final String BKP_FILE_NAME = "quickTask.txt";
 
-    public static void writeTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+    public static void writeTasksList(Context context, ArrayList<TaskDetails> tasksList, String key) {
         Log.v(TAG, "writeTasksList()");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.putString(PREFERENCES_KEY_TASKS, null);
+        editor.putString(key, null);
         if (!tasksList.isEmpty()) {
             JSONArray jsonArray = new JSONArray();
             for (TaskDetails taskDetails : tasksList) {
@@ -58,20 +62,20 @@ public class PersistenceManager {
                 }
             }
 
-            editor.putString(PREFERENCES_KEY_TASKS, jsonArray.toString());
+            editor.putString(key, jsonArray.toString());
         } else {
-            editor.putString(PREFERENCES_KEY_TASKS, null);
+            editor.putString(key, null);
         }
 
         editor.apply();
     }
 
-    public static ArrayList<TaskDetails> readTasksList(Context context) {
+    public static ArrayList<TaskDetails> readTasksList(Context context, String key) {
         Log.v(TAG, "readTasksList()");
         ArrayList<TaskDetails> tasksList = new ArrayList<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        String json = prefs.getString(PREFERENCES_KEY_TASKS, null);
+        String json = prefs.getString(key, null);
         Log.v(TAG, "writeTasksList(): json=" + json);
         if (json != null && !json.isEmpty()) {
             try {
@@ -243,5 +247,29 @@ public class PersistenceManager {
         writeReminderList(context, retList);
 
         return retList;
+    }
+
+    public static ArrayList<TaskDetails> readMonthlyTasksList(Context context) {
+        return readTasksList(context, PREFERENCES_KEY_REMINDER_MONTHLY);
+    }
+
+    public static ArrayList<TaskDetails> readYearlyTasksList(Context context) {
+        return readTasksList(context, PREFERENCES_KEY_REMINDER_YEARLY);
+    }
+
+    public static ArrayList<TaskDetails> readOtherTasksList(Context context) {
+        return readTasksList(context, PREFERENCES_KEY_REMINDER_OTHER);
+    }
+
+    public static void writeMonthlyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        writeTasksList(context, tasksList, PREFERENCES_KEY_REMINDER_MONTHLY);
+    }
+
+    public static void writeYearlyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        writeTasksList(context, tasksList, PREFERENCES_KEY_REMINDER_YEARLY);
+    }
+
+    public static void writeOtherTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        writeTasksList(context, tasksList, PREFERENCES_KEY_REMINDER_OTHER);
     }
 }

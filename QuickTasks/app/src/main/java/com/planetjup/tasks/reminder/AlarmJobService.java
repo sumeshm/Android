@@ -1,6 +1,5 @@
 package com.planetjup.tasks.reminder;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,7 +11,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PersistableBundle;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.planetjup.tasks.MainActivity;
@@ -84,7 +82,8 @@ public class AlarmJobService extends JobService {
             SimpleDateFormat format = new SimpleDateFormat("MM/dd hh:mm:ss");
             Log.v(TAG, "sendQuickTasksNotification(): " + format.format(curDate) + " :: id=" + requestType);
 
-            Notification notification = new NotificationCompat.Builder(context, channel.getId())
+            /*
+            Notification notification = new NotificationCompat.Action.Builder(context, channel.getId())
                     .setSmallIcon(R.drawable.ic_notification)
                     //.setContentText(context.getString(R.string.msg_notification))
                     .setContentText(format.format(curDate) + " - " + requestType)
@@ -95,6 +94,7 @@ public class AlarmJobService extends JobService {
                     .build();
 
             notificationManager.notify(0, notification);
+            */
         } else {
             Log.e(TAG, "sendQuickTasksNotification(): failed to get NotificationManager");
         }

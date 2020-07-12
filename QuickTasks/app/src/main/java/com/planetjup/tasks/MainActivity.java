@@ -1,34 +1,27 @@
 package com.planetjup.tasks;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.NumberPicker;
-import android.widget.Toast;
 
-import com.planetjup.tasks.reminder.AlarmJobService;
+import com.google.android.material.tabs.TabLayout;
+import com.planetjup.tasks.tabs.TabManager;
 import com.planetjup.tasks.utils.PersistenceManager;
-import com.planetjup.tasks.utils.ReminderDetails;
-import com.planetjup.tasks.utils.ReminderSchedulerUtil;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 
 import java.util.ArrayList;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import planetjup.com.tasks.R;
 
 
@@ -43,47 +36,56 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final int MAX_LENGTH = 20;
-
+    private TabManager tabManager;
     private TaskDetailsArrayAdapter arrayAdapter;
-    private ArrayList<ReminderDetails> reminderList;
+    private ArrayList<TaskDetails> monthlyList;
+    private ArrayList<TaskDetails> yearlyList;
+    private ArrayList<TaskDetails> otherList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate()");
 
-        reminderList = PersistenceManager.readReminderList(this);
-        for (ReminderDetails reminderDetails : reminderList) {
-            // kick off JobService
-            final JobInfo jobInfo = ReminderSchedulerUtil.getActivityJobInfo(reminderDetails, new ComponentName(this, AlarmJobService.class));
-            final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-            if (jobScheduler != null) {
-                final int result = jobScheduler.schedule(jobInfo);
-                Log.v(TAG, "onCreate(): Reminder-" + reminderDetails.getReminderType().getValue() + " : schedule.result=" + result);
-            }
-        }
+        monthlyList = PersistenceManager.readMonthlyTasksList(this);
+        yearlyList = PersistenceManager.readYearlyTasksList(this);
+        otherList = PersistenceManager.readOtherTasksList(this);
 
         setContentView(R.layout.activity_main);
-        populateListView();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.v(TAG, "onDestroy()");
+        // build tabs
+        final ViewPager viewPager = findViewById(R.id.viewPager);
+        tabManager = new TabManager(getSupportFragmentManager(), monthlyList, yearlyList, otherList);
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
-    }
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.addTab(tabLayout.newTab());
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Log.v(TAG, "TabSelectedListener: onTabSelected(): " + tab.getPosition());
+                viewPager.setCurrentItem(tab.getPosition());
+                tabManager.setFocusItem(tab.getPosition());
+            }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.v(TAG, "onStop()");
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                Log.v(TAG, "TabSelectedListener: onTabUnselected(): " + tabManager.getFocusItem());
+            }
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+            }
+        });
+
+        final PagerAdapter adapter = tabManager;
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
     @Override
@@ -91,7 +93,9 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         Log.v(TAG, "onPause()");
 
-        PersistenceManager.writeTasksList(this, arrayAdapter.getTaskList());
+        PersistenceManager.writeMonthlyTasksList(this, tabManager.getMonthlyList());
+        PersistenceManager.writeYearlyTasksList(this, tabManager.getYearlyList());
+        PersistenceManager.writeOtherTasksList(this, tabManager.getOtherList());
     }
 
     @Override
@@ -111,48 +115,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.menuReset:
-                arrayAdapter.resetListView();
-                break;
-
-            case R.id.menuReminderOne:
-                showPickerDialog(reminderList.get(0));
-                break;
-
-            case R.id.menuReminderTwo:
-                showPickerDialog(reminderList.get(1));
-                break;
-
-            case R.id.menuImport:
-                ArrayList<TaskDetails> taskList = PersistenceManager.importPreference(this);
-
-                arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, taskList);
-
-                ListView listView = findViewById(R.id.listView);
-                listView.setAdapter(arrayAdapter);
-
-                Toast.makeText(this, R.string.toastImport, Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.menuExport:
-                PersistenceManager.exportPreference(this, arrayAdapter.getTaskList());
-
-                Toast.makeText(this, R.string.toastExport, Toast.LENGTH_SHORT).show();
+                tabManager.resetFocusList();
                 break;
         }
 
         return true;
-    }
-
-
-    private void populateListView() {
-        Log.v(TAG, "populateListView()");
-
-        ArrayList<TaskDetails> tasksList = PersistenceManager.readTasksList(this);
-
-        arrayAdapter = new TaskDetailsArrayAdapter(this, R.layout.text_view, tasksList);
-
-        ListView listView = findViewById(R.id.listView);
-        listView.setAdapter(arrayAdapter);
     }
 
     private void showAddDialog() {
@@ -177,8 +144,7 @@ public class MainActivity extends AppCompatActivity {
                         newTask = newTask.substring(0, MAX_LENGTH - 1);
                     }
 
-                    arrayAdapter.add(new TaskDetails(newTask, Boolean.FALSE));
-                    arrayAdapter.notifyDataSetChanged();
+                    tabManager.addItem(newTask);
                 }
             }
         });
@@ -191,84 +157,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         builder.show();
-    }
-
-    private void showPickerDialog(final ReminderDetails reminderDetails) {
-        Log.v(TAG, "showPickerDialog(): reminderDetails=" + reminderDetails);
-
-        final View dialogPicker = getLayoutInflater().inflate(R.layout.dialog_picker, null);
-        dialogPicker.setId(reminderDetails.getReminderType().getValue());
-
-        int titleId;
-        switch (reminderDetails.getReminderType()) {
-            case REMINDER_TYPE_ONE:
-                titleId = R.string.title_picker_one;
-                break;
-
-            case REMINDER_TYPE_TWO:
-                titleId = R.string.title_picker_two;
-                break;
-
-            default:
-                titleId = R.string.title_picker;
-                break;
-        }
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
-        builder.setTitle(titleId);
-        builder.setIcon(R.drawable.ic_notification);
-        builder.setView(dialogPicker);
-
-        NumberPicker.Formatter twoDigitFormatter = new NumberPicker.Formatter() {
-            @Override
-            public String format(int value) {
-                return String.format("%02d", value);
-            }
-        };
-
-        final NumberPicker pickerMonth = dialogPicker.findViewById(R.id.pickerDay);
-        pickerMonth.setFormatter(twoDigitFormatter);
-        pickerMonth.setMinValue(1);
-        pickerMonth.setMaxValue(28);
-        pickerMonth.setValue(reminderDetails.getDay());
-
-        final NumberPicker pickerHour = dialogPicker.findViewById(R.id.pickerHour);
-        pickerHour.setFormatter(twoDigitFormatter);
-        pickerHour.setMinValue(0);
-        pickerHour.setMaxValue(23);
-        pickerHour.setValue(reminderDetails.getHour());
-
-        final NumberPicker pickerMinute = dialogPicker.findViewById(R.id.pickerMinute);
-        pickerMinute.setFormatter(twoDigitFormatter);
-        pickerMinute.setMinValue(0);
-        pickerMinute.setMaxValue(59);
-        pickerMinute.setValue(reminderDetails.getMinute());
-
-        final AlertDialog dialog = builder.show();
-
-        Button submitButton = dialogPicker.findViewById(R.id.submitButton);
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                reminderDetails.setDay(pickerMonth.getValue());
-                reminderDetails.setHour(pickerHour.getValue());
-                reminderDetails.setMinute(pickerMinute.getValue());
-
-                // kick off JobService
-                final JobInfo jobInfo = ReminderSchedulerUtil.getActivityJobInfo(reminderDetails, new ComponentName(view.getContext(), AlarmJobService.class));
-                final JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                if (jobScheduler != null) {
-                    final int result = jobScheduler.schedule(jobInfo);
-                    Log.v(TAG, "onClick(): Reminder-" + reminderDetails.getReminderType().getValue() + " : schedule.result=" + result);
-                }
-
-                // record change to reminder
-                PersistenceManager.writeReminderList(view.getContext(), reminderList);
-
-                Toast.makeText(view.getContext(), R.string.toastReminder, Toast.LENGTH_SHORT).show();
-                dialog.cancel();
-            }
-        });
     }
 }
 
