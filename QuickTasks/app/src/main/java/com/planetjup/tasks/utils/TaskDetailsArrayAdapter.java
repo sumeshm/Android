@@ -38,10 +38,6 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         this.taskList = new ArrayList<>(list);
     }
 
-    public ArrayList<TaskDetails> getTaskList() {
-        return taskList;
-    }
-
     public void resetListView() {
         Log.v(TAG, "onClick()");
 
@@ -118,9 +114,9 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
 
 
     private class ListItemManager {
+        final TextView textView;
         final private TaskDetails taskDetails;
         final private View view;
-        final TextView textView;
         final private CheckBox checkBox;
         final private ImageButton deleteButton;
         final private ImageButton refreshButton;

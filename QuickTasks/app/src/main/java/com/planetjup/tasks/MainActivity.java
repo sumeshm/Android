@@ -1,6 +1,7 @@
 package com.planetjup.tasks;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -37,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final int MAX_LENGTH = 20;
     private TabManager tabManager;
-    private TaskDetailsArrayAdapter arrayAdapter;
     private ArrayList<TaskDetails> monthlyList;
     private ArrayList<TaskDetails> yearlyList;
     private ArrayList<TaskDetails> otherList;

@@ -3,8 +3,6 @@ package com.planetjup.tasks.tabs;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.planetjup.tasks.utils.PersistenceManager;
-import com.planetjup.tasks.utils.ReminderDetails;
 import com.planetjup.tasks.utils.TaskDetails;
 
 import java.util.ArrayList;
@@ -22,20 +20,18 @@ public class TabManager extends FragmentStatePagerAdapter {
     private static final String TAG = TabManager.class.getSimpleName();
 
     private int focusPosition;
-    private FragmentImpl tabMonthly;
-    private FragmentImpl tabYearly;
-    private FragmentImpl tabOthers;
-
-    private ArrayList<ReminderDetails> monthlyList;
+    private final FragmentImpl tabMonthly;
+    private final FragmentImpl tabYearly;
+    private final FragmentImpl tabOthers;
 
     @SuppressLint("WrongConstant")
     public TabManager(@NonNull FragmentManager fm, ArrayList<TaskDetails> monthly, ArrayList<TaskDetails> yearly, ArrayList<TaskDetails> other) {
         super(fm, 3);
         Log.v(TAG, "TabManager()");
 
-        tabMonthly =  new FragmentImpl(R.layout.tab_list, monthly);
-        tabYearly =  new FragmentImpl(R.layout.tab_list, yearly);
-        tabOthers =  new FragmentImpl(R.layout.tab_list, other);
+        tabMonthly = new FragmentImpl(R.layout.tab_list, monthly);
+        tabYearly = new FragmentImpl(R.layout.tab_list, yearly);
+        tabOthers = new FragmentImpl(R.layout.tab_list, other);
     }
 
     @NonNull

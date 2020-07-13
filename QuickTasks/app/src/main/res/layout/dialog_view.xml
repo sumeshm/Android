@@ -6,13 +6,13 @@
 
     <EditText
         android:id="@+id/editText"
-        android:inputType="text"
-        android:autofillHints="@string/hint_task_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_task_name"
-        android:textColorHighlight="@color/colorOrangeLight"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp" />
+        android:layout_marginEnd="20dp"
+        android:autofillHints="@string/hint_task_name"
+        android:hint="@string/hint_task_name"
+        android:inputType="text"
+        android:textColorHighlight="@color/colorOrangeLight" />
 
 </com.google.android.material.textfield.TextInputLayout>

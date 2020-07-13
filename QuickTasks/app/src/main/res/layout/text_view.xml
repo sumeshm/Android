@@ -3,35 +3,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/button_Delete"
-        android:contentDescription="@string/button_desc_remove"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_button_delete" />
-
-    <ImageButton
-        android:id="@+id/button_Refresh"
-        android:contentDescription="@string/button_desc_reset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/button_Delete"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_button_refresh" />
-
-    <TextView
-        android:id="@+id/text_checkBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_toEndOf="@+id/button_Refresh"
-        android:layout_marginStart="15dp"
-        android:text="@string/app_name"
-        android:textColor="@color/colorTextActive"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"
@@ -41,5 +12,34 @@
         android:buttonTint="@color/colorOrange"
         android:focusable="false"
         android:focusableInTouchMode="false" />
+
+    <ImageButton
+        android:id="@+id/button_Refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/button_Delete"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/button_desc_reset"
+        android:src="@drawable/ic_button_refresh" />
+
+    <ImageButton
+        android:id="@+id/button_Delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/button_desc_remove"
+        android:src="@drawable/ic_button_delete" />
+
+    <TextView
+        android:id="@+id/text_checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/button_Refresh"
+        android:text="@string/app_name"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorTextActive" />
 
 </RelativeLayout>

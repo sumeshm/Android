@@ -18,14 +18,6 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menuReminderOne"
-        android:title="@string/menu_reminder_one" />
-
-    <item
-        android:id="@+id/menuReminderTwo"
-        android:title="@string/menu_reminder_two" />
-
-    <item
         android:id="@+id/menuExport"
         android:title="@string/menu_export" />
 

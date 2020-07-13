@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickTasks.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickTasks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/QuickTaskTabs.iml" filepath="$PROJECT_DIR$/.idea/modules/QuickTaskTabs.iml" group="QuickTaskTabs" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="QuickTaskTabs/app" />
     </modules>
   </component>
 </project>

@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.planetjup.tasks.utils.PersistenceManager;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 
@@ -18,12 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import planetjup.com.tasks.R;
 
-public class FragmentImpl  extends Fragment {
+public class FragmentImpl extends Fragment {
 
     private static final String TAG = FragmentImpl.class.getSimpleName();
 
-    private int resourceId;
-    private ArrayList<TaskDetails> tasksList;
+    private final int resourceId;
+    private final ArrayList<TaskDetails> tasksList;
     private TaskDetailsArrayAdapter arrayAdapter;
 
     public FragmentImpl(int resourceId, ArrayList<TaskDetails> tasksList) {
