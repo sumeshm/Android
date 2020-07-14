@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.planetjup.tasks.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,78 +36,6 @@ public class PersistenceManager {
     private static final String JSON_KEY_TASK_NAME = "name";
     private static final String JSON_KEY_TASK_STATE = "checked";
 
-    private static final String BKP_FILE_NAME = "quickTask.txt";
-
-
-    public static ArrayList<TaskDetails> importPreference(Context context) {
-        Log.v(TAG, "importPreference()");
-        ArrayList<TaskDetails> tasksList = new ArrayList<>();
-
-        try {
-            FileInputStream inputStream = context.openFileInput(BKP_FILE_NAME);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-            StringBuilder stringBuilder = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-
-            String json = stringBuilder.toString();
-            Log.v(TAG, "importPreference(): DONE: json=" + json);
-
-            if (!json.isEmpty()) {
-                JSONArray jsonArray = new JSONArray(json);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-                    TaskDetails taskDetails = new TaskDetails(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE));
-                    tasksList.add(taskDetails);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return tasksList;
-    }
-
-    public static void exportPreference(Context context, ArrayList<TaskDetails> tasksList) {
-        Log.v(TAG, "exportPreference()");
-
-        if (!tasksList.isEmpty()) {
-            JSONArray jsonArray = new JSONArray();
-            for (TaskDetails taskDetails : tasksList) {
-
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put(JSON_KEY_TASK_NAME, taskDetails.getTaskName());
-                    jsonObject.put(JSON_KEY_TASK_STATE, taskDetails.isCompleted());
-                    jsonArray.put(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            Log.v(TAG, "exportPreference(): json=" + jsonArray.toString());
-
-            try {
-                byte[] jsonBytes = jsonArray.toString().getBytes();
-
-                FileOutputStream outputStream = context.openFileOutput(BKP_FILE_NAME, Context.MODE_PRIVATE);
-                outputStream.write(jsonBytes);
-                outputStream.close();
-
-                Log.v(TAG, "exportPreference(): DONE");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     public static ArrayList<TaskDetails> readMonthlyTasksList(Context context) {
         return readTasksList(context, KEY_REMINDER_MONTHLY);
     }
@@ -127,6 +58,30 @@ public class PersistenceManager {
 
     public static void writeOtherTasksList(Context context, ArrayList<TaskDetails> tasksList) {
         writeTasksList(context, tasksList, KEY_REMINDER_OTHER);
+    }
+
+    public static void exportMonthlyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        exportTasksList(context, tasksList, KEY_REMINDER_MONTHLY);
+    }
+
+    public static void exportYearlyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        exportTasksList(context, tasksList, KEY_REMINDER_YEARLY);
+    }
+
+    public static void exportOtherTasksList(Context context, ArrayList<TaskDetails> tasksList) {
+        exportTasksList(context, tasksList, KEY_REMINDER_OTHER);
+    }
+
+    public static ArrayList<TaskDetails> importMonthlyTasksList(Context context) {
+        return importTasksList(context, KEY_REMINDER_MONTHLY);
+    }
+
+    public static ArrayList<TaskDetails> importYearlyTasksList(Context context) {
+        return importTasksList(context, KEY_REMINDER_YEARLY);
+    }
+
+    public static ArrayList<TaskDetails> importOtherTasksList(Context context) {
+        return importTasksList(context, KEY_REMINDER_OTHER);
     }
 
     private static ArrayList<TaskDetails> readTasksList(Context context, String key) {
@@ -179,4 +134,76 @@ public class PersistenceManager {
 
         editor.apply();
     }
+
+    private static ArrayList<TaskDetails> importTasksList(Context context, String key) {
+        Log.v(TAG, "importTasksList()");
+        ArrayList<TaskDetails> tasksList = new ArrayList<>();
+
+        try {
+            FileInputStream inputStream = context.openFileInput(key + ".txt");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+
+            String json = stringBuilder.toString();
+            Log.v(TAG, "importTasksList(): DONE: json=" + json);
+
+            if (!json.isEmpty()) {
+                JSONArray jsonArray = new JSONArray(json);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    TaskDetails taskDetails = new TaskDetails(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE));
+                    tasksList.add(taskDetails);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return tasksList;
+    }
+
+    private static void exportTasksList(Context context, ArrayList<TaskDetails> tasksList, String key) {
+        Log.v(TAG, "exportTasksList()");
+
+        if (!tasksList.isEmpty()) {
+            JSONArray jsonArray = new JSONArray();
+            for (TaskDetails taskDetails : tasksList) {
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(JSON_KEY_TASK_NAME, taskDetails.getTaskName());
+                    jsonObject.put(JSON_KEY_TASK_STATE, taskDetails.isCompleted());
+                    jsonArray.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.v(TAG, "exportTasksList(): JsonArray.size=" + jsonArray.length());
+            Log.v(TAG, "exportTasksList(): JsonArray=" + jsonArray.toString());
+
+            try {
+                byte[] jsonBytes = jsonArray.toString().getBytes();
+
+                FileOutputStream outputStream = context.openFileOutput(key + ".txt", Context.MODE_PRIVATE);
+                outputStream.write(jsonBytes);
+                outputStream.close();
+
+                Log.v(TAG, "exportTasksList(): DONE");
+                Toast.makeText(context, "Exported: " + jsonBytes, Toast.LENGTH_SHORT).show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

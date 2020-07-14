@@ -48,6 +48,20 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         notifyDataSetChanged();
     }
 
+    public void resetListData(ArrayList<TaskDetails> newList) {
+        for (TaskDetails taskDetails : taskList) {
+            //remove(taskDetails);
+            super.remove(taskDetails);
+        }
+        taskList.clear();
+        for (TaskDetails taskDetails : newList) {
+            add(taskDetails);
+        }
+
+        //addAll(newList);
+        notifyDataSetChanged();
+    }
+
     @SuppressLint("Range")
     @Override
     public void onClick(View view) {
@@ -111,7 +125,6 @@ public class TaskDetailsArrayAdapter extends ArrayAdapter<TaskDetails> implement
         taskList.remove(getPosition(taskDetails));
         super.remove(taskDetails);
     }
-
 
     private class ListItemManager {
         final TextView textView;

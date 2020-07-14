@@ -57,6 +57,12 @@ public class FragmentImpl extends Fragment {
         return tasksList;
     }
 
+    public void setList(ArrayList<TaskDetails> newList) {
+        if (arrayAdapter != null) {
+            arrayAdapter.resetListData(newList);
+        }
+    }
+
     public void reset() {
         arrayAdapter.resetListView();
     }

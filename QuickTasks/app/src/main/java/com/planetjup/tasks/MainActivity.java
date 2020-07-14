@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.planetjup.tasks.tabs.TabManager;
@@ -16,6 +17,10 @@ import com.planetjup.tasks.utils.PersistenceManager;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AlertDialog;
@@ -116,6 +121,38 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.menuReset:
                 tabManager.resetFocusList();
+                break;
+
+            case R.id.menuExport:
+                switch (tabManager.getFocusItem()) {
+                    case 0:
+                        PersistenceManager.exportMonthlyTasksList(this, tabManager.getMonthlyList());
+                        break;
+                    case 1:
+                        PersistenceManager.exportYearlyTasksList(this, tabManager.getYearlyList());
+                        break;
+                    default:
+                        PersistenceManager.exportOtherTasksList(this, tabManager.getOtherList());
+                        break;
+                }
+                break;
+
+            case R.id.menuImport:
+                switch (tabManager.getFocusItem()) {
+                    case 0:
+                        ArrayList<TaskDetails> monthlyList = PersistenceManager.importMonthlyTasksList(this);
+                        tabManager.setMonthlyList(monthlyList);
+                        break;
+                    case 1:
+                        ArrayList<TaskDetails> yearlyList = PersistenceManager.importYearlyTasksList(this);
+                        tabManager.setYearlyList(yearlyList);
+                        break;
+                    default:
+                        ArrayList<TaskDetails> otherList = PersistenceManager.importOtherTasksList(this);
+                        tabManager.setOtherList(otherList);
+                        break;
+                }
+
                 break;
         }
 

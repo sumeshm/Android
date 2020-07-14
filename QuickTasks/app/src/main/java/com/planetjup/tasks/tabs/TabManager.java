@@ -113,6 +113,18 @@ public class TabManager extends FragmentStatePagerAdapter {
         return tabOthers.getList();
     }
 
+    public void setMonthlyList(ArrayList<TaskDetails> newList) {
+        tabMonthly.setList(newList);
+    }
+
+    public void setYearlyList(ArrayList<TaskDetails> newList) {
+        tabYearly.setList(newList);
+    }
+
+    public void setOtherList(ArrayList<TaskDetails> newList) {
+        tabOthers.setList(newList);
+    }
+
     public void resetFocusList() {
         Log.v(TAG, "resetFocusList(): focusPosition=" + focusPosition);
 
