@@ -35,13 +35,15 @@ public class PersistenceManager {
 
     private static final String JSON_KEY_TASK_NAME = "name";
     private static final String JSON_KEY_TASK_STATE = "checked";
+    private static final String JSON_KEY_TASK_MONTH = "month";
+    private static final String JSON_KEY_TASK_DAY = "day";
 
     public static ArrayList<TaskDetails> readMonthlyTasksList(Context context) {
         return readTasksList(context, KEY_REMINDER_MONTHLY);
     }
 
-    public static ArrayList<TaskDetails> readYearlyTasksList(Context context) {
-        return readTasksList(context, KEY_REMINDER_YEARLY);
+    public static ArrayList<TaskDetailsExtended> readYearlyTasksList(Context context) {
+        return readTasksExtendedList(context, KEY_REMINDER_YEARLY);
     }
 
     public static ArrayList<TaskDetails> readOtherTasksList(Context context) {
@@ -52,8 +54,8 @@ public class PersistenceManager {
         writeTasksList(context, tasksList, KEY_REMINDER_MONTHLY);
     }
 
-    public static void writeYearlyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
-        writeTasksList(context, tasksList, KEY_REMINDER_YEARLY);
+    public static void writeYearlyTasksList(Context context, ArrayList<TaskDetailsExtended> tasksList) {
+        writeTasksExtendedList(context, tasksList, KEY_REMINDER_YEARLY);
     }
 
     public static void writeOtherTasksList(Context context, ArrayList<TaskDetails> tasksList) {
@@ -64,8 +66,8 @@ public class PersistenceManager {
         exportTasksList(context, tasksList, KEY_REMINDER_MONTHLY);
     }
 
-    public static void exportYearlyTasksList(Context context, ArrayList<TaskDetails> tasksList) {
-        exportTasksList(context, tasksList, KEY_REMINDER_YEARLY);
+    public static void exportYearlyTasksList(Context context, ArrayList<TaskDetailsExtended> tasksList) {
+        exportTasksExtendedList(context, tasksList, KEY_REMINDER_YEARLY);
     }
 
     public static void exportOtherTasksList(Context context, ArrayList<TaskDetails> tasksList) {
@@ -76,8 +78,8 @@ public class PersistenceManager {
         return importTasksList(context, KEY_REMINDER_MONTHLY);
     }
 
-    public static ArrayList<TaskDetails> importYearlyTasksList(Context context) {
-        return importTasksList(context, KEY_REMINDER_YEARLY);
+    public static ArrayList<TaskDetailsExtended> importYearlyTasksList(Context context) {
+        return importTasksExtendedList(context, KEY_REMINDER_YEARLY);
     }
 
     public static ArrayList<TaskDetails> importOtherTasksList(Context context) {
@@ -90,13 +92,37 @@ public class PersistenceManager {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         String json = prefs.getString(key, null);
-        Log.v(TAG, "writeTasksList(): json=" + json);
+        Log.v(TAG, "readTasksList(): json=" + json);
         if (json != null && !json.isEmpty()) {
             try {
                 JSONArray jsonArray = new JSONArray(json);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     TaskDetails taskDetails = new TaskDetails(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE));
+                    tasksList.add(taskDetails);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return tasksList;
+    }
+
+    private static ArrayList<TaskDetailsExtended> readTasksExtendedList(Context context, String key) {
+        Log.v(TAG, "readTasksExtendedList()");
+        ArrayList<TaskDetailsExtended> tasksList = new ArrayList<>();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String json = prefs.getString(key, null);
+        Log.v(TAG, "readTasksExtendedList(): json=" + json);
+        if (json != null && !json.isEmpty()) {
+            try {
+                JSONArray jsonArray = new JSONArray(json);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    TaskDetailsExtended taskDetails = new TaskDetailsExtended(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE),
+                            jsonObject.getInt(JSON_KEY_TASK_DAY), jsonObject.getInt(JSON_KEY_TASK_MONTH) );
                     tasksList.add(taskDetails);
                 }
             } catch (JSONException e) {
@@ -135,6 +161,36 @@ public class PersistenceManager {
         editor.apply();
     }
 
+    private static void writeTasksExtendedList(Context context, ArrayList<TaskDetailsExtended> tasksList, String key) {
+        Log.v(TAG, "writeTasksExtendedList()");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putString(key, null);
+        if (!tasksList.isEmpty()) {
+            JSONArray jsonArray = new JSONArray();
+            for (TaskDetailsExtended taskDetails : tasksList) {
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(JSON_KEY_TASK_NAME, taskDetails.getTaskName());
+                    jsonObject.put(JSON_KEY_TASK_STATE, taskDetails.isCompleted());
+                    jsonObject.put(JSON_KEY_TASK_DAY, taskDetails.getDayOfMonth());
+                    jsonObject.put(JSON_KEY_TASK_MONTH, taskDetails.getMonthOfYear());
+                    jsonArray.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            editor.putString(key, jsonArray.toString());
+        } else {
+            editor.putString(key, null);
+        }
+
+        editor.apply();
+    }
+
     private static ArrayList<TaskDetails> importTasksList(Context context, String key) {
         Log.v(TAG, "importTasksList()");
         ArrayList<TaskDetails> tasksList = new ArrayList<>();
@@ -157,6 +213,41 @@ public class PersistenceManager {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     TaskDetails taskDetails = new TaskDetails(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE));
+                    tasksList.add(taskDetails);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return tasksList;
+    }
+
+    private static ArrayList<TaskDetailsExtended> importTasksExtendedList(Context context, String key) {
+        Log.v(TAG, "importTasksExtendedList()");
+        ArrayList<TaskDetailsExtended> tasksList = new ArrayList<>();
+
+        try {
+            FileInputStream inputStream = context.openFileInput(key + ".txt");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+
+            String json = stringBuilder.toString();
+            Log.v(TAG, "importTasksExtendedList(): DONE: json=" + json);
+
+            if (!json.isEmpty()) {
+                JSONArray jsonArray = new JSONArray(json);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    TaskDetailsExtended taskDetails = new TaskDetailsExtended(jsonObject.getString(JSON_KEY_TASK_NAME), jsonObject.getBoolean(JSON_KEY_TASK_STATE),
+                            jsonObject.getInt(JSON_KEY_TASK_DAY), jsonObject.getInt(JSON_KEY_TASK_MONTH));
                     tasksList.add(taskDetails);
                 }
             }
@@ -206,4 +297,42 @@ public class PersistenceManager {
         }
     }
 
+    private static void exportTasksExtendedList(Context context, ArrayList<TaskDetailsExtended> tasksList, String key) {
+        Log.v(TAG, "exportTasksExtendedList()");
+
+        if (!tasksList.isEmpty()) {
+            JSONArray jsonArray = new JSONArray();
+            for (TaskDetailsExtended taskDetails : tasksList) {
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put(JSON_KEY_TASK_NAME, taskDetails.getTaskName());
+                    jsonObject.put(JSON_KEY_TASK_STATE, taskDetails.isCompleted());
+                    jsonObject.put(JSON_KEY_TASK_DAY, taskDetails.getDayOfMonth());
+                    jsonObject.put(JSON_KEY_TASK_MONTH, taskDetails.getMonthOfYear());
+                    jsonArray.put(jsonObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.v(TAG, "exportTasksExtendedList(): JsonArray.size=" + jsonArray.length());
+            Log.v(TAG, "exportTasksExtendedList(): JsonArray=" + jsonArray.toString());
+
+            try {
+                byte[] jsonBytes = jsonArray.toString().getBytes();
+
+                FileOutputStream outputStream = context.openFileOutput(key + ".txt", Context.MODE_PRIVATE);
+                outputStream.write(jsonBytes);
+                outputStream.close();
+
+                Log.v(TAG, "exportTasksExtendedList(): DONE");
+                Toast.makeText(context, "Exported: " + jsonBytes, Toast.LENGTH_SHORT).show();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

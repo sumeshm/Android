@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.planetjup.tasks.utils.TaskDetails;
+import com.planetjup.tasks.utils.TaskDetailsExtended;
 
 import java.util.ArrayList;
 
@@ -21,16 +22,16 @@ public class TabManager extends FragmentStatePagerAdapter {
 
     private int focusPosition;
     private final FragmentImpl tabMonthly;
-    private final FragmentImpl tabYearly;
+    private final FragmentExtendedImpl tabYearly;
     private final FragmentImpl tabOthers;
 
     @SuppressLint("WrongConstant")
-    public TabManager(@NonNull FragmentManager fm, ArrayList<TaskDetails> monthly, ArrayList<TaskDetails> yearly, ArrayList<TaskDetails> other) {
+    public TabManager(@NonNull FragmentManager fm, ArrayList<TaskDetails> monthly, ArrayList<TaskDetailsExtended> yearly, ArrayList<TaskDetails> other) {
         super(fm, 3);
         Log.v(TAG, "TabManager()");
 
         tabMonthly = new FragmentImpl(R.layout.tab_list, monthly);
-        tabYearly = new FragmentImpl(R.layout.tab_list, yearly);
+        tabYearly = new FragmentExtendedImpl(R.layout.tab_list, yearly);
         tabOthers = new FragmentImpl(R.layout.tab_list, other);
     }
 
@@ -86,15 +87,15 @@ public class TabManager extends FragmentStatePagerAdapter {
         }
     }
 
-    public void addItem(String newItem) {
-        Log.v(TAG, "addItem(): newItem=" + newItem);
+    public void addItem(String newItem, int day, int month) {
+        Log.v(TAG, "addItem(): newItem=" + newItem + ", day=" + day + ", month=" + month);
 
         switch (focusPosition) {
             case 0:
                 tabMonthly.addItem(newItem);
                 break;
             case 1:
-                tabYearly.addItem(newItem);
+                tabYearly.addItem(newItem, day, month);
                 break;
             default:
                 tabOthers.addItem(newItem);
@@ -105,7 +106,7 @@ public class TabManager extends FragmentStatePagerAdapter {
         return tabMonthly.getList();
     }
 
-    public ArrayList<TaskDetails> getYearlyList() {
+    public ArrayList<TaskDetailsExtended> getYearlyList() {
         return tabYearly.getList();
     }
 
@@ -117,7 +118,7 @@ public class TabManager extends FragmentStatePagerAdapter {
         tabMonthly.setList(newList);
     }
 
-    public void setYearlyList(ArrayList<TaskDetails> newList) {
+    public void setYearlyList(ArrayList<TaskDetailsExtended> newList) {
         tabYearly.setList(newList);
     }
 

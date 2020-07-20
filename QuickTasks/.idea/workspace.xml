@@ -14,10 +14,18 @@
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/jarAnalysis.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/app/app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/planetjup/tasks/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/planetjup/tasks/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/planetjup/tasks/tabs/TabManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/planetjup/tasks/tabs/TabManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/planetjup/tasks/utils/PersistenceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/planetjup/tasks/utils/PersistenceManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,8 +63,17 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/layout" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.planetjup.tasks.tabs" />
+      <recent name="com.planetjup.tasks.utils" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/src/main/res/layout" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
@@ -132,6 +149,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="676" y="252" key="#com.intellij.ide.util.MemberChooser" timestamp="1595279219125">
+      <screen x="46" y="23" width="1634" height="1027" />
+    </state>
+    <state x="676" y="252" key="#com.intellij.ide.util.MemberChooser/46.23.1634.1027@46.23.1634.1027" timestamp="1595279219125" />
     <state x="601" y="290" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1594673066179">
       <screen x="46" y="23" width="1634" height="1027" />
     </state>
@@ -140,26 +161,30 @@
       <screen x="46" y="23" width="1634" height="1027" />
     </state>
     <state x="611" y="380" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/46.23.1634.1027@46.23.1634.1027" timestamp="1594673748334" />
-    <state width="1592" height="238" key="GridCell.Tab.0.bottom" timestamp="1594680541056">
+    <state width="1592" height="238" key="GridCell.Tab.0.bottom" timestamp="1595280358237">
       <screen x="46" y="23" width="1634" height="1027" />
     </state>
-    <state width="1592" height="238" key="GridCell.Tab.0.bottom/46.23.1634.1027@46.23.1634.1027" timestamp="1594680541056" />
-    <state width="1592" height="238" key="GridCell.Tab.0.center" timestamp="1594680541055">
+    <state width="1592" height="238" key="GridCell.Tab.0.bottom/46.23.1634.1027@46.23.1634.1027" timestamp="1595280358237" />
+    <state width="1592" height="238" key="GridCell.Tab.0.center" timestamp="1595280358236">
       <screen x="46" y="23" width="1634" height="1027" />
     </state>
-    <state width="1592" height="238" key="GridCell.Tab.0.center/46.23.1634.1027@46.23.1634.1027" timestamp="1594680541055" />
-    <state width="1592" height="238" key="GridCell.Tab.0.left" timestamp="1594680541055">
+    <state width="1592" height="238" key="GridCell.Tab.0.center/46.23.1634.1027@46.23.1634.1027" timestamp="1595280358236" />
+    <state width="1592" height="238" key="GridCell.Tab.0.left" timestamp="1595280358236">
       <screen x="46" y="23" width="1634" height="1027" />
     </state>
-    <state width="1592" height="238" key="GridCell.Tab.0.left/46.23.1634.1027@46.23.1634.1027" timestamp="1594680541055" />
-    <state width="1592" height="238" key="GridCell.Tab.0.right" timestamp="1594680541055">
+    <state width="1592" height="238" key="GridCell.Tab.0.left/46.23.1634.1027@46.23.1634.1027" timestamp="1595280358236" />
+    <state width="1592" height="238" key="GridCell.Tab.0.right" timestamp="1595280358237">
       <screen x="46" y="23" width="1634" height="1027" />
     </state>
-    <state width="1592" height="238" key="GridCell.Tab.0.right/46.23.1634.1027@46.23.1634.1027" timestamp="1594680541055" />
-    <state width="300" height="59" key="javadoc.popup.new" timestamp="1594684689624">
+    <state width="1592" height="238" key="GridCell.Tab.0.right/46.23.1634.1027@46.23.1634.1027" timestamp="1595280358237" />
+    <state x="463" y="276" key="Vcs.Push.Dialog.v2" timestamp="1595272893104">
       <screen x="46" y="23" width="1634" height="1027" />
     </state>
-    <state width="300" height="59" key="javadoc.popup.new/46.23.1634.1027@46.23.1634.1027" timestamp="1594684689624" />
+    <state x="463" y="276" key="Vcs.Push.Dialog.v2/46.23.1634.1027@46.23.1634.1027" timestamp="1595272893104" />
+    <state width="300" height="59" key="javadoc.popup.new" timestamp="1595280468404">
+      <screen x="46" y="23" width="1634" height="1027" />
+    </state>
+    <state width="300" height="59" key="javadoc.popup.new/46.23.1634.1027@46.23.1634.1027" timestamp="1595280468404" />
     <state x="528" y="250" width="670" height="676" key="search.everywhere.popup" timestamp="1594680790946">
       <screen x="46" y="23" width="1634" height="1027" />
     </state>

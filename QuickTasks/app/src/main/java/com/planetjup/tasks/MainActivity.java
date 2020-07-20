@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
@@ -16,12 +17,14 @@ import com.planetjup.tasks.tabs.TabManager;
 import com.planetjup.tasks.utils.PersistenceManager;
 import com.planetjup.tasks.utils.TaskDetails;
 import com.planetjup.tasks.utils.TaskDetailsArrayAdapter;
+import com.planetjup.tasks.utils.TaskDetailsExtended;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private final int MAX_LENGTH = 20;
     private TabManager tabManager;
     private ArrayList<TaskDetails> monthlyList;
-    private ArrayList<TaskDetails> yearlyList;
+    private ArrayList<TaskDetailsExtended> yearlyList;
     private ArrayList<TaskDetails> otherList;
 
     @Override
@@ -116,7 +119,17 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.menuAdd:
-                showAddDialog();
+                switch (tabManager.getFocusItem()) {
+                    case 0:
+                        showAddDialog();
+                        break;
+                    case 1:
+                        showAddDialogExtended();
+                        break;
+                    default:
+                        showAddDialog();
+                        break;
+                }
                 break;
 
             case R.id.menuReset:
@@ -144,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                         tabManager.setMonthlyList(monthlyList);
                         break;
                     case 1:
-                        ArrayList<TaskDetails> yearlyList = PersistenceManager.importYearlyTasksList(this);
+                        ArrayList<TaskDetailsExtended> yearlyList = PersistenceManager.importYearlyTasksList(this);
                         tabManager.setYearlyList(yearlyList);
                         break;
                     default:
@@ -181,7 +194,90 @@ public class MainActivity extends AppCompatActivity {
                         newTask = newTask.substring(0, MAX_LENGTH - 1);
                     }
 
-                    tabManager.addItem(newTask);
+                    tabManager.addItem(newTask, 0, 0);
+                }
+            }
+        });
+
+        builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void showAddDialogExtended() {
+        Log.v(TAG, "showAddDialogExtended()");
+
+        final View dialogView = getLayoutInflater().inflate(R.layout.dialog_view_extended, null);
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogCustom);
+        builder.setTitle(R.string.title_popup);
+        builder.setIcon(R.drawable.ic_notification);
+        builder.setView(dialogView);
+
+        NumberPicker dayPicker = dialogView.findViewById(R.id.dayPicker);
+        dayPicker.setMinValue(1);
+        dayPicker.setMaxValue(31);
+
+        NumberPicker monthPicker = dialogView.findViewById(R.id.monthPicker);
+        monthPicker.setMinValue(1);
+        monthPicker.setMaxValue(12);
+        monthPicker.setDisplayedValues(TaskDetailsExtended.getMonths());
+
+        monthPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
+                Log.v(TAG, "showAddDialogExtended(): onValueChange: newVal=" + newVal + ", oldVal=" + oldVal);
+                NumberPicker dayPicker = dialogView.findViewById(R.id.dayPicker);
+                dayPicker.setValue(1);
+                switch(newVal) {
+                    case 1:
+                    case 3:
+                    case 5:
+                    case 7:
+                    case 8:
+                    case 10:
+                    case 12:
+                        dayPicker.setMaxValue(31);
+                        break;
+                    case 2:
+                        int year = Calendar.getInstance().get(Calendar.YEAR);
+                        if (year % 4 == 0) {
+                            dayPicker.setMaxValue(29);
+                        } else {
+                            dayPicker.setMaxValue(28);
+                        }
+                        break;
+                    default:
+                        dayPicker.setMaxValue(30);
+                        break;
+                }
+            }
+        });
+
+        builder.setPositiveButton(R.string.button_add, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                EditText editText = dialogView.findViewById(R.id.editText);
+                String newTask = editText.getText().toString().trim();
+
+                NumberPicker dayPicker = dialogView.findViewById(R.id.dayPicker);
+                int dayIndex = dayPicker.getValue();
+
+                NumberPicker monthPicker = dialogView.findViewById(R.id.monthPicker);
+                int monthIndex = monthPicker.getValue();
+
+                if (!newTask.isEmpty()) {
+                    // trim length if needed
+                    if (newTask.length() > MAX_LENGTH) {
+                        newTask = newTask.substring(0, MAX_LENGTH - 1);
+                    }
+
+                    tabManager.addItem(newTask, dayIndex, monthIndex);
                 }
             }
         });
